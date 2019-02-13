@@ -1920,7 +1920,10 @@ class ParserController extends Controller
         $pattern2 = '/\[search:([\w]+)(\s+[^]]+)?\]/';
         if (preg_match_all($pattern, $content, $matches)) {
             $count = count($matches[0]);
-            $field = request('field', 'var');
+            $field = request('field');
+            if (! preg_match('/^[\w\|\s]+$/', $field)) {
+                $field = '';
+            }
             $keyword = request('keyword', 'vars');
             $scode = request('scode');
             $start = 1;
