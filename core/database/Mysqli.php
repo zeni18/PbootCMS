@@ -243,13 +243,13 @@ class Mysqli implements Builder
     // 显示执行错误
     protected function error($sql, $conn)
     {
-        if ($this->begin) { // 如果是事务模式，发生错误，则回滚
-            $this->$conn->rollback();
-            $this->begin = false;
-        }
         $err = '错误：' . mysqli_error($this->$conn) . '，';
         if (preg_match('/XPATH/i', $err)) {
             $err = '';
+        }
+        if ($this->begin) { // 如果是事务模式，发生错误，则回滚
+            $this->$conn->rollback();
+            $this->begin = false;
         }
         error('执行SQL发生错误！' . $err . '语句：' . $sql);
     }
