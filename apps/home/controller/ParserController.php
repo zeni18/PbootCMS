@@ -2123,6 +2123,7 @@ class ParserController extends Controller
                 unset($where3['isappinstalled']);
                 unset($where3['x']);
                 unset($where3['y']);
+                unset($where3['searchtpl']);
                 
                 // 无任何条件不显示内容
                 if (! $where3) {

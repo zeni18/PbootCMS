@@ -27,7 +27,11 @@ class SearchController extends Controller
 
     public function index()
     {
-        $content = parent::parser('search.html'); // 框架标签解析
+        $searchtpl = request('searchtpl');
+        if (! preg_match('/^[\w\-\.\/]+$/', $searchtpl)) {
+            $searchtpl = 'search.html';
+        }
+        $searchtpl = $content = parent::parser($searchtpl); // 框架标签解析
         $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
         $content = $this->parser->parserPositionLabel($content, 0, '搜索', url('/home/Search/index')); // CMS当前位置标签解析
         $content = $this->parser->parserSpecialPageSortLabel($content, - 1, '搜索结果', url('/home/Search/index')); // 解析分类标签
