@@ -30,6 +30,15 @@ class ListController extends Controller
     {
         if (! ! $scode = get('scode', 'vars')) {
             if (! ! $sort = $this->model->getSort($scode)) {
+                
+                // 如果访问的内容和当前区域不一致，则自动切换
+                if ($sort->acode != cookie('lg')) {
+                    $lgs = $this->config('lgs');
+                    if (isset($lgs[$sort->acode])) {
+                        cookie('lg', $sort->acode);
+                    }
+                }
+                
                 if ($sort->listtpl) {
                     $content = parent::parser($sort->listtpl); // 框架标签解析
                     $content = $this->parser->parserBefore($content); // CMS公共标签前置解析

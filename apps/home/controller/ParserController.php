@@ -1695,6 +1695,7 @@ class ParserController extends Controller
                 $num = $this->config('pagesize');
                 $page = true;
                 $start = 1;
+                $lg = '';
                 
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -1707,6 +1708,9 @@ class ParserController extends Controller
                         case 'start':
                             $start = $value;
                             break;
+                        case 'lg':
+                            $lg = $value;
+                            break;
                     }
                 }
                 
@@ -1716,7 +1720,7 @@ class ParserController extends Controller
                 }
                 
                 // 读取数据
-                if (! $data = $this->model->getMessage(escape_string($num), $page, $start)) {
+                if (! $data = $this->model->getMessage(escape_string($num), $page, $start, $lg)) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }

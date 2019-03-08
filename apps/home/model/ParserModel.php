@@ -47,7 +47,7 @@ class ParserModel extends Model
         return parent::table('ay_label')->decode()->column('value,type', 'name');
     }
 
-    // 单个分类信息
+    // 单个分类信息，不区分语言，兼容跨语言
     public function getSort($scode)
     {
         $field = array(
@@ -68,7 +68,6 @@ class ParserModel extends Model
             )
         );
         return parent::table('ay_content_sort a')->field($field)
-            ->where("a.acode='" . get_lg() . "'")
             ->where("a.scode='$scode' OR a.filename='$scode'")
             ->join($join)
             ->find();
@@ -243,7 +242,7 @@ class ParserModel extends Model
         return parent::table('ay_extfield')->where("name='$field'")->value('value');
     }
 
-    // 列表内容,带分页
+    // 列表内容,带分页，不区分语言，兼容跨语言
     public function getLists($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1)
     {
         $fields = array(
@@ -295,7 +294,6 @@ class ParserModel extends Model
         }
         
         $where = array(
-            "a.acode='" . get_lg() . "'",
             'a.status=1',
             'd.type=2',
             "a.date<'" . date('Y-m-d H:i:s') . "'"
@@ -315,7 +313,7 @@ class ParserModel extends Model
             ->select();
     }
 
-    // 列表内容，不带分页
+    // 列表内容，不带分页，不区分语言，兼容跨语言
     public function getList($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1)
     {
         $fields = array(
@@ -367,7 +365,6 @@ class ParserModel extends Model
         }
         
         $where = array(
-            "a.acode='" . get_lg() . "'",
             'a.status=1',
             'd.type=2',
             "a.date<'" . date('Y-m-d H:i:s') . "'"
@@ -387,7 +384,7 @@ class ParserModel extends Model
             ->select();
     }
 
-    // 内容详情
+    // 内容详情，不区分语言，兼容跨语言
     public function getContent($id)
     {
         $field = array(
@@ -424,7 +421,6 @@ class ParserModel extends Model
         );
         $result = parent::table('ay_content a')->field($field)
             ->where("a.id='$id' OR a.filename='$id'")
-            ->where("a.acode='" . get_lg() . "'")
             ->where('a.status=1')
             ->join($join)
             ->decode()
@@ -432,7 +428,7 @@ class ParserModel extends Model
         return $result;
     }
 
-    // 单篇详情
+    // 单篇详情,不区分语言，兼容跨语言
     public function getAbout($scode)
     {
         $field = array(
@@ -469,7 +465,6 @@ class ParserModel extends Model
         );
         $result = parent::table('ay_content a')->field($field)
             ->where("a.scode='$scode' OR b.filename='$scode'")
-            ->where("a.acode='" . get_lg() . "'")
             ->where('a.status=1')
             ->join($join)
             ->decode()
@@ -478,11 +473,10 @@ class ParserModel extends Model
         return $result;
     }
 
-    // 指定内容多图
+    // 指定内容多图,不区分语言，兼容跨语言
     public function getContentPics($id)
     {
         $result = parent::table('ay_content')->where("id='$id'")
-            ->where("acode='" . get_lg() . "'")
             ->where('status=1')
             ->value('pics');
         return $result;
@@ -579,7 +573,6 @@ class ParserModel extends Model
     public function getSlides($gid, $num, $start = 1)
     {
         $result = parent::table('ay_slide')->where("gid='$gid'")
-            ->where("acode='" . get_lg() . "'")
             ->order('sorting ASC,id ASC')
             ->limit($start - 1, $num)
             ->select();
@@ -590,7 +583,6 @@ class ParserModel extends Model
     public function getLinks($gid, $num, $start = 1)
     {
         $result = parent::table('ay_link')->where("gid='$gid'")
-            ->where("acode='" . get_lg() . "'")
             ->order('sorting ASC,id ASC')
             ->limit($start - 1, $num)
             ->select();
@@ -598,18 +590,29 @@ class ParserModel extends Model
     }
 
     // 获取留言
-    public function getMessage($num, $page = true, $start = 1)
+    public function getMessage($num, $page = true, $start = 1, $lg = null)
     {
+        if ($lg == 'all') {
+            $where = array();
+        } elseif ($lg) {
+            $where = array(
+                'acode' => $lg
+            );
+        } else {
+            $where = array(
+                'acode' => get_lg()
+            );
+        }
         if ($page) {
             return parent::table('ay_message')->where("status=1")
-                ->where("acode='" . get_lg() . "'")
+                ->where($where)
                 ->order('id DESC')
                 ->decode(false)
                 ->page(1, $num, $start)
                 ->select();
         } else {
             return parent::table('ay_message')->where("status=1")
-                ->where("acode='" . get_lg() . "'")
+                ->where($where)
                 ->order('id DESC')
                 ->decode(false)
                 ->limit($start - 1, $num)

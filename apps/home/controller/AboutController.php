@@ -40,7 +40,16 @@ class AboutController extends Controller
                 } else {
                     error('您访问的内容不存在，请核对后重试！');
                 }
+            } else {
+                // 如果访问的内容和当前区域不一致，则自动切换
+                if ($data->acode != cookie('lg')) {
+                    $lgs = $this->config('lgs');
+                    if (isset($lgs[$data->acode])) {
+                        cookie('lg', $data->acode);
+                    }
+                }
             }
+            
             // 读取模板
             if (! ! $sort = $this->model->getSort($data->scode)) {
                 if ($sort->contenttpl) {
