@@ -989,6 +989,16 @@ class ParserController extends Controller
                                 case 'oppose':
                                     $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,' . $value . ' DESC,a.sorting ASC,a.date DESC,a.id DESC';
                                     break;
+                                case 'random': // 随机取数
+                                    $db_type = get_db_type();
+                                    if ($db_type == 'mysql') {
+                                        $order = "RAND()";
+                                    } elseif ($db_type == 'sqlite') {
+                                        $order = "RANDOM()";
+                                    } else {
+                                        $order = 'a.sorting ASC,a.date DESC,a.id DESC';
+                                    }
+                                    break;
                                 default:
                                     $order = $value . ',a.sorting ASC,a.date DESC,a.id DESC';
                             }
@@ -1986,6 +1996,16 @@ class ParserController extends Controller
                                 case 'likes':
                                 case 'oppose':
                                     $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,' . $value . ' DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    break;
+                                case 'random': // 随机取数
+                                    $db_type = get_db_type();
+                                    if ($db_type == 'mysql') {
+                                        $order = "RAND()";
+                                    } elseif ($db_type == 'sqlite') {
+                                        $order = "RANDOM()";
+                                    } else {
+                                        $order = 'a.sorting ASC,a.date DESC,a.id DESC';
+                                    }
                                     break;
                                 default:
                                     $order = $value . ',a.sorting ASC,a.date DESC,a.id DESC';
