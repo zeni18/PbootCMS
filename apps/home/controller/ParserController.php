@@ -39,7 +39,7 @@ class ParserController extends Controller
         
         // 实现自动页面关键字及描述
         if (C == 'List') {
-            $content = str_replace('{pboot:pagetitle}', '{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+            // {pboot:pagetitle}在列表控制器中实现
             $content = str_replace('{pboot:pagekeywords}', '{sort:keywords}', $content);
             $content = str_replace('{pboot:pagedescription}', '{sort:description}', $content);
         } elseif (C == 'Content') {
