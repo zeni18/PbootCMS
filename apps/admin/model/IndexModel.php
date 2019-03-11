@@ -17,14 +17,14 @@ class IndexModel extends Model
     // 检查用户账号密码
     public function login($where)
     {
-        // 执行登陆
+        // 执行登录
         $result = parent::table('ay_user')->field('id,ucode,username,realname')
             ->where($where)
             ->where('status=1')
             ->find();
         
-        if ($result) { // 登陆成功
-            $this->updateLogin($where); // 执行更新登陆记录
+        if ($result) { // 登录成功
+            $this->updateLogin($where); // 执行更新登录记录
             $menus = $this->getUserMenu($result->ucode); // 用户菜单
             $result->menus = get_tree($menus, 0, 'mcode', 'pcode'); // 用户菜单树
             $result->rcodes = $this->getUserRcode($result->ucode); // 用户角色

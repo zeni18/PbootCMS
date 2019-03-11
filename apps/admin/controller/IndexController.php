@@ -22,7 +22,7 @@ class IndexController extends Controller
         $this->model = new IndexModel();
     }
 
-    // 登陆页面
+    // 登录页面
     public function index()
     {
         if (session('sid')) {

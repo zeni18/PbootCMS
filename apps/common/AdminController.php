@@ -32,7 +32,7 @@ class AdminController extends Controller
                 }
             } else {
                 session_unset();
-                error('您账号的区域权限设置有误，无法正常登陆！', url('/admin/index/index'), 10);
+                error('您账号的区域权限设置有误，无法正常登录！', url('/admin/index/index'), 10);
             }
         }
         

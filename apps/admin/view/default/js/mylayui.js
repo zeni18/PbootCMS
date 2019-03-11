@@ -27,7 +27,7 @@ layui.use(['element','upload','laydate','form'], function(){
 	layer.tips($(this).data('content'), this);
   }) 
  
-  //用户登陆验证
+  //用户登录验证
   form.on('submit(login-submit)', function(data){
   	var form = $("#dologin");
     var url = form.attr('action');

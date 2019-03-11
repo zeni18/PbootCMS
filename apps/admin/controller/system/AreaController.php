@@ -207,7 +207,7 @@ class AreaController extends Controller
             path_delete(RUN_PATH . '/config'); // 清理缓存的配置文件
             $this->log('删除数据区域' . $acode . '成功！');
             session_unset();
-            success('删除成功,请重新登陆', url('/admin/index/index'));
+            success('删除成功,请重新登录', url('/admin/index/index'));
         } else {
             $this->log('删除数据区域' . $acode . '失败！');
             error('删除失败，请核对是否为默认区域！', - 1);

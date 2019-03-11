@@ -177,7 +177,7 @@ class Weixin
         return $wx_user;
     }
 
-    // 执行网页授权登陆，返回指定地址,$type模式为snsapi_userinfo或snsapi_base(静默方式)
+    // 执行网页授权登录，返回指定地址,$type模式为snsapi_userinfo或snsapi_base(静默方式)
     public function redirectAuth($redirectUrl, $type = 'snsapi_userinfo')
     {
         if (strpos($redirectUrl, 'http') === FALSE) {
