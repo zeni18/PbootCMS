@@ -70,7 +70,7 @@ class UpgradeController extends Controller
                 }
                 if (file_exists($file)) {
                     $files[$key]->type = '<span style="color:Red">覆盖</span>';
-                    $files[$key]->ltime = date('Y-m-d H:i:s', filectime($file));
+                    $files[$key]->ltime = date('Y-m-d H:i:s', filemtime($file));
                 } else {
                     $files[$key]->type = '新增';
                     $files[$key]->ltime = '无';
@@ -212,7 +212,7 @@ class UpgradeController extends Controller
             $file = ROOT_PATH . $value->path;
             if (file_exists($file)) {
                 $files[$key]->type = '<span style="color:Red">覆盖</span>';
-                $files[$key]->ltime = date('Y-m-d H:i:s', filectime($file));
+                $files[$key]->ltime = date('Y-m-d H:i:s', filemtime($file));
             } else {
                 $files[$key]->type = '新增';
                 $files[$key]->ltime = '无';
@@ -329,7 +329,7 @@ class UpgradeController extends Controller
                     $this->files[] = array(
                         'path' => $out_path,
                         'md5' => md5_file($file),
-                        'ctime' => filectime($file)
+                        'ctime' => filemtime($file)
                     );
                 }
             }
