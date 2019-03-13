@@ -35,6 +35,7 @@ class SlideController extends Controller
             } else {
                 $result = $this->model->getList();
             }
+            $this->assign('gids', $this->model->getGid());
             $this->assign('slides', $result);
         }
         $this->display('content/slide.html');
@@ -53,7 +54,7 @@ class SlideController extends Controller
             $sorting = post('sorting', 'int');
             
             if (! $gid) {
-                alert_back('分组不能为空！');
+                $gid = $this->model->getMaxGid() + 1;
             }
             
             if (! $pic) {
@@ -190,6 +191,7 @@ class SlideController extends Controller
             if (! $result = $this->model->getSlide($id)) {
                 error('编辑的内容已经不存在！', - 1);
             }
+            $this->assign('gids', $this->model->getGid());
             $this->assign('slide', $result);
             $this->display('content/slide.html');
         }

@@ -41,6 +41,21 @@ class SlideModel extends Model
             ->find();
     }
 
+    // 获取分组
+    public function getGid()
+    {
+        return parent::table('ay_slide')->distinct()
+            ->where("acode='" . session('acode') . "'")
+            ->order('gid')
+            ->column('gid');
+    }
+
+    // 获取最大分组值
+    public function getMaxGid()
+    {
+        return parent::table('ay_slide')->max('gid');
+    }
+
     // 添加轮播图
     public function addSlide(array $data)
     {

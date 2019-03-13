@@ -52,7 +52,7 @@ class LinkController extends Controller
             $sorting = post('sorting');
             
             if (! $gid) {
-                alert_back('分组不能为空！');
+                $gid = $this->model->getMaxGid() + 1;
             }
             
             if (! $name) {
@@ -208,6 +208,7 @@ class LinkController extends Controller
             if (! $result = $this->model->getLink($id)) {
                 error('编辑的内容已经不存在！', - 1);
             }
+            $this->assign('gids', $this->model->getGid());
             $this->assign('link', $result);
             $this->display('content/link.html');
         }

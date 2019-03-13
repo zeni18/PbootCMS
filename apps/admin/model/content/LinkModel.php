@@ -41,6 +41,21 @@ class LinkModel extends Model
             ->find();
     }
 
+    // 获取分组
+    public function getGid()
+    {
+        return parent::table('ay_link')->distinct()
+            ->where("acode='" . session('acode') . "'")
+            ->order('gid')
+            ->column('gid');
+    }
+
+    // 获取最大分组值
+    public function getMaxGid()
+    {
+        return parent::table('ay_link')->max('gid');
+    }
+
     // 添加友情链接
     public function addLink(array $data)
     {
