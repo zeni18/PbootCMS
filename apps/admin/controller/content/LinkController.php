@@ -35,6 +35,7 @@ class LinkController extends Controller
             } else {
                 $result = $this->model->getList();
             }
+            $this->assign('gids', $this->model->getGid());
             $this->assign('links', $result);
         }
         $this->display('content/link.html');
