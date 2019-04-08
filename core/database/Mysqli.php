@@ -51,7 +51,7 @@ class Mysqli implements Builder
         if ($cfg['host'] == 'localhost') {
             $cfg['host'] = '127.0.0.1';
         }
-        $conn = @new \Mysqli($cfg['host'], $cfg['user'], $cfg['passwd'], $cfg['dbname'], $cfg['dbport']);
+        $conn = @new \Mysqli($cfg['host'], $cfg['user'], $cfg['passwd'], $cfg['dbname'], $cfg['port']);
         if (mysqli_connect_errno()) {
             error("连接数据库服务器失败：" . iconv('gbk', 'utf-8', mysqli_connect_error()));
         }

@@ -54,6 +54,9 @@ return array(
     // 默认分页大小
     'pagesize' => 15,
     
+    // 会话文件使用网站路径
+    'session_in_sitepath' => 0,
+    
     // 配置会话缓存，files,memcache,redis
     'session' => array(
         'handler' => 'files',

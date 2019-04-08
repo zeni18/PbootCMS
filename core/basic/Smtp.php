@@ -191,7 +191,9 @@ class Smtp
             $this->setMail($subject, $body);
         }
         $command = $this->getCommand();
-        $this->socket($this->isSecurity);
+        if (! $this->socket($this->isSecurity)) {
+            return false;
+        }
         foreach ($command as $value) {
             $result = $this->sendCommand($value[0], $value[1]);
             if ($result) {
@@ -470,14 +472,54 @@ class Smtp
      */
     protected function socket($ssl = true)
     {
-        $remoteAddr = "tcp://" . $this->sendServer . ":" . $this->port;
-        $this->socket = stream_socket_client($remoteAddr, $errno, $errstr, 30);
-        if (! $this->socket) {
-            $this->errorMessage = $errstr;
+        if ($ssl && ! extension_loaded('openssl')) {
+            $this->errorMessage = '服务器未启用openssl扩展，无法使用加密方式发送邮件！';
             return false;
         }
-        // 设置加密连接，默认是ssl，如果需要tls连接，可以查看php手册streamsocket_enable_crypto函数的解释
-        stream_socket_enable_crypto($this->socket, $ssl, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+        
+        if (function_exists('stream_socket_client')) {
+            
+            if (! function_exists('stream_socket_enable_crypto')) {
+                $this->errorMessage = '服务器已经禁用stream_socket_enable_crypto函数，无法发送邮件！';
+                return false;
+            }
+            
+            if (! function_exists('stream_set_blocking')) {
+                $this->errorMessage = '服务器已经禁用stream_set_blocking函数，无法发送邮件！';
+                return false;
+            }
+            
+            // 建立连接
+            $remoteAddr = "tcp://" . $this->sendServer . ":" . $this->port;
+            $this->socket = stream_socket_client($remoteAddr, $errno, $errstr, 30);
+            if (! $this->socket) {
+                $this->errorMessage = $errstr;
+                return false;
+            }
+            
+            // 设置加密方式
+            $crypto_method = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+            if (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT')) {
+                $crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+                $crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+            }
+            stream_socket_enable_crypto($this->socket, $ssl, $crypto_method);
+        } elseif (function_exists('fsockopen')) {
+            if ($ssl) {
+                $remoteAddr = "ssl://" . $this->sendServer;
+            } else {
+                $remoteAddr = "tcp://" . $this->sendServer;
+            }
+            $this->socket = fsockopen($remoteAddr, $this->port, $errno, $errstr, 30);
+            if (! $this->socket) {
+                $this->errorMessage = $errstr;
+                return false;
+            }
+        } else {
+            $this->errorMessage = '服务器已经禁用stream_socket_client和fsockopen函数，请至少开启一个才能发送邮件！';
+            return false;
+        }
+        
         stream_set_blocking($this->socket, 1); // 设置阻塞模式
         $str = fread($this->socket, 1024);
         if (! preg_match("/220+?/", $str)) {

@@ -367,7 +367,7 @@ function parse_info_tpl($info_tpl, $string, $jump_url, $time)
 }
 
 // 获取转义数据，支持字符串、数组、对象
-function escape_string($string, $dropStr = true)
+function escape_string($string)
 {
     if (! $string)
         return $string;

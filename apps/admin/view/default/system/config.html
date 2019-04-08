@@ -215,9 +215,19 @@
 	  </ul>
 	  
 	  <div class="layui-tab-content">
-	  	<div class="layui-tab-item layui-show">
+	  	<div class="layui-tab-item layui-show">	    
 	  		<form action="{url./admin/Config/email}" method="post" class="layui-form">
 	  			<input type="hidden" name="formcheck" value="{$formcheck}" > 
+	  			
+	  			<div class="layui-form-item">
+	                   <label class="layui-form-label">服务器状态 </label>
+	                   <div class="layui-input-block" style="line-height:36px;">
+							stream_socket_client函数<i class="layui-icon layui-icon-ok-circle" style="color: {php}echo function_exists('stream_socket_client')?'#5FB878':'#f2f2f2';{/php}"></i>&nbsp;&nbsp;&nbsp; 
+							fsockopen函数 <i class="layui-icon layui-icon-ok-circle" style="color: {php}echo function_exists('fsockopen')?'#5FB878':'#f2f2f2';{/php}"></i>
+							<span class="layui-icon layui-icon-about tips" data-content="至少需要支持其中一个函数才能正常使用！"></span>
+	                   </div>
+	             </div>
+	             
 	 	   		<div class="layui-form-item">
 	                    <label class="layui-form-label">SMTP服务器</label>
 	                   <div class="layui-input-block">
@@ -251,7 +261,7 @@
 	   			<div class="layui-form-item">
 	                  <label class="layui-form-label">邮箱密码</label>
 	                 <div class="layui-input-block">
-	                 	<input type="password" name="smtp_password" value="{$configs['smtp_password']['value']}" placeholder="请输入邮箱密码" class="layui-input">
+	                 	<input type="password" name="smtp_password" value="{$configs['smtp_password']['value']}" placeholder="请输入邮箱密码或邮箱授权码，QQ邮箱必须授权码" class="layui-input">
 	                 </div>
 	            </div>
 	            
