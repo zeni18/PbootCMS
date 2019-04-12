@@ -1,10 +1,10 @@
 <?php
 return array(
     // 应用版本
-    'app_version' => '1.3.7',
+    'app_version' => '1.3.8',
     
     // 发布时间
-    'release_time' => '20190409'
+    'release_time' => '20190412'
 
 );
  

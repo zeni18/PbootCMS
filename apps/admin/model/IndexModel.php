@@ -214,4 +214,13 @@ class IndexModel extends Model
     {
         return parent::table('ay_user')->where("id=" . session('id'))->update($data);
     }
+
+    // 获取用户信息
+    public function getUserInfo($ucode)
+    {
+        $result = parent::table('ay_user')->field('id,ucode,username,realname,last_login_ip,update_time,login_count')
+            ->where("ucode='$ucode'")
+            ->find();
+        return $result;
+    }
 }

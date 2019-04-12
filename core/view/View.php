@@ -169,7 +169,7 @@ class View
     // 缓存页面， 开启缓存开关时有效
     public function cache($content)
     {
-        if (Config::get('tpl_html_cache')) {
+        if (Config::get('tpl_html_cache') && ! $_SERVER['QUERY_STRING']) {
             $lg = cookie('lg');
             if (Config::get('open_wap') && (is_mobile() || Config::get('wap_domain') == get_http_host())) {
                 $wap = 'wap';

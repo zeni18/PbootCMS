@@ -70,6 +70,8 @@ class IndexController extends Controller
         $this->assign('server', get_server_info());
         $this->assign('branch', $this->config('upgrade_branch') ?: '1.X');
         
+        $this->assign('user_info', $this->model->getUserInfo(session('ucode')));
+        
         $this->assign('sum_msg', model('admin.content.Message')->getCount());
         
         // 内容模型菜单
@@ -78,6 +80,7 @@ class IndexController extends Controller
         foreach ($models as $key => $value) {
             $models[$key]->count = $model->getModelCount($value->mcode)->count;
         }
+        
         $this->assign('model_msg', $models);
         $this->display('system/home.html');
     }

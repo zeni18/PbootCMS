@@ -684,7 +684,7 @@ function get_server_info()
     // 检测curl扩展
     $data['curl'] = extension_loaded('curl') ? YES : NO;
     // 会话保存路径
-    $data['session_save_path'] = session_save_path();
+    $data['session_save_path'] = session_save_path() ?: $_SERVER['TMP'];
     // 检测standard库是否存在
     $data['standard'] = extension_loaded('standard') ? YES : NO;
     // 检测多线程支持
