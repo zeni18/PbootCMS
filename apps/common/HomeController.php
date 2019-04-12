@@ -17,7 +17,12 @@ class HomeController extends Controller
             if ($this->config('wap_domain') && $this->config('wap_domain') == get_http_host()) {
                 $this->setTheme(get_theme() . '/wap'); // 已绑域名并且一致则自动手机版本
             } elseif (is_mobile() && $this->config('wap_domain') && $this->config('wap_domain') != get_http_host()) {
-                header('Location://' . $this->config('wap_domain') . URL); // 手机访问并且绑定了域名，但是访问域名不一致则跳转
+                if (is_https()) {
+                    $pre = 'https://';
+                } else {
+                    $pre = 'http://';
+                }
+                header('Location:' . $pre . $this->config('wap_domain') . URL); // 手机访问并且绑定了域名，但是访问域名不一致则跳转
             } elseif (is_mobile()) { // 其他情况手机访问则自动手机版本
                 $this->setTheme(get_theme() . '/wap');
             } else { // 其他情况，电脑版本
