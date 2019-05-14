@@ -1,5 +1,0 @@
-<IfModule mod_rewrite.c>
-  <FilesMatch "\.db$">
-    Deny from all
-  </FilesMatch> 
-</IfModule>

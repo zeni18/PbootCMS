@@ -1,7 +1,6 @@
 <?php
 /**
  * @copyright (C)2016-2099 Hnaoyun Inc.
- * @license This is not a freeware, use is subject to license terms
  * @author XingMeng
  * @email hnxsh@foxmail.com
  * @date 2017年11月16日
@@ -31,10 +30,10 @@ class LogDb implements Builder
         return self::$logDb;
     }
 
-    // 写入文本日志
-    public function write($content, $level = "info")
+    // 写入日志
+    public function write($content, $level = "info", $username = null)
     {
-        $username = session('username') ?: 'system';
+        $username = $username ?: session('username');
         $data = array(
             'level' => $level,
             'event' => escape_string($content),
@@ -47,13 +46,13 @@ class LogDb implements Builder
         return self::$model->table('ay_syslog')->insert($data);
     }
 
-    // 写入文本错误日志
+    // 写入错误日志
     public function error($content)
     {
         return $this->write($content, 'error');
     }
 
-    // 写入文本信息日志
+    // 写入信息日志
     public function info($content)
     {
         return $this->write($content, 'info');

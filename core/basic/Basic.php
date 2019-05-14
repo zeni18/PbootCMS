@@ -100,7 +100,7 @@ class Basic
                 if (Config::get('session_in_sitepath')) {
                     $save_path = RUN_PATH . '/session/';
                     if (! check_dir($save_path, true))
-                        error('设置的会话路径目录创建失败！');
+                        error('设置的会话目录创建失败！');
                     ini_set("session.save_handler", "files");
                     $depth = 2;
                     ini_set("session.save_path", $depth . ';' . $save_path);

@@ -1,7 +1,6 @@
 <?php
 /**
  * @copyright (C)2016-2099 Hnaoyun Inc.
- * @license This is not a freeware, use is subject to license terms
  * @author XingMeng
  * @email hnxsh@foxmail.com
  * @date 2017年10月24日 
@@ -39,10 +38,10 @@ class Log
      * @param string $level
      *            内容级别
      */
-    public static function write($content, $level = "info")
+    public static function write($content, $level = "info", $username = null)
     {
         $log = self::getLogInstance();
-        $log->write($content, $level);
+        $log->write($content, $level, $username);
     }
 
     /**

@@ -86,7 +86,7 @@
 //页面加载时检查更新
 $.ajax({
     type: 'GET',
-	url: 'https://www.pbootcms.com/index.php/upgrade/check/version/{APP_VERSION}.{RELEASE_TIME}/branch/{$branch}',
+	url: 'https://www.pbootcms.com/index.php/upgrade/check/version/{APP_VERSION}.{RELEASE_TIME}.{$revise}/branch/{$branch}',
 	dataType: 'json',
 	success: function (response, status) {
 		 if(response.code==1){
@@ -120,10 +120,9 @@ function check(){
   		
 	var url= $('#check').data('url');
 	$.ajax({
-   	  type: 'POST',
+   	  type: 'GET',
    	  url: url,
    	  dataType: 'json',
-   	  data: {},
    	  success: function (response, status) {
    		  if(response.code==1){
    			  var data=response.data;

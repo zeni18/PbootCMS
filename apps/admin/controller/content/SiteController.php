@@ -49,7 +49,7 @@ class SiteController extends Controller
             'keywords' => post('keywords'),
             'description' => post('description'),
             'icp' => post('icp'),
-            'theme' => post('theme') ?: 'default',
+            'theme' => basename(post('theme')) ?: 'default',
             'statistical' => post('statistical'),
             'copyright' => post('copyright')
         );

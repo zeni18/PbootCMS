@@ -1,11 +1,11 @@
 <?php
 return array(
     
-    // 调试模式
-    'debug' => 0,
-    
     // 授权码，多个授权码使用英文逗号隔开，如：'aaaaa,bbbbb'
     'sn' => '281BE285D7',
+    
+    // 授权用户手机
+    'sn_user' => '',
     
     // 设置URL模式,1、基本模式,2、伪静态模式
     'url_type' => 1,
@@ -15,6 +15,12 @@ return array(
     
     // 模板内容缓存有效时间（秒）
     'tpl_html_cache_time' => 900,
+    
+    // 默认分页大小
+    'pagesize' => 15,
+    
+    // 分页条数字数量
+    'pagenum' => 5,
     
     // 访问页面规则，如禁用浏览器、操作系统类型
     'access_rule' => array(

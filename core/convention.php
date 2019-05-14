@@ -11,7 +11,7 @@ return array(
     'sn' => '281BE285D7',
     
     // 内核版本
-    'core_version' => '1.5.3',
+    'core_version' => '1.5.5',
     
     // 配置模块
     'public_app' => 'home,admin,api',
@@ -53,6 +53,9 @@ return array(
     
     // 默认分页大小
     'pagesize' => 15,
+    
+    // 分页条数字数量
+    'pagenum' => 5,
     
     // 会话文件使用网站路径
     'session_in_sitepath' => 0,

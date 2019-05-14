@@ -24,6 +24,9 @@ class UpgradeController extends Controller
     // 强制同步文件
     private $force;
 
+    // 修改版本
+    private $revise;
+
     // 文件列表
     public $files = array();
 
@@ -32,6 +35,7 @@ class UpgradeController extends Controller
         error_reporting(0);
         $this->branch = $this->config('upgrade_branch') ?: '1.X';
         $this->force = $this->config('upgrade_force') ?: 0;
+        $this->revise = $this->config('revise_version') ?: 0;
     }
 
     public function index()
@@ -46,6 +50,7 @@ class UpgradeController extends Controller
         $this->assign('upfile', $upfile);
         $this->assign('branch', $this->branch);
         $this->assign('force', $this->force);
+        $this->assign('revise', $this->revise);
         $this->display('system/upgrade.html');
     }
 
@@ -54,7 +59,9 @@ class UpgradeController extends Controller
     {
         // 清理目录，检查下载目录及备份目录
         path_delete(RUN_PATH . '/upgrade', true);
-        check_dir(RUN_PATH . '/upgrade', true);
+        if (! check_dir(RUN_PATH . '/upgrade', true)) {
+            json(0, '目录写入权限不足，无法正常升级！' . RUN_PATH . '/upgrade');
+        }
         check_dir(DOC_PATH . STATIC_DIR . '/backup/upgrade', true);
         
         $files = $this->getServerList();
@@ -64,7 +71,7 @@ class UpgradeController extends Controller
             if (@md5_file($file) != $value->md5) {
                 // 筛选数据库更新脚本
                 if (preg_match('/([\w]+)-([\w\.]+)-update\.sql/i', $file, $matches)) {
-                    if ($matches[1] != $db || ! $this->compareVersion($matches[2], APP_VERSION . '.' . RELEASE_TIME)) {
+                    if ($matches[1] != $db || ! $this->compareVersion($matches[2], APP_VERSION . '.' . RELEASE_TIME . '.' . $this->revise)) {
                         continue;
                     }
                 }
@@ -100,10 +107,13 @@ class UpgradeController extends Controller
                 foreach ($list as $value) {
                     // 本地存储路径
                     $path = RUN_PATH . '/upgrade' . $value;
-                    check_dir(dirname($path), true); // 自动创建目录
-                                                     
+                    // 自动创建目录
+                    if (! check_dir(dirname($path), true)) {
+                        json(0, '目录写入权限不足，无法下载升级文件！' . dirname($path));
+                    }
+                    
                     // 定义执行下载的类型
-                    $types = '.gif|.jpeg|.png|.bmp|.jpg|.zip|.rar|.doc|.docx|.ppt|.pptx|.xls|.xlsx|.chm|';
+                    $types = '.zip|.rar|.doc|.docx|.ppt|.pptx|.xls|.xlsx|.chm|';
                     $pathinfo = explode(".", basename($path));
                     $ext = end($pathinfo); // 获取扩展
                     if (preg_match('/\.' . $ext . '\|/i', $types)) {
@@ -141,7 +151,9 @@ class UpgradeController extends Controller
                         $path = RUN_PATH . '/upgrade' . $value;
                         $des_path = ROOT_PATH . $value;
                         $back_path = DOC_PATH . STATIC_DIR . '/backup/upgrade/' . $backdir . $value;
-                        check_dir(dirname($des_path), true); // 检查目录并字段创建
+                        if (! check_dir(dirname($des_path), true)) {
+                            json(0, '目录写入权限不足，无法正常升级！' . dirname($des_path));
+                        }
                         if (file_exists($des_path)) { // 文件存在时执行备份
                             check_dir(dirname($back_path), true);
                             copy($des_path, $back_path);
@@ -240,7 +252,7 @@ class UpgradeController extends Controller
     // 获取列表
     private function getServerList()
     {
-        $url = $this->server . '/index.php/upgrade/getlist/version/' . APP_VERSION . '.' . RELEASE_TIME . '/branch/' . $this->branch . '/force/' . $this->force;
+        $url = $this->server . '/index.php/upgrade/getlist/version/' . APP_VERSION . '.' . RELEASE_TIME . '.' . $this->revise . '/branch/' . $this->branch . '/force/' . $this->force;
         if (! ! $rs = json_decode(get_url($url, '', '', true))) {
             if ($rs->code) {
                 if (is_array($rs->data)) {

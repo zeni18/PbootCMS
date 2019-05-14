@@ -52,8 +52,23 @@ class AdminController extends Controller
         
         // POST表单提交校验
         if ($_POST && ! in_array(C, $nocheck) && session('formcheck') != post('formcheck')) {
-            if (! session('formcheck')) { // 会话目录缺失时重建目录
-                create_session_dir(RUN_PATH . '/session/', 2);
+            // 检查会话目录权限问题
+            if (session_save_path()) {
+                preg_match('/^((\s+)?([0-9]+)(\s+)?;)?(.*)/', session_save_path(), $matches);
+                // 自动创建会话主目录
+                if (! check_dir($matches[5], true)) {
+                    error('会话目录创建失败！' . $matches[5]);
+                }
+                // 检查会话目录写入权限
+                if (! is_writable($matches[5])) {
+                    error('会话目录权限不足！' . $matches[5]);
+                }
+                // 自动创建层级会话目录
+                if ($matches[3]) {
+                    create_session_dir($matches[5], $matches[3]);
+                }
+            } elseif (isset($_SERVER['TMP']) && ! is_writable($_SERVER['TMP'] . '/sess_' . session_id())) {
+                error(' 操作系统缓存目录写入权限不足！' . $_SERVER['TMP']);
             }
             alert_back('表单提交校验失败,请刷新后重试！');
         }

@@ -39,7 +39,7 @@ class IndexController extends Controller
         if (get('action') == 'moddb') {
             $file = CONF_PATH . '/database.php';
             $sname = $this->config('database.dbname');
-            $dname = '/data/#' . get_uniqid() . '.db';
+            $dname = '/data/' . get_uniqid() . '.db';
             $sconfig = file_get_contents($file);
             $dconfig = str_replace($sname, $dname, $sconfig);
             if (file_put_contents($file, $dconfig)) {
@@ -69,6 +69,7 @@ class IndexController extends Controller
         $this->assign('dbsecurity', $dbsecurity);
         $this->assign('server', get_server_info());
         $this->assign('branch', $this->config('upgrade_branch') ?: '1.X');
+        $this->assign('revise', $this->config('revise_version') ?: '0');
         
         $this->assign('user_info', $this->model->getUserInfo(session('ucode')));
         

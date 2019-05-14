@@ -35,6 +35,8 @@ class ConfigController extends Controller
                 $config = array(
                     'debug',
                     'sn',
+                    'sn_user',
+                    'pagenum',
                     'url_type',
                     'tpl_html_cache',
                     'tpl_html_cache_time'
@@ -74,6 +76,8 @@ class ConfigController extends Controller
         $configs = $this->model->getList();
         $configs['debug']['value'] = $this->config('debug');
         $configs['sn']['value'] = $this->config('sn');
+        $configs['sn_user']['value'] = $this->config('sn_user');
+        $configs['pagenum']['value'] = $this->config('pagenum');
         $configs['url_type']['value'] = $this->config('url_type');
         $configs['tpl_html_cache']['value'] = $this->config('tpl_html_cache');
         $configs['tpl_html_cache_time']['value'] = $this->config('tpl_html_cache_time');
@@ -133,10 +137,14 @@ class ConfigController extends Controller
         $config = file_get_contents(CONF_PATH . '/config.php');
         $value = str_replace(' ', '', $value); // 去除空格
         $value = str_replace('，', ',', $value); // 转换可能输入的中文逗号
-        if (is_numeric($value)) {
-            $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}' . $value . ',', $config);
+        if (preg_match("'$key'", $config)) {
+            if (is_numeric($value)) {
+                $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}' . $value . ',', $config);
+            } else {
+                $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}\'' . $value . '\',', $config);
+            }
         } else {
-            $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}\'' . $value . '\',', $config);
+            $config = preg_replace('/(return array\()/', "$1\n\n'$key' => '$value',", $config); // 自动新增配置
         }
         return file_put_contents(CONF_PATH . '/config.php', $config);
     }

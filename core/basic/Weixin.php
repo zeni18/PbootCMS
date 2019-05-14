@@ -1,7 +1,6 @@
 <?php
 /**
  * @copyright (C)2016-2099 Hnaoyun Inc.
- * @license This is not a freeware, use is subject to license terms
  * @author XingMeng
  * @email hnxsh@foxmail.com
  * @date 2017年12月28日
@@ -24,10 +23,10 @@ class Weixin
 
     public function __construct()
     {
-        $this->appid = Config::get('weixin.appid');
-        $this->secret = Config::get('weixin.secret');
+        $this->appid = Config::get('weixin_appid');
+        $this->secret = Config::get('weixin_secret');
         $this->noncestr = get_uniqid();
-        $this->redirect = Config::get('weixin.redirect');
+        $this->redirect = Config::get('weixin_redirect');
     }
 
     // 检查客户端访问Token是否过期
@@ -194,7 +193,7 @@ class Weixin
         $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={$this->appid}&secret={$this->secret}&code=$code&grant_type=authorization_code";
         $result = json_decode(get_url($url));
         if (isset($result->errcode) && $result->errcode) {
-            error('获取用户登陆授权令牌发生错误，请关闭后重新进入,错误：' . $result->errmsg);
+            error('获取用户登录授权令牌发生错误，请关闭后重新进入,错误：' . $result->errmsg);
         }
         session('auth_token', $result->access_token);
         session('auth_refresh_token', $result->refresh_token);

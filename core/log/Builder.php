@@ -1,7 +1,6 @@
 <?php
 /**
  * @copyright (C)2016-2099 Hnaoyun Inc.
- * @license This is not a freeware, use is subject to license terms
  * @author XingMeng
  * @email hnxsh@foxmail.com
  * @date 2017年10月24日
@@ -23,7 +22,7 @@ interface Builder
      * @param string $level
      *            内容级别
      */
-    public function write($content, $level = "info");
+    public function write($content, $level = "info", $username = null);
 
     /**
      * 错误日志快速写入，error级别

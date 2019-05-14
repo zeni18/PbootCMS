@@ -53,8 +53,22 @@ class Check
             check_dir(APP_PATH, true);
             check_dir(APP_PATH . '/common', true);
             check_dir(CONF_PATH, true);
-            check_dir(RUN_PATH, true);
-            check_dir(DOC_PATH . STATIC_DIR, true);
+        }
+        
+        check_dir(RUN_PATH, true);
+        check_dir(DOC_PATH . STATIC_DIR . '/upload', true);
+        
+        // 检查中文路径问题
+        if (__FILE__ != iconv('GB2312', 'UTF-8', __FILE__)) {
+            error('站点目录请不要使用中文路径！');
+        }
+        
+        // 目录权限判断
+        if (! is_writable(RUN_PATH)) {
+            error('缓存目录写入权限不足！' . RUN_PATH);
+        }
+        if (! is_writable(DOC_PATH . STATIC_DIR . '/upload')) {
+            error('上传目录写入权限不足！' . DOC_PATH . STATIC_DIR . '/upload');
         }
     }
 

@@ -72,7 +72,7 @@ class UserController extends Controller
             }
             
             if (! preg_match('/^[\x{4e00}-\x{9fa5}\w\-\.@]+$/u', $username)) {
-                json(0, '用户名含有不允许的特殊字符！');
+                alert_back('用户名含有不允许的特殊字符！');
             }
             
             // 检查编码重复
@@ -171,7 +171,7 @@ class UserController extends Controller
             }
             
             if (! preg_match('/^[\x{4e00}-\x{9fa5}\w\-\.@]+$/u', $username)) {
-                json(0, '用户名含有不允许的特殊字符！');
+                alert_back('用户名含有不允许的特殊字符！');
             }
             
             // 检查用户名重复
