@@ -7,7 +7,7 @@ return array(
     'release_time' => '20190515',
     
     // 修订版本
-    'revise_version' => '1'
+    'revise_version' => '3'
 
 );
  

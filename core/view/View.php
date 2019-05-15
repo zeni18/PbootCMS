@@ -88,7 +88,7 @@ class View
     {
         // 设置主题
         $theme = isset($this->vars['theme']) ? $this->vars['theme'] : 'default';
-        $theme = basename($theme); // 过滤相对路径
+        $theme = str_replace('../', '', $theme); // 过滤掉相对路径
         
         if (! is_dir($this->tplPath .= '/' . $theme)) { // 检查主题是否存在
             error('模板主题目录不存在！主题路径：' . $this->tplPath);
