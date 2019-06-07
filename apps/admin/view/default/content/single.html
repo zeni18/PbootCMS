@@ -395,12 +395,12 @@
 
 </div>
 
-<!--感谢网友大淘的贡献-->
 <style>.placeHolder {border:dashed 2px gray; }</style>
 <script type="text/javascript" src="{APP_THEME_DIR}/js/jquery.dragsort-0.5.2.min.js"></script>
 <script type="text/javascript">
 $("#pics_box").dragsort({
 	dragSelector: "dl",
+	dragSelectorExclude: "input,textarea,dd"
 	dragBetween: false,
 	dragEnd: saveOrder,
 	placeHolderTemplate: "<dl class='placeHolder'><dt></dt></dl>"
@@ -414,5 +414,6 @@ function saveOrder() {
 };
 </script>
 <script type="text/javascript" src="{APP_THEME_DIR}/js/jscolor.js"></script>
+
 {include file='common/ueditor.html'}
 {include file='common/foot.html'}

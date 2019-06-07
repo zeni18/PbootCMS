@@ -2196,6 +2196,7 @@ class ParserController extends Controller
                 unset($where3['page']);
                 unset($where3['from']);
                 unset($where3['isappinstalled']);
+                unset($where3['tdsourcetag']);
                 unset($where3['x']);
                 unset($where3['y']);
                 unset($where3['searchtpl']);

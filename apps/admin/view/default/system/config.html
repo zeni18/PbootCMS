@@ -78,6 +78,8 @@
 		                     </div>
 		                </div>
 		                
+		                {if(![$configs.sn_user.value])}
+		                
 		                <div class="layui-form-item">
 		                     <label class="layui-form-label">系统授权码</label>
 		                     <div class="layui-input-inline">
@@ -91,6 +93,8 @@
 		                     	<input type="text" name="sn_user"  value="{$configs.sn_user.value}" placeholder="请购买了万能授权码的用户填写"  class="layui-input">
 		                     </div>
 		                </div>
+		                
+		                {/if}
 		                
 		                <div class="layui-form-item">
 							 <div class="layui-input-block">

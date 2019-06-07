@@ -121,6 +121,11 @@ class ConfigController extends Controller
     // 修改配置文件
     private function modConfig($key, $value)
     {
+        $value = str_replace(' ', '', $value); // 去除空格
+        $value = str_replace('，', ',', $value); // 转换可能输入的中文逗号
+        if (! preg_match('/^[\w\s\,\-]+$/', $value)) {
+            return;
+        }
         // 如果开启伪静态时自动拷贝文件
         if ($key == 'url_type' && $value == 2) {
             $soft = get_server_soft();
@@ -134,9 +139,8 @@ class ConfigController extends Controller
                 }
             }
         }
+        
         $config = file_get_contents(CONF_PATH . '/config.php');
-        $value = str_replace(' ', '', $value); // 去除空格
-        $value = str_replace('，', ',', $value); // 转换可能输入的中文逗号
         if (preg_match("'$key'", $config)) {
             if (is_numeric($value)) {
                 $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}' . $value . ',', $config);
