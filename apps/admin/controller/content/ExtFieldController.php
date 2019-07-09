@@ -89,21 +89,21 @@ class ExtFieldController extends Controller
             
             // 字段类型及长度
             switch ($type) {
-                case '2':
-                    $mysql = 'varchar(500)';
-                    $sqlite = 'TEXT(500)';
+                case '2': // 多行
+                    $mysql = 'varchar(1000)';
+                    $sqlite = 'TEXT(1000)';
                     break;
-                case '7':
+                case '7': // 时间日期
                     $mysql = 'datetime';
                     $sqlite = 'TEXT';
                     break;
-                case '8':
-                    $mysql = 'varchar(2000)';
-                    $sqlite = 'TEXT(2000)';
+                case '8': // 编辑器
+                    $mysql = 'varchar(10000)';
+                    $sqlite = 'TEXT(10000)';
                     break;
                 default:
-                    $mysql = 'varchar(100)';
-                    $sqlite = 'TEXT(100)';
+                    $mysql = 'varchar(200)';
+                    $sqlite = 'TEXT(200)';
             }
             
             // 字段不存在时创建

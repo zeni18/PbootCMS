@@ -163,7 +163,7 @@ function is_image($path)
  * @param number $max_height最大高度            
  * @return string 返回成功上传文件的路径数组
  */
-function upload($input_name, $file_ext = null, $max_width = null, $max_height = null)
+function upload($input_name, $file_ext = null, $max_width = null, $max_height = null, $watermark = false)
 {
     // 未选择文件返回空
     if (! isset($_FILES[$input_name])) {
@@ -179,12 +179,17 @@ function upload($input_name, $file_ext = null, $max_width = null, $max_height = 
         $array_ext_allow = explode(',', $file_ext);
     }
     
+    // 未直接传递函数参数，且具有地址参数，则打水印
+    if (! $watermark && get('watermark', 'int')) {
+        $watermark = true;
+    }
+    
     $array_save_file = array();
     if (is_array($files['tmp_name'])) { // 多文件情况
         $file_count = count($files['tmp_name']);
         for ($i = 0; $i < $file_count; $i ++) {
             if (! $files['error'][$i]) {
-                $upfile = handle_upload($files['name'][$i], $files['tmp_name'][$i], $array_ext_allow, $max_width, $max_height);
+                $upfile = handle_upload($files['name'][$i], $files['tmp_name'][$i], $array_ext_allow, $max_width, $max_height, $watermark);
                 if (strrpos($upfile, '/') > 0) {
                     $array_save_file[] = $upfile;
                 } else {
@@ -196,7 +201,7 @@ function upload($input_name, $file_ext = null, $max_width = null, $max_height = 
         }
     } else { // 单文件情况
         if (! $files['error']) {
-            $upfile = handle_upload($files['name'], $files['tmp_name'], $array_ext_allow, $max_width, $max_height);
+            $upfile = handle_upload($files['name'], $files['tmp_name'], $array_ext_allow, $max_width, $max_height, $watermark);
             if (strrpos($upfile, '/') > 0) {
                 $array_save_file[] = $upfile;
             } else {
@@ -214,7 +219,7 @@ function upload($input_name, $file_ext = null, $max_width = null, $max_height = 
 }
 
 // 处理并移动上传文件
-function handle_upload($file, $temp, $array_ext_allow, $max_width, $max_height)
+function handle_upload($file, $temp, $array_ext_allow, $max_width, $max_height, $watermark)
 {
     // 定义主存储路径
     $save_path = DOC_PATH . STATIC_DIR . '/upload';
@@ -264,6 +269,10 @@ function handle_upload($file, $temp, $array_ext_allow, $max_width, $max_height)
     if (is_image($file_path)) {
         if (($reset = resize_img($file_path, $file_path, $max_width, $max_height)) !== true) {
             return $reset;
+        }
+        // 图片打水印
+        if ($watermark) {
+            watermark_img($file_path);
         }
     }
     return $save_file;
@@ -337,8 +346,8 @@ function resize_img($src_image, $out_image = null, $max_width = null, $max_heigh
         // 避免透明背景变黑问题
         if ($type == 1 || $type == 3) {
             $color = imagecolorallocate($new_img, 255, 255, 255);
-            imagecolortransparent($new_img, $color);
             imagefill($new_img, 0, 0, $color);
+            imagecolortransparent($new_img, $color);
         }
         
         imagecopyresampled($new_img, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height); // 重绘图像
@@ -401,8 +410,8 @@ function cut_img($src_image, $out_image = null, $new_width = null, $new_height =
     // 避免透明背景变黑问题
     if ($type == 1 || $type == 3) {
         $color = imagecolorallocate($new_img, 255, 255, 255);
-        imagecolortransparent($new_img, $color);
         imagefill($new_img, 0, 0, $color);
+        imagecolortransparent($new_img, $color);
     }
     
     // 计算裁剪是变大缩小方式
@@ -439,6 +448,128 @@ function cut_img($src_image, $out_image = null, $new_width = null, $new_height =
     }
     imagedestroy($new_img);
     imagedestroy($img);
+    return true;
+}
+
+// 图片水印
+function watermark_img($src_image, $out_image = null, $position = null, $watermark_image = null, $watermark_text = '', $watermark_text_size = null, $watermark_text_color = null)
+{
+    cache_config(); // 避免直接调用时未加载水印配置问题
+    if (! Config::get('watermark_open')) {
+        return;
+    }
+    
+    // 输出地址
+    if (! $out_image)
+        $out_image = $src_image;
+    
+    // 如果不存在文字及图片则直接返回
+    if (! $watermark_text) {
+        $watermark_text = Config::get('watermark_text') ?: 'PbootCMS';
+    }
+    $watermark_image = $watermark_image ?: Config::get('watermark_pic');
+    if (! $watermark_text && ! $watermark_image) {
+        return;
+    }
+    
+    // 获取图片属性
+    list ($width1, $height1, $type1, $attr1) = getimagesize($src_image);
+    switch ($type1) {
+        case 1:
+            $img1 = imagecreatefromgif($src_image);
+            break;
+        case 2:
+            $img1 = imagecreatefromjpeg($src_image);
+            break;
+        case 3:
+            $img1 = imagecreatefrompng($src_image);
+            break;
+    }
+    
+    if ($watermark_image) {
+        $watermark_image = ROOT_PATH . $watermark_image;
+        // 获取水印图片
+        list ($width2, $height2, $type2, $attr2) = getimagesize($watermark_image);
+        switch ($type2) {
+            case 1:
+                $img2 = imagecreatefromgif($watermark_image);
+                break;
+            case 2:
+                $img2 = imagecreatefromjpeg($watermark_image);
+                break;
+            case 3:
+                $img2 = imagecreatefrompng($watermark_image);
+                break;
+        }
+    } else {
+        if (! $watermark_text_size) {
+            $watermark_text_size = Config::get('watermark_text_size') ?: 16;
+        }
+        if (! $watermark_text_color) {
+            $watermark_text_color = Config::get('watermark_text_color') ?: '100,100,100';
+        }
+        $colors = explode(',', $watermark_text_color);
+        
+        // 手动创建水印图像
+        $fontsize = $watermark_text_size;
+        $width2 = mb_strlen($watermark_text, 'UTF-8') * ($fontsize + 10) + 20;
+        $height2 = $fontsize + 10;
+        $img2 = imagecreatetruecolor($width2, $height2);
+        $color = imagecolorallocate($img2, 254, 254, 254);
+        imagefill($img2, 0, 0, $color);
+        imagecolortransparent($img2, $color); // 创建透明图
+        $textcolor = imagecolorallocate($img2, $colors[0], $colors[1], $colors[2]);
+        $font = CORE_PATH . '/extend/code/SourceHanSerifSC-Heavy.otf';
+        imagettftext($img2, $fontsize, 0, 5, $fontsize + 5, $textcolor, $font, $watermark_text);
+    }
+    
+    // 水印位置
+    if (! $position) {
+        $position = Config::get('watermark_position') ?: 4;
+    }
+    switch ($position) {
+        case '1':
+            $x = 20;
+            $y = 20;
+            break;
+        case '2':
+            $x = $width1 - $width2 - 20;
+            $y = 20;
+            break;
+        case '3':
+            $x = 20;
+            $y = $height1 - $height2 - 20;
+            break;
+        case '5':
+            $x = ($width1 - $width2) / 2;
+            $y = ($height1 - $height2) / 2;
+            break;
+        default:
+            $x = $width1 - $width2 - 20;
+            $y = $height1 - $height2 - 20;
+            break;
+    }
+    
+    // 拷贝图片
+    imagecopy($img1, $img2, $x, $y - 10, 0, 0, $width2, $height2);
+    check_dir(dirname($out_image), true); // 检查输出目录
+                                          
+    // 输出图片
+    switch ($type1) {
+        case 1:
+            imagegif($img1, $out_image, 90);
+            break;
+        case 2:
+            imagejpeg($img1, $out_image, 90);
+            break;
+        case 3:
+            imagepng($img1, $out_image, 90 / 10); // $quality参数取值范围0-99 在php 5.1.2之后变更为0-9
+            break;
+        default:
+            imagejpeg($img1, $out_image, 90);
+    }
+    imagedestroy($img1);
+    imagedestroy($img2);
     return true;
 }
 

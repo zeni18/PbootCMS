@@ -14,7 +14,7 @@ class SingleModel extends Model
 {
 
     // 获取文章列表
-    public function getList()
+    public function getList($mcode)
     {
         $field = array(
             'a.id',
@@ -43,6 +43,7 @@ class SingleModel extends Model
         );
         return parent::table('ay_content a')->distinct()
             ->field($field)
+            ->where("b.mcode='$mcode'")
             ->where("a.acode='" . session('acode') . "'")
             ->where('c.type=1')
             ->join($join)
@@ -52,7 +53,7 @@ class SingleModel extends Model
     }
 
     // 查找文章
-    public function findSingle($field, $keyword)
+    public function findSingle($mcode, $field, $keyword)
     {
         $fields = array(
             'a.id',
@@ -81,6 +82,7 @@ class SingleModel extends Model
         );
         return parent::table('ay_content a')->distinct()
             ->field($fields)
+            ->where("b.mcode='$mcode'")
             ->where("a.acode='" . session('acode') . "'")
             ->where('c.type=1')
             ->like($field, $keyword)

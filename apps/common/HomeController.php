@@ -10,6 +10,7 @@ class HomeController extends Controller
     public function __construct()
     {
         // 自动缓存基础信息
+        cache_lg();
         cache_config();
         
         // 手机自适应主题

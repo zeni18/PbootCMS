@@ -223,7 +223,7 @@
 			                		<div class="layui-input-inline">
 				                     	<input type="text" name="[value->name]" id="[value->name]" placeholder="请上传[value->description]"  class="layui-input">
 				                     </div>
-				                     <button type="button" class="layui-btn upload" data-des="[value->name]">
+				                     <button type="button" class="layui-btn upload watermark" data-des="[value->name]">
 									 	 <i class="layui-icon">&#xe67c;</i>上传图片
 									 </button>
 									 <div id="[value->name]_box" class="pic"></div>
@@ -260,7 +260,7 @@
 											//初始化编辑器
 											$(document).ready(function (e) {
 												var ue = UE.getEditor('editor_[value->name]',{
-													maximumWords:2000 
+													maximumWords:10000 
 												});
 											})
 										</script>
@@ -319,7 +319,7 @@
 			                     <div class="layui-input-inline">
 			                     	<input type="text" name="ico" id="ico" placeholder="请上传缩略图"  class="layui-input">
 			                     </div>
-			                     <button type="button" class="layui-btn upload" data-des="ico">
+			                     <button type="button" class="layui-btn upload watermark" data-des="ico">
 								 	 <i class="layui-icon">&#xe67c;</i>上传图片
 								 </button>
 								 <div id="ico_box" class="pic addedit"></div>
@@ -330,7 +330,7 @@
 			                     <div class="layui-input-inline">
 			                     	<input type="text" name="pics" id="pics" placeholder="请上传轮播多图"  class="layui-input">
 			                     </div>
-			                     <button type="button" class="layui-btn uploads" data-des="pics">
+			                     <button type="button" class="layui-btn uploads watermark" data-des="pics">
 								 	 <i class="layui-icon">&#xe67c;</i>上传多图
 								 </button>
 								 <div id="pics_box" class="pic addedit"><dl></dl> <!-- 规避空内容拖动bug --></div>
@@ -543,7 +543,7 @@
 			                		<div class="layui-input-inline">
 				                     	<input type="text" name="[value->name]" id="[value->name]" value="{$content->{$value->name}}" placeholder="请上传[value->description]"  class="layui-input">
 				                     </div>
-				                     <button type="button" class="layui-btn upload" data-des="[value->name]">
+				                     <button type="button" class="layui-btn upload watermark" data-des="[value->name]">
 									 	 <i class="layui-icon">&#xe67c;</i>上传图片
 									 </button>
 									 {php}$name=$value->name; {/php}
@@ -584,7 +584,7 @@
 											//初始化编辑器
 											$(document).ready(function (e) {
 												var ue = UE.getEditor('editor_[value->name]',{
-													maximumWords:2000 
+													maximumWords:10000 
 												});
 											})
 										</script>
@@ -648,7 +648,7 @@
 			                     <div class="layui-input-inline">
 			                     	<input type="text" name="ico" id="ico" value="{$content->ico}" placeholder="请上传缩略图"  class="layui-input">
 			                     </div>
-			                     <button type="button" class="layui-btn upload" data-des="ico">
+			                     <button type="button" class="layui-btn upload watermark" data-des="ico">
 								 	 <i class="layui-icon">&#xe67c;</i>上传图片
 								 </button>
 								 <div id="ico_box" class="pic addedit">{if([$content->ico])}<dl><dt><img src="{SITE_DIR}{$content->ico}" data-url="{$content->ico}"></dt><dd>删除</dd></dl>{/if}</div>
@@ -659,7 +659,7 @@
 			                     <div class="layui-input-inline">
 			                     	<input type="text" name="pics" id="pics" value="{$content->pics}" placeholder="请上传轮播多图"  class="layui-input">
 			                     </div>
-			                     <button type="button" class="layui-btn uploads" data-des="pics">
+			                     <button type="button" class="layui-btn uploads watermark" data-des="pics">
 								 	 <i class="layui-icon">&#xe67c;</i>上传多图
 								 </button>
 								 <div id="pics_box" class="pic addedit">
@@ -788,7 +788,7 @@
 <script type="text/javascript">
 $("#pics_box").dragsort({
 	dragSelector: "dl",
-	dragSelectorExclude: "input,textarea,dd"
+	dragSelectorExclude: "input,textarea,dd",
 	dragBetween: false,
 	dragEnd: saveOrder,
 	placeHolderTemplate: "<dl class='placeHolder'><dt></dt></dl>"

@@ -139,3 +139,24 @@ function light_nav(){
 		$('#nav').find('.nav-item').eq(2).addClass('layui-nav-itemed');
 	}
 }
+
+
+//判断option是否存在，如果不存在就增加
+function addOptionValue(id,value,text) {  
+  if(!isExistOption(id,value)){$('#'+id).append("<option value="+value+">"+text+"</option>");}      
+} 
+
+//判断option是否存在
+function isExistOption(id,value) {  
+  var isExist = false;  
+  var count = $('#'+id).find('option').length;  
+    for(var i=0;i<count;i++)     
+    {     
+       if($('#'+id).get(0).options[i].value == value)     
+           {     
+                 isExist = true;     
+                      break;     
+                }     
+      }     
+      return isExist;  
+} 

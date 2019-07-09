@@ -11,7 +11,7 @@ return array(
     'sn' => '281BE285D7',
     
     // 内核版本
-    'core_version' => '1.5.5',
+    'core_version' => '1.6.0',
     
     // 配置模块
     'public_app' => 'home,admin,api',
@@ -58,7 +58,7 @@ return array(
     'pagenum' => 5,
     
     // 会话文件使用网站路径
-    'session_in_sitepath' => 0,
+    'session_in_sitepath' => 1,
     
     // 配置会话缓存，files,memcache,redis
     'session' => array(

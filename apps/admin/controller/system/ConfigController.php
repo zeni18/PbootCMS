@@ -25,8 +25,22 @@ class ConfigController extends Controller
     // 应用配置列表
     public function index()
     {
+        if (! ! $action = get('action')) {
+            switch ($action) {
+                case 'sendemail':
+                    $rs = sendmail($this->config(), get('to'), '【PbootCMS】测试邮件', '欢迎您使用PbootCMS网站开发管理系统！');
+                    if ($rs === true) {
+                        alert_back('测试邮件发送成功！');
+                    } else {
+                        error('发送失败：' . $rs);
+                    }
+                    break;
+            }
+        }
+        
         // 修改参数配置
         if ($_POST) {
+            unset($_POST['upload']); // 去除上传组件
             foreach ($_POST as $key => $value) {
                 if (! preg_match('/^[\w\-]+$/', $key)) {
                     continue;
@@ -38,7 +52,8 @@ class ConfigController extends Controller
                     'pagenum',
                     'url_type',
                     'tpl_html_cache',
-                    'tpl_html_cache_time'
+                    'tpl_html_cache_time',
+                    'session_in_sitepath'
                 );
                 if (in_array($key, $config)) {
                     if ($key == 'tpl_html_cache_time' && ! $value) {
@@ -55,7 +70,7 @@ class ConfigController extends Controller
             $this->log('修改参数配置成功！');
             path_delete(RUN_PATH . '/config'); // 清理缓存的配置文件
             switch (post('submit')) {
-                case 'msg':
+                case 'email':
                     success('修改成功！', url('/admin/Config/index?#tab=t2', false));
                     break;
                 case 'baidu':
@@ -64,6 +79,9 @@ class ConfigController extends Controller
                 case 'api':
                     success('修改成功！', url('/admin/Config/index?#tab=t4', false));
                     break;
+                case 'watermark':
+                    success('修改成功！', url('/admin/Config/index?#tab=t5', false));
+                    break;
                 case 'upgrade':
                     success('修改成功！', url('/admin/Upgrade/index?#tab=t2', false));
                     break;
@@ -71,49 +89,16 @@ class ConfigController extends Controller
                     success('修改成功！', url('/admin/Config/index', false));
             }
         }
-        $this->assign('basic', true);
         $configs = $this->model->getList();
         $configs['debug']['value'] = $this->config('debug');
         $configs['sn']['value'] = $this->config('sn');
         $configs['sn_user']['value'] = $this->config('sn_user');
+        $configs['session_in_sitepath']['value'] = $this->config('session_in_sitepath');
         $configs['pagenum']['value'] = $this->config('pagenum');
         $configs['url_type']['value'] = $this->config('url_type');
         $configs['tpl_html_cache']['value'] = $this->config('tpl_html_cache');
         $configs['tpl_html_cache_time']['value'] = $this->config('tpl_html_cache_time');
         $this->assign('configs', $configs);
-        $this->display('system/config.html');
-    }
-
-    // 邮件发送配置
-    public function email()
-    {
-        if (! ! $action = get('action')) {
-            switch ($action) {
-                case 'sendemail':
-                    $rs = sendmail($this->config(), get('to'), '【PbootCMS】测试邮件', '欢迎您使用PbootCMS网站开发管理系统！');
-                    if ($rs === true) {
-                        alert_back('测试邮件发送成功！');
-                    } else {
-                        error('发送失败：' . $rs);
-                    }
-                    break;
-            }
-        }
-        
-        // 修改参数配置
-        if ($_POST) {
-            foreach ($_POST as $key => $value) {
-                if (! preg_match('/^[\w\-]+$/', $key)) {
-                    continue;
-                }
-                $this->modDbConfig($key);
-            }
-            $this->log('修改邮件发送配置成功！');
-            path_delete(RUN_PATH . '/config'); // 清理缓存的配置文件
-            success('修改成功！', url('/admin/Config/email'));
-        }
-        $this->assign('email', true);
-        $this->assign('configs', $this->model->getList());
         $this->display('system/config.html');
     }
 
@@ -147,7 +132,7 @@ class ConfigController extends Controller
                 $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}\'' . $value . '\',', $config);
             }
         } else {
-            $config = preg_replace('/(return array\()/', "$1\n\n'$key' => '$value',", $config); // 自动新增配置
+            $config = preg_replace('/(return array\()/', "$1\r\n\r\n\t'$key' => '$value',", $config); // 自动新增配置
         }
         return file_put_contents(CONF_PATH . '/config.php', $config);
     }

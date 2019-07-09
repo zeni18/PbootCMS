@@ -75,6 +75,10 @@ layui.use(['element','upload','laydate','form'], function(){
 	,accept: 'images' //接收文件类型 images（图片）、file（所有文件）、video（视频）、audio（音频）
 	,acceptMime: 'image/*'
     ,before: function(obj){ 
+       //判断是否需要加水印
+       if($(this.item).hasClass('watermark')){
+	  	 uploadInst.config.url=uploadurl+'/watermark/1';//改变URL
+	   }
 	   layer.load(); //上传loading
 	}
 	,done: function(res){
@@ -106,7 +110,11 @@ layui.use(['element','upload','laydate','form'], function(){
 	,accept: 'images' //接收文件类型 images（图片）、file（所有文件）、video（视频）、audio（音频）
 	,acceptMime: 'image/*'
 	,before: function(obj){ 
-		layer.load(); //上传loading
+	   //判断是否需要加水印
+       if($(this.item).hasClass('watermark')){
+	  	 uploadsInst.config.url=uploadurl+'/watermark/1';//改变URL
+	   }
+	   layer.load(); //上传loading
 	}
 	,done: function(res){
 	   if(res.code==1){
@@ -211,8 +219,6 @@ layui.use(['element','upload','laydate','form'], function(){
    
 });
 
-
-
 //日期控件函数
 function useLayDateMultiple(cls,type) {
 	layui.use('laydate', function() {
@@ -224,25 +230,4 @@ function useLayDateMultiple(cls,type) {
 			});
 		});
 	});
-} 
-
-
-//判断option是否存在，如果不存在就增加
-function addOptionValue(id,value,text) {  
-    if(!isExistOption(id,value)){$('#'+id).append("<option value="+value+">"+text+"</option>");}      
-} 
-
-//判断option是否存在
-function isExistOption(id,value) {  
-    var isExist = false;  
-    var count = $('#'+id).find('option').length;  
-      for(var i=0;i<count;i++)     
-      {     
-         if($('#'+id).get(0).options[i].value == value)     
-             {     
-                   isExist = true;     
-                        break;     
-                  }     
-        }     
-        return isExist;  
 } 

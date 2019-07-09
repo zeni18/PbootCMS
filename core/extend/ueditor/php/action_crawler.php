@@ -31,6 +31,17 @@ if (isset($_POST[$fieldName])) {
 foreach ($source as $imgUrl) {
     $item = new Uploader($imgUrl, $config, "remote");
     $info = $item->getFileInfo();
+    
+    // 图片打水印
+    $ext = array(
+        '.jpg',
+        '.png',
+        '.gif'
+    );
+    if (in_array($info['type'], $ext)) {
+        watermark_img(ROOT_PATH . $info['url']);
+    }
+    
     array_push($list, array(
         "state" => $info["state"],
         "url" => $info["url"],

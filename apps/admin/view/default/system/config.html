@@ -1,13 +1,13 @@
 {include file='common/head.html'}
 
 <div class="layui-body">
-	{if([$basic])}
 	<div class="layui-tab layui-tab-brief" lay-filter="tab">
 	  <ul class="layui-tab-title">
 	    <li class="layui-this" lay-id="t1">基本配置</li>
-	    <li  lay-id="t2">留言通知</li>
+	    <li  lay-id="t2">邮件通知</li>
 	    <li  lay-id="t3">百度接口</li>
 	    <li  lay-id="t4">WebAPI</li>
+	    <li  lay-id="t5">图片水印</li>
 	  </ul>
 		  <div class="layui-tab-content">
 		  	   <div class="layui-tab-item layui-show">
@@ -35,6 +35,14 @@
 		                     <div class="layui-input-block">
 		                     	<input type="radio" name="admin_check_code" value="1" {if([$configs.admin_check_code.value]==1)} checked="checked" {/if} title="启用">
 								<input type="radio" name="admin_check_code" value="0" {if([$configs.admin_check_code.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                 <div class="layui-form-item">
+		                     <label class="layui-form-label">留言验证码</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="message_check_code" value="1" {if([$configs.message_check_code.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="message_check_code" value="0" {if([$configs.message_check_code.value]==0)} checked="checked" {/if} title="禁用">
 		                     </div>
 		                </div>
 		                
@@ -68,6 +76,14 @@
 		                     <div class="layui-input-block">
 		                     	<input type="radio" name="gzip" value="1" {if([$configs.gzip.value]==1)} checked="checked" {/if} title="启用">
 								<input type="radio" name="gzip" value="0" {if([$configs.gzip.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">会话文件路径</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="session_in_sitepath" value="1" {if([$configs.session_in_sitepath.value]==1)} checked="checked" {/if} title="站内">
+								<input type="radio" name="session_in_sitepath" value="0" {if([$configs.session_in_sitepath.value]==0)} checked="checked" {/if} title="系统">
 		                     </div>
 		                </div>
 		                
@@ -110,12 +126,59 @@
 			  	   	    <input type="hidden" name="formcheck" value="{$formcheck}" > 
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">留言验证码</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="message_check_code" value="1" {if([$configs.message_check_code.value]==1)} checked="checked" {/if} title="启用">
-								<input type="radio" name="message_check_code" value="0" {if([$configs.message_check_code.value]==0)} checked="checked" {/if} title="禁用">
-		                     </div>
-		                </div>
+			                   <label class="layui-form-label">服务器状态 </label>
+			                   <div class="layui-input-block" style="line-height:36px;">
+									stream_socket_client函数<i class="layui-icon layui-icon-ok-circle" style="color: {php}echo function_exists('stream_socket_client')?'#5FB878':'#f2f2f2';{/php}"></i>&nbsp;&nbsp;&nbsp; 
+									fsockopen函数 <i class="layui-icon layui-icon-ok-circle" style="color: {php}echo function_exists('fsockopen')?'#5FB878':'#f2f2f2';{/php}"></i>
+									<span class="layui-icon layui-icon-about tips" data-content="至少需要支持其中一个函数才能正常使用！"></span>
+			                   </div>
+			             </div>
+			             
+			 	   		<div class="layui-form-item">
+			                    <label class="layui-form-label">SMTP服务器</label>
+			                   <div class="layui-input-inline">
+			                   	<input type="text" name="smtp_server" value="{$configs.smtp_server.value}" placeholder="请输入SMTP服务器" class="layui-input">
+			                   </div>
+			             </div>
+				  	   
+			
+			  	   		<div class="layui-form-item">
+			                    <label class="layui-form-label">SMTP端口</label>
+			                   <div class="layui-input-inline">
+			                   	<input type="text" name="smtp_port" value="{$configs.smtp_port.value}" placeholder="请输入SMTP端口,一般SSL为465，普通为25" class="layui-input">
+			                   </div>
+			             </div>
+				  	   
+				  	    <div class="layui-form-item">
+			                <label class="layui-form-label">是否为SSL</label>
+			                <div class="layui-input-block">
+			                   	<input type="radio" name="smtp_ssl" value="1" {if([$configs.smtp_ssl.value]==1)} checked="checked" {/if} title="是">
+								<input type="radio" name="smtp_ssl" value="0" {if([$configs.smtp_ssl.value]==0)} checked="checked" {/if} title="否">
+			           		</div>
+			           </div>
+			           
+			   			<div class="layui-form-item">
+			                  <label class="layui-form-label">邮箱账号</label>
+			                 <div class="layui-input-inline">
+			                 	<input type="text" name="smtp_username"  value="{$configs.smtp_username.value}" placeholder="请输入邮箱账号" class="layui-input">
+			                 </div>
+			            </div>
+			   
+			   			<div class="layui-form-item">
+			                  <label class="layui-form-label">邮箱密码</label>
+			                 <div class="layui-input-inline">
+			                 	<input type="password" name="smtp_password" value="{$configs.smtp_password.value}" placeholder="请输入邮箱密码或邮箱授权码" class="layui-input">
+			                 </div>
+			            </div>
+			            
+						<div class="layui-form-item">
+			                  <label class="layui-form-label">测试账号</label>
+			                 <div class="layui-input-inline">
+			                 	<input type="text" name="smtp_username_test" id="smtp_username_test" value="{$configs.smtp_username_test.value}" placeholder="请输入用于接受测试邮件的账号" class="layui-input">
+			                 </div>
+			            </div>
+		            
+		               
 		                
 		                <div class="layui-form-item">
 		                     <label class="layui-form-label">留言发送邮件</label>
@@ -131,13 +194,20 @@
 		                     	<input type="text" name="message_send_to"  value="{$configs.message_send_to.value}" placeholder="请输入留言接收邮箱"  class="layui-input">
 		                     </div>
 		                </div>
-		               
-		                <div class="layui-form-item">
+		                
+						 <div class="layui-form-item">
 							 <div class="layui-input-block">
-							    <button class="layui-btn" lay-submit name="submit" value="msg">立即提交</button>
+							    <button class="layui-btn" lay-submit name="submit" value="email">立即提交</button>
 							    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+							    <a href="{url./admin/Config/index/action/sendemail}" onclick="return sendtest(this,'#smtp_username_test')" class="layui-btn layui-btn-primary">发送测试邮件</a>
 							 </div>
 						</div>
+						<script>
+					    	function sendtest(obj,to){
+					    		$(obj).attr('href',$(obj).attr('href')+'?to='+$(to).val()); 
+					    		return true;
+					    	}
+					    </script>
 	              </form>
 		  	   </div>
 		  	   
@@ -216,92 +286,70 @@
 					</div>
 				 </form>
 		  	   </div> 
+		  	   
+		  	    <div class="layui-tab-item">
+		  	   	  <form action="{url./admin/Config/index}" method="post" class="layui-form">
+		  	   	  	<input type="hidden" name="formcheck" value="{$formcheck}" > 
+		  	   		<div class="layui-form-item">
+	                     <label class="layui-form-label">状态</label>
+	                     <div class="layui-input-block">
+	                     	<input type="radio" name="watermark_open" value="1" {if(@[$configs.watermark_open.value]==1)} checked="checked" {/if} title="启用">
+							<input type="radio" name="watermark_open" value="0" {if(@[$configs.watermark_open.value]==0)} checked="checked" {/if} title="禁用">
+	                     </div>
+	                </div>
+	                
+	                <div class="layui-form-item">
+	                      <label class="layui-form-label">水印文字</label>
+	                     <div class="layui-input-inline">
+	                     	<input type="text" name="watermark_text" value="{$configs.watermark_text.value}" placeholder="请输入水印文字，如：PbootCMS" class="layui-input">
+	                     </div>
+	                </div>
+	                
+	                <div class="layui-form-item">
+	                      <label class="layui-form-label">文字大小</label>
+	                     <div class="layui-input-inline">
+	                     	<input type="text" name="watermark_text_size" value="{$configs.watermark_text_size.value}" placeholder="请输入水印文字大小，如：20" class="layui-input">
+	                     </div>
+	                </div>
+	                
+	                <div class="layui-form-item">
+	                      <label class="layui-form-label">文字颜色</label>
+	                     <div class="layui-input-inline">
+	                     	<input type="text" name="watermark_text_color" value="{$configs.watermark_text_color.value}" placeholder="请输入水印文字颜色，如：100, 100, 100" class="layui-input">
+	                     </div>
+	                </div>
+	                
+	                <div class="layui-form-item">
+	                     <label class="layui-form-label">水印图片</label>
+	                     <div class="layui-input-inline">
+	                     	<input type="text" name="watermark_pic" id="watermark_pic" value="{$configs.watermark_pic.value}" placeholder="请上传水印图片，优先文字水印"  class="layui-input">
+	                     </div>
+	                     <button type="button" class="layui-btn upload" data-des="watermark_pic">
+						 	 <i class="layui-icon">&#xe67c;</i>上传图片
+						 </button>
+						 <div id="watermark_pic_box" class="pic"><dl><dt>{if(@[$configs.watermark_pic.value])}<img src="{SITE_DIR}{$configs.watermark_pic.value}" data-url="{$configs.watermark_pic.value}"></dt><dd>删除</dd></dl>{/if}</div>
+	                </div>
+	                
+	                <div class="layui-form-item">
+	                     <label class="layui-form-label">水印位置</label>
+	                     <div class="layui-input-block">
+	                     	<input type="radio" name="watermark_position" value="1" {if(@[$configs.watermark_position.value]==1)} checked="checked" {/if} title="左上">
+	                     	<input type="radio" name="watermark_position" value="2" {if(@[$configs.watermark_position.value]==2)} checked="checked" {/if} title="右上">
+							<input type="radio" name="watermark_position" value="3" {if(@[$configs.watermark_position.value]==3)} checked="checked" {/if} title="左下">
+	                     	<input type="radio" name="watermark_position" value="4" {if(@[$configs.watermark_position.value]==4)} checked="checked" {/if} title="右下">
+	                     	<input type="radio" name="watermark_position" value="5" {if(@[$configs.watermark_position.value]==5)} checked="checked" {/if} title="中间">
+	                     </div>
+	                </div>
+
+	                <div class="layui-form-item">
+						 <div class="layui-input-block">
+						    <button class="layui-btn" lay-submit name="submit" value="watermark">立即提交</button>
+						    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						 </div>
+					</div>
+				 </form>
+		  	   </div> 
 		  </div>
 	 </div>
-    {/if}
-    
-    {if([$email])}
-    
-    <div class="layui-tab layui-tab-brief" lay-filter="tab">
-	  <ul class="layui-tab-title">
-	    <li class="layui-this" lay-id="t1">邮箱配置</li>
-	  </ul>
-	  
-	  <div class="layui-tab-content">
-	  	<div class="layui-tab-item layui-show">	    
-	  		<form action="{url./admin/Config/email}" method="post" class="layui-form">
-	  			<input type="hidden" name="formcheck" value="{$formcheck}" > 
-	  			
-	  			<div class="layui-form-item">
-	                   <label class="layui-form-label">服务器状态 </label>
-	                   <div class="layui-input-block" style="line-height:36px;">
-							stream_socket_client函数<i class="layui-icon layui-icon-ok-circle" style="color: {php}echo function_exists('stream_socket_client')?'#5FB878':'#f2f2f2';{/php}"></i>&nbsp;&nbsp;&nbsp; 
-							fsockopen函数 <i class="layui-icon layui-icon-ok-circle" style="color: {php}echo function_exists('fsockopen')?'#5FB878':'#f2f2f2';{/php}"></i>
-							<span class="layui-icon layui-icon-about tips" data-content="至少需要支持其中一个函数才能正常使用！"></span>
-	                   </div>
-	             </div>
-	             
-	 	   		<div class="layui-form-item">
-	                    <label class="layui-form-label">SMTP服务器</label>
-	                   <div class="layui-input-block">
-	                   	<input type="text" name="smtp_server" value="{$configs.smtp_server.value}" placeholder="请输入SMTP服务器" class="layui-input">
-	                   </div>
-	             </div>
-		  	   
-	
-	  	   		<div class="layui-form-item">
-	                    <label class="layui-form-label">SMTP端口</label>
-	                   <div class="layui-input-block">
-	                   	<input type="text" name="smtp_port" value="{$configs.smtp_port.value}" placeholder="请输入SMTP端口,一般SSL为465，普通为25" class="layui-input">
-	                   </div>
-	             </div>
-		  	   
-		  	    <div class="layui-form-item">
-	                <label class="layui-form-label">是否为SSL</label>
-	                <div class="layui-input-block">
-	                   	<input type="radio" name="smtp_ssl" value="1" {if([$configs.smtp_ssl.value]==1)} checked="checked" {/if} title="是">
-						<input type="radio" name="smtp_ssl" value="0" {if([$configs.smtp_ssl.value]==0)} checked="checked" {/if} title="否">
-	           		</div>
-	           </div>
-	           
-	   			<div class="layui-form-item">
-	                  <label class="layui-form-label">邮箱账号</label>
-	                 <div class="layui-input-block">
-	                 	<input type="text" name="smtp_username" lay-verify="email" value="{$configs.smtp_username.value}" placeholder="请输入邮箱账号" class="layui-input">
-	                 </div>
-	            </div>
-	   
-	   			<div class="layui-form-item">
-	                  <label class="layui-form-label">邮箱密码</label>
-	                 <div class="layui-input-block">
-	                 	<input type="password" name="smtp_password" value="{$configs.smtp_password.value}" placeholder="请输入邮箱密码或邮箱授权码，QQ邮箱必须授权码" class="layui-input">
-	                 </div>
-	            </div>
-	            
-				<div class="layui-form-item">
-	                  <label class="layui-form-label">测试账号</label>
-	                 <div class="layui-input-block">
-	                 	<input type="text" name="smtp_username_test" id="smtp_username_test" lay-verify="email" value="{$configs.smtp_username_test.value}" placeholder="请输入用于接受测试邮件的账号" class="layui-input">
-	                 </div>
-	            </div>
-		  	   
-		  	   <div class="layui-form-item">
-					 <div class="layui-input-block">
-					    <button class="layui-btn" lay-submit>立即提交</button>
-					    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-					    <a href="{url./admin/Config/email/action/sendemail}" onclick="return sendtest(this,'#smtp_username_test')" class="layui-btn layui-btn-primary">发送测试邮件</a>
-					 </div>
-				</div>
-				<script>
-			    	function sendtest(obj,to){
-			    		$(obj).attr('href',$(obj).attr('href')+'?to='+$(to).val()); 
-			    		return true;
-			    	}
-			    </script>
-          	</form> 
-          </div>
-	  </div>
-	</div>
-    {/if}
 </div>
 {include file='common/foot.html'}

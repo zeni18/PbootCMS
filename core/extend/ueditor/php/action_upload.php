@@ -54,6 +54,17 @@ if (defined('STATIC_DIR')) {
 /* 生成上传实例对象并完成上传 */
 $up = new Uploader($fieldName, $config, $base64);
 
+// 图片打水印
+$rs = $up->getFileInfo();
+$ext = array(
+    '.jpg',
+    '.png',
+    'gif'
+);
+if (in_array($rs['type'], $ext)) {
+    watermark_img(ROOT_PATH . $rs['url']);
+}
+
 /**
  * 得到上传文件所对应的各个参数,数组结构
  * array(

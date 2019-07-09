@@ -488,7 +488,7 @@ class ContentController extends Controller
                 if (! ! $backurl = get('backurl')) {
                     success('修改成功！', base64_decode($backurl));
                 } else {
-                    success('修改成功！', url('/admin/Content/index'));
+                    success('修改成功！', url('/admin/Content/index/mcode/2'));
                 }
             } else {
                 location(- 1);

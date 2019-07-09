@@ -143,10 +143,9 @@ function get_btn($btnName, $theme, $btnAction, $idValue, $id = 'id')
     return $btn_html;
 }
 
-// 缓存基础信息
-function cache_config($refresh = false)
+// 缓存语言信息
+function cache_lg($refresh = false)
 {
-    
     // 多语言缓存，不存在时自动缓存
     $lg_cache = RUN_PATH . '/config/' . md5('language') . '.php';
     if (! file_exists($lg_cache) || $refresh) {
@@ -179,16 +178,6 @@ function cache_config($refresh = false)
     if (! isset($_COOKIE['lg'])) {
         cookie('lg', get_default_lg());
     }
-    
-    // 系统配置缓存
-    $config_cache = RUN_PATH . '/config/' . md5('config') . '.php';
-    if (! file_exists($config_cache) || $refresh) {
-        if (! isset($model)) {
-            $model = model('admin.system.Config');
-        }
-        Config::set(md5('config'), $model->getConfig(), false);
-    }
-    Config::assign($config_cache); // 注入语言配置
 }
 
 // 获取默认语言

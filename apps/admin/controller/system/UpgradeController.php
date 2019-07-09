@@ -251,7 +251,14 @@ class UpgradeController extends Controller
     // 获取列表
     private function getServerList()
     {
-        $url = $this->server . '/index.php/upgrade/getlist/version/' . APP_VERSION . '.' . RELEASE_TIME . '.' . $this->revise . '/branch/' . $this->branch . '/force/' . $this->force;
+        $param = array(
+            'version' => APP_VERSION . '.' . RELEASE_TIME . '.' . $this->revise,
+            'branch' => $this->branch,
+            'force' => $this->force,
+            'site' => get_http_url(),
+            'sn_user' => $this->config('sn_user')
+        );
+        $url = $this->server . '/index.php/upgrade/getlist?' . http_build_query($param);
         if (! ! $rs = json_decode(get_url($url, '', '', true))) {
             if ($rs->code) {
                 if (is_array($rs->data)) {

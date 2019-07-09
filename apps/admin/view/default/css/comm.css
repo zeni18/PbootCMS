@@ -201,7 +201,7 @@ a.page-num-current:hover{
 	padding: 2px;
 }
 .pic img {
-	height: 100px;
+	max-height: 100px;
 	margin: 5px 0;
 	margin-right: 5px;
 }

@@ -31,10 +31,14 @@ class SingleController extends Controller
             $this->assign('content', $result);
         } else {
             $this->assign('list', true);
+            if (! $mcode = get('mcode', 'var')) {
+                error('传递的模型编码参数有误，请核对后重试！');
+            }
+            
             if (! ! ($field = get('field', 'var')) && ! ! ($keyword = get('keyword', 'vars'))) {
-                $result = $this->model->findSingle($field, $keyword);
+                $result = $this->model->findSingle($mcode, $field, $keyword);
             } else {
-                $result = $this->model->getList();
+                $result = $this->model->getList($mcode);
             }
             $this->assign('baidu_zz_token', $this->config('baidu_zz_token'));
             $this->assign('baidu_xzh_appid', $this->config('baidu_xzh_appid'));
@@ -198,7 +202,7 @@ class SingleController extends Controller
                 if (! ! $backurl = get('backurl')) {
                     success('修改成功！', base64_decode($backurl));
                 } else {
-                    success('修改成功！', url('/admin/Single/index'));
+                    success('修改成功！', url('/admin/Single/index/mcode/1'));
                 }
             } else {
                 location(- 1);

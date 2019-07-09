@@ -5,7 +5,9 @@
 <script>
 //初始化编辑器
 $(document).ready(function (e) {
-	var ue = UE.getEditor('editor');
+	var ue = UE.getEditor('editor',{
+		maximumWords:30000 
+	});
 })
 </script>
 

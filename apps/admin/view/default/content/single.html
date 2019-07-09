@@ -8,7 +8,7 @@
 	  </ul>
 	  <div class="layui-tab-content">
 	  	   <div class="layui-tab-item layui-show">
-	  	   		<form action="{url./admin/Single/index}" method="get" class="layui-form">
+	  	   		<form action="{url./admin/Single/index/mcode/'.get('mcode').'}" method="get" class="layui-form">
 		  	   		<div class="layui-form-item nospace">
 		  	   			<div class="layui-input-inline">
 					       <select name="field" class="form-control input-sm" style="width:auto;">
@@ -22,7 +22,7 @@
 	                     </div>
 	                     <div class="layui-input-inline">
 	                     	<button class="layui-btn" lay-submit>搜索</button>
-	                     	<a class="layui-btn layui-btn-primary"  href="{url./admin/Single/index}">清除搜索</a>
+	                     	<a class="layui-btn layui-btn-primary"  href="{url./admin/Single/index/mcode/'.get('mcode').'}">清除搜索</a>
 	                     </div>
 	                </div>
                 </form>
@@ -68,7 +68,7 @@
 	                        <td>
 	                            <a href="{url./home/about/index/scode/'.$value->scode.'}?nocache=1" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 	                            {if(check_level('mod'))}
-	                            	<a href="{url./admin/Single/mod/mcode/'.$value->mcode.'/id/'.$value->id.'}" class="layui-btn layui-btn-xs" >修改</a>
+	                            	<a href="{url./admin/Single/mod/mcode/'.$value->mcode.'/id/'.$value->id.'}?backurl={$backurl}" class="layui-btn layui-btn-xs" >修改</a>
 	                            	{if([$baidu_zz_token])}
 	                            		<a href="{url./admin/'.C.'/mod/baiduzz/'.$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary" >百度推送</a>
 	                            	{/if}
@@ -180,7 +180,7 @@
 			                		<div class="layui-input-inline">
 				                     	<input type="text" name="[value->name]" id="[value->name]" value="{$content->{$value->name}}" placeholder="请上传[value->description]"  class="layui-input">
 				                     </div>
-				                     <button type="button" class="layui-btn upload" data-des="[value->name]">
+				                     <button type="button" class="layui-btn upload watermark" data-des="[value->name]">
 									 	 <i class="layui-icon">&#xe67c;</i>上传图片
 									 </button>
 									 {php}$name=$value->name; {/php}
@@ -221,7 +221,7 @@
 											//初始化编辑器
 											$(document).ready(function (e) {
 												var ue = UE.getEditor('editor_[value->name]',{
-													maximumWords:2000 
+													maximumWords:10000 
 												});
 											})
 										</script>
@@ -285,7 +285,7 @@
 			                     <div class="layui-input-inline">
 			                     	<input type="text" name="ico" id="ico" value="{$content->ico}" placeholder="请上传缩略图"  class="layui-input">
 			                     </div>
-			                     <button type="button" class="layui-btn upload" data-des="ico">
+			                     <button type="button" class="layui-btn upload watermark" data-des="ico">
 								 	 <i class="layui-icon">&#xe67c;</i>上传图片
 								 </button>
 								 <div id="ico_box" class="pic addedit">{if([$content->ico])}<dl><dt><img src="{SITE_DIR}{$content->ico}" data-url="{$content->ico}"></dt><dd>删除</dd></dl>{/if}</div>
@@ -296,7 +296,7 @@
 			                     <div class="layui-input-inline">
 			                     	<input type="text" name="pics" id="pics" value="{$content->pics}" placeholder="请上传轮播多图"  class="layui-input">
 			                     </div>
-			                     <button type="button" class="layui-btn uploads" data-des="pics">
+			                     <button type="button" class="layui-btn uploads watermark" data-des="pics">
 								 	 <i class="layui-icon">&#xe67c;</i>上传多图
 								 </button>
 								 <div id="pics_box" class="pic addedit">
@@ -400,7 +400,7 @@
 <script type="text/javascript">
 $("#pics_box").dragsort({
 	dragSelector: "dl",
-	dragSelectorExclude: "input,textarea,dd"
+	dragSelectorExclude: "input,textarea,dd",
 	dragBetween: false,
 	dragEnd: saveOrder,
 	placeHolderTemplate: "<dl class='placeHolder'><dt></dt></dl>"

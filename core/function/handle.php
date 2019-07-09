@@ -883,4 +883,14 @@ function strlen_both($string)
     return $n;
 }
 
-
+// 缓存配置
+function cache_config($refresh = false)
+{
+    // 系统配置缓存
+    $config_cache = RUN_PATH . '/config/' . md5('config') . '.php';
+    if (! file_exists($config_cache) || $refresh) {
+        $model = model('admin.system.Config');
+        Config::set(md5('config'), $model->getConfig(), false);
+    }
+    Config::assign($config_cache); // 注入配置
+}
