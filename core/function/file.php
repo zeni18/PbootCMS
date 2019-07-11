@@ -511,7 +511,7 @@ function watermark_img($src_image, $out_image = null, $position = null, $waterma
         $colors = explode(',', $watermark_text_color);
         
         if (Config::get('watermark_text_font')) {
-            $font = CORE_PATH . Config::get('watermark_text_font');
+            $font = ROOT_PATH . Config::get('watermark_text_font');
         } else {
             return;
         }
