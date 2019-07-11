@@ -21,6 +21,10 @@ class UserModel extends Model
             ->select();
         // 获取每用户的第一角色
         foreach ($result as $key => $value) {
+            if ($value->ucode == '10001') {
+                $value->rolename = '创始人';
+                continue;
+            }
             $roles = $this->getUserRole($value->ucode);
             if ($roles) {
                 $value->rolename = $roles[0]->name;
@@ -40,6 +44,10 @@ class UserModel extends Model
             ->select();
         // 获取每用户的第一角色
         foreach ($result as $key => $value) {
+            if ($value->ucode == '10001') {
+                $value->rolename = '创始人';
+                continue;
+            }
             $roles = $this->getUserRole($value->ucode);
             if ($roles) {
                 $value->rolename = $roles[0]->name;
@@ -109,16 +117,14 @@ class UserModel extends Model
     public function modUser($ucode, $data, array $roles = null)
     {
         $result = parent::table('ay_user')->where("ucode='$ucode'")->update($data);
-        if ($result) {
-            if (is_array($roles)) {
-                $this->delUserRole($ucode);
-            }
+        if (is_array($roles)) {
+            $result = $this->delUserRole($ucode);
             if ($roles) {
                 if (array_key_exists('ucode', $data)) {
                     $ucode = $data['ucode'];
                 }
                 if ($ucode != '10001')
-                    $this->addUserRole($ucode, $roles);
+                    $result = $this->addUserRole($ucode, $roles);
             }
         }
         return $result;

@@ -27,6 +27,7 @@ return array(
         'admin/Slide' => 'admin/content.Slide',
         'admin/Link' => 'admin/content.Link',
         'admin/Form' => 'admin/content.Form',
+        'admin/Tags' => 'admin/content.Tags',
         
         // =======前端路由============为前端美观，使用了小写URL，此处也用小写
         'home/index' => 'home/index/index',

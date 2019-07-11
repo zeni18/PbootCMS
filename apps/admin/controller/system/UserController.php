@@ -127,6 +127,11 @@ class UserController extends Controller
         if (! $ucode = get('ucode', 'var')) {
             error('传递的参数值错误！', - 1);
         }
+        
+        if ($ucode == '10001') {
+            error('内置管理员不允许删除！', - 1);
+        }
+        
         if ($this->model->delUser($ucode)) {
             $this->log('删除用户' . $ucode . '成功！');
             success('删除成功！', - 1);
@@ -141,6 +146,10 @@ class UserController extends Controller
     {
         if (! $ucode = get('ucode', 'var')) {
             error('传递的参数值错误！', - 1);
+        }
+        
+        if ($ucode == '10001') {
+            error('内置管理员不允许此操作！', - 1);
         }
         
         // 单独修改状态

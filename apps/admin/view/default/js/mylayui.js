@@ -51,6 +51,7 @@ layui.use(['element','upload','laydate','form'], function(){
 				layer.msg("登入成功！", {icon: 1});
 				window.location.href = response.data;
 			} else {
+				$('#codeimg').click();//更新验证码
 				layer.msg("登入失败：" + response.data, {icon: 5});
 			} 
       },

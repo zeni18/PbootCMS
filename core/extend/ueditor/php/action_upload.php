@@ -59,10 +59,11 @@ $rs = $up->getFileInfo();
 $ext = array(
     '.jpg',
     '.png',
-    'gif'
+    '.gif'
 );
 if (in_array($rs['type'], $ext)) {
-    watermark_img(ROOT_PATH . $rs['url']);
+    resize_img(ROOT_PATH . $rs['url']); // 缩放大小
+    watermark_img(ROOT_PATH . $rs['url']); // 水印
 }
 
 /**

@@ -265,8 +265,9 @@ function handle_upload($file, $temp, $array_ext_allow, $max_width, $max_height, 
     }
     $save_file = str_replace(ROOT_PATH, '', $file_path); // 获取文件站点路径
                                                          
-    // 如果是图片进行等比例缩放
+    // 如果是图片
     if (is_image($file_path)) {
+        // 进行等比例缩放
         if (($reset = resize_img($file_path, $file_path, $max_width, $max_height)) !== true) {
             return $reset;
         }
@@ -343,14 +344,13 @@ function resize_img($src_image, $out_image = null, $max_width = null, $max_heigh
         $new_height = floor($scale * $height);
         $new_img = imagecreatetruecolor($new_width, $new_height); // 创建画布
                                                                   
-        // 避免透明背景变黑问题
+        // 创建透明画布,避免黑色
         if ($type == 1 || $type == 3) {
             $color = imagecolorallocate($new_img, 255, 255, 255);
             imagefill($new_img, 0, 0, $color);
             imagecolortransparent($new_img, $color);
         }
-        
-        imagecopyresampled($new_img, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height); // 重绘图像
+        imagecopyresized($new_img, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
         
         switch ($type) {
             case 1:
@@ -404,16 +404,6 @@ function cut_img($src_image, $out_image = null, $new_width = null, $new_height =
         $new_height = floor($height * ($new_width / $width));
     }
     
-    // 创建画布
-    $new_img = imagecreatetruecolor($new_width, $new_height);
-    
-    // 避免透明背景变黑问题
-    if ($type == 1 || $type == 3) {
-        $color = imagecolorallocate($new_img, 255, 255, 255);
-        imagefill($new_img, 0, 0, $color);
-        imagecolortransparent($new_img, $color);
-    }
-    
     // 计算裁剪是变大缩小方式
     if ($width >= $new_width && $height >= $new_height) { // 长宽均满足
         $cut_width = $new_width;
@@ -430,7 +420,17 @@ function cut_img($src_image, $out_image = null, $new_width = null, $new_height =
         }
     }
     
-    imagecopyresampled($new_img, $img, 0, 0, 0, 0, $new_width, $new_height, $cut_width, $cut_height); // 重绘图像
+    // 创建画布
+    $new_img = imagecreatetruecolor($new_width, $new_height);
+    
+    // 创建透明画布,避免黑色
+    if ($type == 1 || $type == 3) {
+        $color = imagecolorallocate($new_img, 255, 255, 255);
+        imagefill($new_img, 0, 0, $color);
+        imagecolortransparent($new_img, $color);
+    }
+    
+    imagecopyresized($new_img, $img, 0, 0, 0, 0, $new_width, $new_height, $cut_width, $cut_height);
     check_dir(dirname($out_image), true); // 检查输出目录
     
     switch ($type) {
@@ -515,12 +515,22 @@ function watermark_img($src_image, $out_image = null, $position = null, $waterma
         $width2 = mb_strlen($watermark_text, 'UTF-8') * ($fontsize + 10) + 20;
         $height2 = $fontsize + 10;
         $img2 = imagecreatetruecolor($width2, $height2);
-        $color = imagecolorallocate($img2, 254, 254, 254);
+        $color = imagecolorallocate($img2, 255, 255, 255);
         imagefill($img2, 0, 0, $color);
         imagecolortransparent($img2, $color); // 创建透明图
         $textcolor = imagecolorallocate($img2, $colors[0], $colors[1], $colors[2]);
         $font = CORE_PATH . '/extend/code/SourceHanSerifSC-Heavy.otf';
         imagettftext($img2, $fontsize, 0, 5, $fontsize + 5, $textcolor, $font, $watermark_text);
+    }
+    
+    // 现对图片太大时，自动缩放水印
+    if ($width1 < $width2 * 3 || $height1 < $height2) {
+        $scale = min(($width1 / 3) / $width2, ($height1 / 2) / $height2); // 求缩放比例
+        $new_width = floor($scale * $width2);
+        $new_height = floor($scale * $height2);
+    } else {
+        $new_width = $width2;
+        $new_height = $height2;
     }
     
     // 水印位置
@@ -529,44 +539,55 @@ function watermark_img($src_image, $out_image = null, $position = null, $waterma
     }
     switch ($position) {
         case '1':
-            $x = 20;
-            $y = 20;
+            $x = 15;
+            $y = 15;
             break;
         case '2':
-            $x = $width1 - $width2 - 20;
+            $x = $width1 - $new_width - 15;
             $y = 20;
             break;
         case '3':
             $x = 20;
-            $y = $height1 - $height2 - 20;
+            $y = $height1 - $new_height - 15;
             break;
         case '5':
-            $x = ($width1 - $width2) / 2;
-            $y = ($height1 - $height2) / 2;
+            $x = ($width1 - $new_width) / 2;
+            $y = ($height1 - $new_height) / 2;
             break;
         default:
-            $x = $width1 - $width2 - 20;
-            $y = $height1 - $height2 - 20;
+            $x = $width1 - $new_width - 15;
+            $y = $height1 - $new_height - 15;
             break;
     }
     
-    // 拷贝图片
-    imagecopy($img1, $img2, $x, $y - 10, 0, 0, $width2, $height2);
+    // 创建透明画布,避免黑色
+    if ($type1 == 1 || $type1 == 3) {
+        $out = imagecreatetruecolor($width1, $height1);
+        $color = imagecolorallocate($out, 255, 255, 255);
+        imagefill($out, 0, 0, $color);
+        imagecolortransparent($out, $color);
+        imagecopy($out, $img1, 0, 0, 0, 0, $width1, $height1);
+    } else {
+        $out = $img1;
+    }
+    
+    // 打上水印
+    imagecopyresized($out, $img2, $x, $y - 10, 0, 0, $new_width, $new_height, $width2, $height2);
     check_dir(dirname($out_image), true); // 检查输出目录
                                           
     // 输出图片
     switch ($type1) {
         case 1:
-            imagegif($img1, $out_image, 90);
+            imagegif($out, $out_image, 90);
             break;
         case 2:
-            imagejpeg($img1, $out_image, 90);
+            imagejpeg($out, $out_image, 90);
             break;
         case 3:
-            imagepng($img1, $out_image, 90 / 10); // $quality参数取值范围0-99 在php 5.1.2之后变更为0-9
+            imagepng($out, $out_image, 90 / 10); // $quality参数取值范围0-99 在php 5.1.2之后变更为0-9
             break;
         default:
-            imagejpeg($img1, $out_image, 90);
+            imagejpeg($out, $out_image, 90);
     }
     imagedestroy($img1);
     imagedestroy($img2);

@@ -675,4 +675,10 @@ class ParserModel extends Model
     {
         return parent::table($table)->insert($data);
     }
+
+    // 文章内链
+    public function getTags()
+    {
+        return parent::table('ay_tags')->field('name,link')->select();
+    }
 }

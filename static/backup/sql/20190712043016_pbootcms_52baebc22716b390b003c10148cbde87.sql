@@ -1,7 +1,7 @@
 -- Online Database Management SQL Dump
 -- 数据库名: pbootcms
--- 生成日期: 2019-07-09 15:19:54
--- PHP 版本: 7.2.10
+-- 生成日期: 2019-07-12 04:30:16
+-- PHP 版本: 5.6.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+08:00";
@@ -134,7 +134,7 @@ CREATE TABLE `ay_content` (
   `date` datetime NOT NULL COMMENT '发布日期',
   `ico` varchar(100) NOT NULL COMMENT '缩略图',
   `pics` varchar(1000) NOT NULL COMMENT '多图片',
-  `content` varchar(30000) NOT NULL COMMENT '内容',
+  `content` mediumtext NOT NULL COMMENT '内容',
   `tags` varchar(500) NOT NULL COMMENT 'tag关键字',
   `enclosure` varchar(100) NOT NULL COMMENT '附件',
   `keywords` varchar(200) NOT NULL COMMENT '关键字',
@@ -454,7 +454,7 @@ CREATE TABLE `ay_menu` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ay_menu_mcode` (`mcode`),
   KEY `ay_menu_pcode` (`pcode`)
-) ENGINE=MyISAM AUTO_INCREMENT=61 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `ay_menu`
@@ -482,6 +482,7 @@ INSERT INTO `ay_menu` (`id`,`mcode`,`pcode`,`name`,`url`,`sorting`,`status`,`sho
 ('51','M151','M157','轮播图片','/admin/Slide/index','502','1','1','fa-picture-o','admin','admin','2018-03-01 14:57:41','2018-04-07 18:47:07'),
 ('52','M152','M157','友情链接','/admin/Link/index','503','1','1','fa-link','admin','admin','2018-03-01 14:58:45','2018-04-07 18:47:16'),
 ('53','M153','M156','配置参数','/admin/Config/index','201','1','1','fa-sliders','admin','admin','2018-03-21 14:52:05','2018-04-07 18:44:02'),
+('61','M1000','M157','文章内链','/admin/Tags/index','505','1','0','fa-random','admin','admin','2019-07-12 08:25:41','2019-07-12 08:26:23'),
 ('55','M155','M156','模型管理','/admin/Model/index','204','1','1','fa-codepen','admin','admin','2018-03-25 17:16:06','2018-04-07 18:44:40'),
 ('56','M156','0','全局配置','/admin/M156/index','200','1','0','fa-globe','admin','admin','2018-03-25 17:20:43','2018-04-30 14:43:56'),
 ('58','M158','M156','模型字段','/admin/ExtField/index','205','1','1','fa-external-link','admin','admin','2018-03-25 21:24:43','2018-04-07 18:44:49'),
@@ -635,12 +636,12 @@ CREATE TABLE `ay_model` (
 -- 转存表中的数据 `ay_model`
 --
 
-INSERT INTO `ay_model` (`id`,`mcode`,`name`,`type`,`listtpl`,`contenttpl`,`status`,`issystem`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
-('1','1','专题','1','','about.html','1','1','admin','admin','2018-04-11 17:16:01','2018-04-11 17:16:01'),
-('2','2','新闻','2','newslist.html','news.html','1','1','admin','admin','2018-04-11 17:17:16','2018-04-11 17:17:16'),
-('3','3','产品','2','productlist.html','product.html','1','0','admin','admin','2018-04-11 17:17:46','2018-04-11 17:17:46'),
-('4','4','案例','2','caselist.html','case.html','1','0','admin','admin','2018-04-11 17:19:53','2018-04-11 17:19:53'),
-('5','5','招聘','2','joblist.html','job.html','1','0','admin','admin','2018-04-11 17:24:34','2018-04-11 17:24:34');
+INSERT INTO `ay_model` (`id`,`mcode`,`name`,`urlname`,`type`,`listtpl`,`contenttpl`,`status`,`issystem`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
+('1','1','专题','','1','','about.html','1','1','admin','admin','2018-04-11 17:16:01','2018-04-11 17:16:01'),
+('2','2','新闻','','2','newslist.html','news.html','1','1','admin','admin','2018-04-11 17:17:16','2018-04-11 17:17:16'),
+('3','3','产品','','2','productlist.html','product.html','1','0','admin','admin','2018-04-11 17:17:46','2018-04-11 17:17:46'),
+('4','4','案例','','2','caselist.html','case.html','1','0','admin','admin','2018-04-11 17:19:53','2018-04-11 17:19:53'),
+('5','5','招聘','','2','joblist.html','job.html','1','0','admin','admin','2018-04-11 17:24:34','2018-04-11 17:24:34');
 
 -- --------------------------------------------------------
 
@@ -902,6 +903,34 @@ CREATE TABLE `ay_syslog` (
   `create_time` datetime NOT NULL COMMENT '添加时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ay_tags`
+--
+
+DROP TABLE IF EXISTS `ay_tags`;
+CREATE TABLE `ay_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `acode` varchar(20) NOT NULL COMMENT '区域',
+  `name` varchar(50) NOT NULL COMMENT '名称',
+  `link` varchar(200) NOT NULL COMMENT '链接',
+  `create_user` varchar(30) NOT NULL COMMENT '添加人员',
+  `update_user` varchar(30) NOT NULL COMMENT '更新人员',
+  `create_time` datetime NOT NULL COMMENT '添加时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `ay_tags_acode` (`acode`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- 转存表中的数据 `ay_tags`
+--
+
+INSERT INTO `ay_tags` (`id`,`acode`,`name`,`link`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
+('1','cn','PbootCMS','https://www.pbootcms.com','admin','admin','2019-07-12 04:30:03','2019-07-12 04:30:03');
 
 -- --------------------------------------------------------
 

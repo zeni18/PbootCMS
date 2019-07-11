@@ -2900,6 +2900,27 @@ class ParserController extends Controller
                 }
                 break;
             case 'content':
+                // 内链处理
+                if (! ! $tags = $this->model->getTags()) {
+                    // 将A链接保护起来
+                    $rega = "/<a .*?>.*?<\/a>/i";
+                    preg_match_all($rega, $data->content, $matches1);
+                    foreach ($matches1[0] as $key => $value) {
+                        $data->content = str_replace($value, '#rega:' . $key . '#', $data->content);
+                    }
+                    // 执行内链替换
+                    foreach ($tags as $value) {
+                        $data->content = str_replace($value->name, '<a href="' . $value->link . '">' . $value->name . '</a>', $data->content);
+                    }
+                    // 还原A链接
+                    $pattern = '/\#rega:([0-9]+)\#/';
+                    if (preg_match_all($pattern, $data->content, $matches2)) {
+                        $count = count($matches2[0]);
+                        for ($i = 0; $i < $count; $i ++) {
+                            $data->content = str_replace($matches2[0][$i], $matches1[0][$matches2[1][$i]], $data->content);
+                        }
+                    }
+                }
                 $this->pre[] = $this->adjustLabelData($params, $data->content); // 保存内容避免解析
                 end($this->pre); // 指向最后一个元素
                 $content = str_replace($search, '#pre:' . key($this->pre) . '#', $content); // 占位替换

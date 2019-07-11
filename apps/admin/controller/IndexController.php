@@ -156,6 +156,7 @@ class IndexController extends Controller
             json(1, url('admin/Index/home'));
         } else {
             $this->log('登入失败!');
+            session('checkcode', mt_rand(10000, 99999)); // 登陆失败，随机打乱原有验证码
             json(0, '用户名或密码错误！');
         }
     }
