@@ -510,6 +510,12 @@ function watermark_img($src_image, $out_image = null, $position = null, $waterma
         }
         $colors = explode(',', $watermark_text_color);
         
+        if (Config::get('watermark_text_font')) {
+            $font = CORE_PATH . Config::get('watermark_text_font');
+        } else {
+            return;
+        }
+        
         // 手动创建水印图像
         $fontsize = $watermark_text_size;
         $width2 = mb_strlen($watermark_text, 'UTF-8') * ($fontsize + 10) + 20;
@@ -519,7 +525,6 @@ function watermark_img($src_image, $out_image = null, $position = null, $waterma
         imagefill($img2, 0, 0, $color);
         imagecolortransparent($img2, $color); // 创建透明图
         $textcolor = imagecolorallocate($img2, $colors[0], $colors[1], $colors[2]);
-        $font = CORE_PATH . '/extend/code/SourceHanSerifSC-Heavy.otf';
         imagettftext($img2, $fontsize, 0, 5, $fontsize + 5, $textcolor, $font, $watermark_text);
     }
     
