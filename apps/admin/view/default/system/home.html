@@ -31,7 +31,7 @@
 				{foreach $model_msg(key,value)}
 				<div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2">
 		    		{if($value->type==1)}
-		    		<a href="{url./admin/Single/index}">
+		    		<a href="{url./admin/Single/index/mcode/'.$value->mcode.'}">
 		    		{else}
 		    		<a href="{url./admin/Content/index/mcode/'.$value->mcode.'}">
 		    		{/if}
