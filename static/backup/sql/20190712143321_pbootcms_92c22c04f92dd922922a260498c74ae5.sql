@@ -1,20 +1,11 @@
 -- Online Database Management SQL Dump
 -- 数据库名: pbootcms
--- 生成日期: 2019-07-12 14:30:03
+-- 生成日期: 2019-07-12 14:33:21
 -- PHP 版本: 7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+08:00";
 SET NAMES utf8;
-
--- --------------------------------------------------------
-
---
--- 数据库名 `pbootcms`
---
-
-CREATE DATABASE IF NOT EXISTS `pbootcms` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `pbootcms`;
 
 -- --------------------------------------------------------
 
@@ -931,7 +922,14 @@ CREATE TABLE `ay_tags` (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `ay_tags_acode` (`acode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- 转存表中的数据 `ay_tags`
+--
+
+INSERT INTO `ay_tags` (`id`,`acode`,`name`,`link`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
+('1','cn','PbootCMS','https://www.pbootcms.com','admin','admin','2019-07-12 14:33:13','2019-07-12 14:33:13');
 
 -- --------------------------------------------------------
 
