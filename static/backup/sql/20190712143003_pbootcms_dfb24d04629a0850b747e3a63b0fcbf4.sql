@@ -1,11 +1,20 @@
 -- Online Database Management SQL Dump
 -- 数据库名: pbootcms
--- 生成日期: 2019-07-12 04:30:16
--- PHP 版本: 5.6.33
+-- 生成日期: 2019-07-12 14:30:03
+-- PHP 版本: 7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+08:00";
 SET NAMES utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 数据库名 `pbootcms`
+--
+
+CREATE DATABASE IF NOT EXISTS `pbootcms` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `pbootcms`;
 
 -- --------------------------------------------------------
 
@@ -636,12 +645,12 @@ CREATE TABLE `ay_model` (
 -- 转存表中的数据 `ay_model`
 --
 
-INSERT INTO `ay_model` (`id`,`mcode`,`name`,`urlname`,`type`,`listtpl`,`contenttpl`,`status`,`issystem`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
-('1','1','专题','','1','','about.html','1','1','admin','admin','2018-04-11 17:16:01','2018-04-11 17:16:01'),
-('2','2','新闻','','2','newslist.html','news.html','1','1','admin','admin','2018-04-11 17:17:16','2018-04-11 17:17:16'),
-('3','3','产品','','2','productlist.html','product.html','1','0','admin','admin','2018-04-11 17:17:46','2018-04-11 17:17:46'),
-('4','4','案例','','2','caselist.html','case.html','1','0','admin','admin','2018-04-11 17:19:53','2018-04-11 17:19:53'),
-('5','5','招聘','','2','joblist.html','job.html','1','0','admin','admin','2018-04-11 17:24:34','2018-04-11 17:24:34');
+INSERT INTO `ay_model` (`id`,`mcode`,`name`,`type`,`listtpl`,`contenttpl`,`status`,`issystem`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
+('1','1','专题','1','','about.html','1','1','admin','admin','2018-04-11 17:16:01','2018-04-11 17:16:01'),
+('2','2','新闻','2','newslist.html','news.html','1','1','admin','admin','2018-04-11 17:17:16','2018-04-11 17:17:16'),
+('3','3','产品','2','productlist.html','product.html','1','0','admin','admin','2018-04-11 17:17:46','2018-04-11 17:17:46'),
+('4','4','案例','2','caselist.html','case.html','1','0','admin','admin','2018-04-11 17:19:53','2018-04-11 17:19:53'),
+('5','5','招聘','2','joblist.html','job.html','1','0','admin','admin','2018-04-11 17:24:34','2018-04-11 17:24:34');
 
 -- --------------------------------------------------------
 
@@ -904,7 +913,6 @@ CREATE TABLE `ay_syslog` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-
 -- --------------------------------------------------------
 
 --
@@ -923,14 +931,7 @@ CREATE TABLE `ay_tags` (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `ay_tags_acode` (`acode`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `ay_tags`
---
-
-INSERT INTO `ay_tags` (`id`,`acode`,`name`,`link`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
-('1','cn','PbootCMS','https://www.pbootcms.com','admin','admin','2019-07-12 04:30:03','2019-07-12 04:30:03');
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
