@@ -1490,13 +1490,15 @@ class ParserController extends Controller
                         error('模板中指定id输出tags时不允许scode指定多个栏目！');
                     }
                     if (! ! $rs = $this->model->getContentTags(escape_string($id))) {
-                        $tags = explode(',', $rs->tags);
-                        $scode = $scode ?: $rs->scode;
-                        foreach ($tags as $key => $value) {
-                            $data[] = array(
-                                'scode' => $scode,
-                                'tags' => $value
-                            );
+                        if ($rs->tags) {
+                            $tags = explode(',', $rs->tags);
+                            $scode = $scode ?: $rs->scode;
+                            foreach ($tags as $key => $value) {
+                                $data[] = array(
+                                    'scode' => $scode,
+                                    'tags' => $value
+                                );
+                            }
                         }
                     }
                 } elseif ($scode) { // 获取指定栏目的tags
@@ -1504,7 +1506,7 @@ class ParserController extends Controller
                     foreach ($scodes as $key => $value) {
                         if (! ! $rs = $this->model->getAllTags($value)) {
                             $tags = implode(',', $rs); // 先把所有列串起来
-                            $tags = array_unique(explode(',', $tags)); // 再把所有tags组成数组
+                            $tags = array_unique(explode(',', $tags)); // 再把所有tags组成数组并去重
                             foreach ($tags as $key2 => $value2) {
                                 $data[] = array(
                                     'scode' => $value,
