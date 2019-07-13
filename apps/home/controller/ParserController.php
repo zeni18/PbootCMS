@@ -2912,7 +2912,7 @@ class ParserController extends Controller
                     }
                     // 执行内链替换
                     foreach ($tags as $value) {
-                        $data->content = str_replace($value->name, '<a href="' . $value->link . '">' . $value->name . '</a>', $data->content);
+                        $data->content = preg_replace('/' . $value->name . '/', '<a href="' . $value->link . '">' . $value->name . '</a>', $data->content, $this->config('content_tags_replace_num') ?: 3);
                     }
                     // 还原A链接
                     $pattern = '/\#rega:([0-9]+)\#/';
