@@ -159,8 +159,20 @@ class ContentSortModel extends Model
     }
 
     // 修改内容栏目资料
-    public function modSort($scode, $data)
+    public function modSort($scode, $data, $modsub = false)
     {
+        if ($modsub) {
+            // 同步修改子栏目模型及模板
+            $scodes = $this->getSubScodes($scode);
+            $subdata = array(
+                'mcode' => $data['mcode'],
+                'listtpl' => $data['listtpl'],
+                'contenttpl' => $data['contenttpl']
+            );
+            parent::table('ay_content_sort')->in('scode', $scodes)
+                ->where("acode='" . session('acode') . "'")
+                ->update($subdata);
+        }
         $result = parent::table('ay_content_sort')->autoTime()
             ->where("scode='$scode'")
             ->where("acode='" . session('acode') . "'")

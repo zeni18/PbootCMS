@@ -321,6 +321,7 @@ class ContentSortController extends Controller
             $title = post('title');
             $keywords = post('keywords');
             $description = post('description');
+            $modsub = post('modsub', 'int');
             
             if (! $pcode) { // 父编码默认为0
                 $pcode = 0;
@@ -369,7 +370,7 @@ class ContentSortController extends Controller
             );
             
             // 执行添加
-            if ($this->model->modSort($scode, $data)) {
+            if ($this->model->modSort($scode, $data, $modsub)) {
                 // 如果修改为单页并且跳转，则删除单页内容，否则判断是否存在内容，不存在则添加
                 if ($type == 1 && $outlink) {
                     $this->model->delContent($scode);
