@@ -210,11 +210,11 @@ layui.use(['element','upload','laydate','form'], function(){
 	  var listtpl = $(elem).find("option:selected").data('listtpl');
 	  var contenttpl = $(elem).find("option:selected").data('contenttpl');
 	  
-	  $("#type").val(type);
+	  $(elem).parents('form').find("#type").val(type);
 	  addOptionValue("listtpl",listtpl,listtpl);
 	  addOptionValue("contenttpl",contenttpl,contenttpl);
-	  $("#listtpl").val(listtpl);
-	  $("#contenttpl").val(contenttpl);
+	  $(elem).parents('form').find("#listtpl").val(listtpl);
+	  $(elem).parents('form').find("#contenttpl").val(contenttpl);
 	  form.render(null, 'sort'); 
 	}); 
    

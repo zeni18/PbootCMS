@@ -101,88 +101,144 @@ class ContentSortController extends Controller
     public function add()
     {
         if ($_POST) {
-            // 获取数据
-            $scode = get_auto_code($this->model->getLastCode()); // 自动编码;
-            $pcode = post('pcode', 'var');
-            $name = post('name');
-            $type = post('type');
-            $mcode = post('mcode');
-            $listtpl = basename(post('listtpl'));
-            $contenttpl = basename(post('contenttpl'));
-            $status = post('status');
-            $subname = post('subname');
-            $filename = post('filename');
-            $outlink = post('outlink');
-            $ico = post('ico');
-            $pic = post('pic');
-            $title = post('title');
-            $keywords = post('keywords');
-            $description = post('description');
-            
-            if (! $scode) {
-                alert_back('编码不能为空！');
-            }
-            
-            if (! $pcode) { // 父编码默认为0
-                $pcode = 0;
-            }
-            
-            if (! $name) {
-                alert_back('栏目名不能为空！');
-            }
-            
-            if (! $mcode) {
-                alert_back('栏目模型必须选择！');
-            }
-            
-            if (! $type) {
-                alert_back('栏目类型不能为空！');
-            }
-            
-            // 缩放缩略图
-            if ($ico) {
-                resize_img(ROOT_PATH . $ico, '', $this->config('ico.max_width'), $this->config('ico.max_height'));
-            }
-            
-            // 检查编码
-            if ($this->model->checkSort("scode='$scode'")) {
-                alert_back('该内容栏目编号已经存在，不能再使用！');
-            }
-            
-            // 检查自定义文件名称
-            if ($filename) {
-                while ($this->model->checkFilename("filename='$filename'")) {
-                    $filename = $filename . '_' . mt_rand(1, 20);
+            if (! ! $multiplename = post('multiplename')) {
+                $multiplename = str_replace('，', ',', $multiplename);
+                $pcode = post('pcode', 'var');
+                $type = post('type');
+                $mcode = post('mcode');
+                $listtpl = basename(post('listtpl'));
+                $contenttpl = basename(post('contenttpl'));
+                $status = post('status');
+                
+                if (! $pcode) { // 父编码默认为0
+                    $pcode = 0;
                 }
+                
+                if (! $mcode) {
+                    alert_back('栏目模型必须选择！');
+                }
+                
+                if (! $type) {
+                    alert_back('栏目类型不能为空！');
+                }
+                
+                $names = explode(',', $multiplename);
+                $lastcode = $this->model->getLastCode();
+                $scode = get_auto_code($lastcode);
+                foreach ($names as $key => $value) {
+                    $data[] = array(
+                        'acode' => session('acode'),
+                        'pcode' => $pcode,
+                        'scode' => $scode,
+                        'name' => $value,
+                        'mcode' => $mcode,
+                        'listtpl' => $listtpl,
+                        'contenttpl' => $contenttpl,
+                        'status' => $status,
+                        'subname' => '',
+                        'filename' => '',
+                        'outlink' => '',
+                        'ico' => '',
+                        'pic' => '',
+                        'title' => '',
+                        'keywords' => '',
+                        'description' => '',
+                        'sorting' => 255,
+                        'create_user' => session('username'),
+                        'update_user' => session('username')
+                    );
+                    $scode = get_auto_code($scode);
+                }
+            } else {
+                // 获取数据
+                $scode = get_auto_code($this->model->getLastCode()); // 自动编码;
+                $pcode = post('pcode', 'var');
+                $name = post('name');
+                $type = post('type');
+                $mcode = post('mcode');
+                $listtpl = basename(post('listtpl'));
+                $contenttpl = basename(post('contenttpl'));
+                $status = post('status');
+                $subname = post('subname');
+                $filename = post('filename');
+                $outlink = post('outlink');
+                $ico = post('ico');
+                $pic = post('pic');
+                $title = post('title');
+                $keywords = post('keywords');
+                $description = post('description');
+                
+                if (! $scode) {
+                    alert_back('编码不能为空！');
+                }
+                
+                if (! $pcode) { // 父编码默认为0
+                    $pcode = 0;
+                }
+                
+                if (! $name) {
+                    alert_back('栏目名不能为空！');
+                }
+                
+                if (! $mcode) {
+                    alert_back('栏目模型必须选择！');
+                }
+                
+                if (! $type) {
+                    alert_back('栏目类型不能为空！');
+                }
+                
+                // 缩放缩略图
+                if ($ico) {
+                    resize_img(ROOT_PATH . $ico, '', $this->config('ico.max_width'), $this->config('ico.max_height'));
+                }
+                
+                // 检查编码
+                if ($this->model->checkSort("scode='$scode'")) {
+                    alert_back('该内容栏目编号已经存在，不能再使用！');
+                }
+                
+                // 检查自定义文件名称
+                if ($filename) {
+                    while ($this->model->checkFilename("filename='$filename'")) {
+                        $filename = $filename . '_' . mt_rand(1, 20);
+                    }
+                }
+                
+                // 构建数据
+                $data = array(
+                    'acode' => session('acode'),
+                    'pcode' => $pcode,
+                    'scode' => $scode,
+                    'name' => $name,
+                    'mcode' => $mcode,
+                    'listtpl' => $listtpl,
+                    'contenttpl' => $contenttpl,
+                    'status' => $status,
+                    'subname' => $subname,
+                    'filename' => $filename,
+                    'outlink' => $outlink,
+                    'ico' => $ico,
+                    'pic' => $pic,
+                    'title' => $title,
+                    'keywords' => $keywords,
+                    'description' => $description,
+                    'sorting' => 255,
+                    'create_user' => session('username'),
+                    'update_user' => session('username')
+                );
             }
-            
-            // 构建数据
-            $data = array(
-                'acode' => session('acode'),
-                'pcode' => $pcode,
-                'scode' => $scode,
-                'name' => $name,
-                'mcode' => $mcode,
-                'listtpl' => $listtpl,
-                'contenttpl' => $contenttpl,
-                'status' => $status,
-                'subname' => $subname,
-                'filename' => $filename,
-                'outlink' => $outlink,
-                'ico' => $ico,
-                'pic' => $pic,
-                'title' => $title,
-                'keywords' => $keywords,
-                'description' => $description,
-                'sorting' => 255,
-                'create_user' => session('username'),
-                'update_user' => session('username')
-            );
             
             // 执行添加
             if ($this->model->addSort($data)) {
                 if ($type == 1 && ! $outlink) { // 在填写了外链时不生成单页
-                    $this->addSingle($scode, $name);
+                    if ($multiplename) {
+                        foreach ($data as $key => $value) {
+                            $this->addSingle($value['scode'], $value['name']);
+                        }
+                    } else {
+                        $this->addSingle($scode, $name);
+                    }
                 }
                 $this->log('新增数据内容栏目' . $scode . '成功！');
                 success('新增成功！', url('/admin/ContentSort/index'));

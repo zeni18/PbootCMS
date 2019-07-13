@@ -6,6 +6,7 @@
 	  <ul class="layui-tab-title">
 	    <li class="layui-this" lay-id="t1">栏目列表</li>
 	    <li lay-id="t2">栏目新增</li>
+	    <li lay-id="t3">批量新增</li>
 	  </ul>
 	  <div class="layui-tab-content">
 	  	   <div class="layui-tab-item layui-show">
@@ -234,6 +235,81 @@
 					</div>
 				</form>
 	  	     </div>
+	  	     
+	  	     <!-- 批量新增 -->
+	  	     <div class="layui-tab-item">
+	  	     	<form action="{url./admin/ContentSort/add}" method="post" class="layui-form" lay-filter="sort">
+		  	     		<input type="hidden" name="formcheck" value="{$formcheck}" > 
+		  	     		<div class="layui-form-item">
+		                     <label class="layui-form-label">父栏目</label>
+		                     <div class="layui-input-block">
+		                     	<select name="pcode">
+			                        <option value="0" >顶级栏目</option>
+			                        {$sort_select}
+			                    </select>
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">栏目名称</label>
+		                     <div class="layui-input-block">
+		                     	<input type="text" name="multiplename" required lay-verify="required" placeholder="请输入栏目名称，多个栏目用逗号隔开" class="layui-input">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">内容模型</label>
+		                     <div class="layui-input-block">
+		                     	<select name="mcode" lay-filter="model" lay-verify="required" >
+			                     	<option value="">请选择内容模型</option>
+			                        {foreach $models(key,value)}	                        	
+			                        	<option value="[value->mcode]" data-type="[value->type]"  data-listtpl="[value->listtpl]" data-contenttpl="[value->contenttpl]" >[value->name]</option>
+			                        {/foreach}
+			                    </select>
+		                     </div>
+		                </div>
+		                
+		                 <input type="hidden" value="1" name="type" id="type">
+		                 
+		                 <div class="layui-form-item">
+		                     <label class="layui-form-label">列表页模板</label>
+		                     <div class="layui-input-block">
+			                     <select name="listtpl" id="listtpl">
+			                     	<option value="">无</option>
+			                     	{foreach $tpls(key,value)}
+			                        	<option value="[value]">[value]</option>
+			                        {/foreach}
+			                     </select>
+		                     </div>
+		                </div>
+		                
+		                 <div class="layui-form-item">
+		                     <label class="layui-form-label">内容页模板</label>
+		                     <div class="layui-input-block">
+			                     <select name="contenttpl" id="contenttpl" >
+			                     	<option value="">无</option>
+			                     	{foreach $tpls(key,value)}
+			                        	<option value="[value]">[value]</option>
+			                        {/foreach}
+			                     </select>
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">状态</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="status" value="1" title="显示" checked>
+								<input type="radio" name="status" value="0" title="隐藏">
+		                     </div>
+		                </div>    
+					<div class="layui-form-item">
+						 <div class="layui-input-block">
+						    <button class="layui-btn" lay-submit>立即提交</button>
+						    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						 </div>
+					</div>
+				</form>
+	  	     </div>
 	   </div>
 	</div>
 	{/if} 
@@ -290,6 +366,7 @@
 		                     <div class="layui-input-block">
 			                     <select name="listtpl" id="listtpl">
 			                     	<option value="{$sort->listtpl}">{$sort->listtpl}</option>
+			                     	<option value="">无</option>
 			                     	{foreach $tpls(key,value)}
 			                     		{if($value!=[$sort->listtpl])}
 			                        		<option value="[value]">[value]</option>
@@ -304,6 +381,7 @@
 		                     <div class="layui-input-block">
 			                     <select name="contenttpl" id="contenttpl" >
 			                     	<option value="{$sort->contenttpl}">{$sort->contenttpl}</option>
+			                     	<option value="">无</option>
 			                     	{foreach $tpls(key,value)}
 			                     		{if($value!=[$sort->contenttpl])}
 			                        		<option value="[value]">[value]</option>
