@@ -176,7 +176,7 @@ function get_url($url, $fields = array(), $UserAgent = null, $vfSSL = false)
     // 数据字段
     if ($fields) {
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
     }
     
     $output = curl_exec($ch);

@@ -89,16 +89,28 @@ class View
         // 设置主题
         $theme = isset($this->vars['theme']) ? $this->vars['theme'] : 'default';
         $theme = str_replace('../', '', $theme); // 过滤掉相对路径
+        $file = str_replace('../', '', $file); // 过滤掉相对路径
         
-        if (! is_dir($this->tplPath .= '/' . $theme)) { // 检查主题是否存在
-            error('模板主题目录不存在！主题路径：' . $this->tplPath);
+        if (strpos($file, '/') === 0) { // 绝对路径模板
+            $tpl_file = ROOT_PATH . $file;
+        } elseif (! ! $pos = strpos($file, '@')) { // 跨模块调用
+            $path = APP_PATH . '/' . substr($file, 0, $pos) . '/view/' . $theme;
+            define('APP_THEME_DIR', $path);
+            if (! is_dir($path)) { // 检查主题是否存在
+                error('模板主题目录不存在！主题路径：' . $path);
+            } else {
+                $this->tplPath = $path;
+            }
+            $tpl_file = $path . '/' . substr($file, $pos + 1);
+        } else {
+            // 定义当前应用主题目录
+            define('APP_THEME_DIR', str_replace(DOC_PATH, '', APP_VIEW_PATH) . '/' . $theme);
+            if (! is_dir($this->tplPath .= '/' . $theme)) { // 检查主题是否存在
+                error('模板主题目录不存在！主题路径：' . $this->tplPath);
+            }
+            $tpl_file = $this->tplPath . '/' . $file; // 模板文件
         }
         
-        // 定义当前应用主题目录
-        define('APP_THEME_DIR', str_replace(DOC_PATH, '', APP_VIEW_PATH) . '/' . $theme);
-        
-        $file = str_replace('../', '', $file); // 过滤掉相对路径
-        $tpl_file = $this->tplPath . '/' . $file; // 模板文件
         file_exists($tpl_file) ?: error('模板文件' . $file . '不存在！');
         $tpl_c_file = $this->tplcPath . '/' . md5($tpl_file) . '.php'; // 编译文件
                                                                        

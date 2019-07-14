@@ -87,7 +87,7 @@ class Parser
     // 解析包含文件，支持多层嵌套
     private static function parInclude()
     {
-        $pattern = '/\{include\s+file\s?=\s?([\"\']?)([\w\.\-\/]+)([\"\']?)\s*\}/';
+        $pattern = '/\{include\s+file\s?=\s?([\"\']?)([\w\.\-\/@]+)([\"\']?)\s*\}/';
         if (preg_match_all($pattern, self::$content, $matches)) {
             $arr = $matches[0]; // 匹配到的所有“包含字符串”：{include file='head.html'}
             $brr = $matches[2]; // 包含的文件名：head.html
@@ -96,6 +96,8 @@ class Parser
                 // 然包含文件支持绝对路径，以/开头
                 if (strpos($brr[$i], '/') === 0) {
                     $inc_file = ROOT_PATH . $brr[$i];
+                } elseif (! ! $pos = strpos($brr[$i], '@')) {
+                    $inc_file = APP_PATH . '/' . substr($brr[$i], 0, $pos) . '/view/' . basename(self::$tplPath) . '/' . substr($brr[$i], $pos + 1);
                 } else {
                     $inc_file = self::$tplPath . '/' . $brr[$i];
                 }

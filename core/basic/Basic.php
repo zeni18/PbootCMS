@@ -51,6 +51,12 @@ class Basic
             case E_NOTICE:
                 $err_level = 'NOTICE';
                 break;
+            case E_RECOVERABLE_ERROR:
+            case E_CORE_ERROR:
+            case E_COMPILE_ERROR:
+            case E_USER_ERROR:
+                $err_level = 'FATAL ERROR';
+                break;
             default:
                 $err_level = 'UNKNOW';
                 break;
@@ -61,10 +67,10 @@ class Basic
         $info .= "<p><b>File:</b> $errfile;</p>\n";
         $info .= "<p><b>Line:</b> $errline;</p>\n";
         
-        if ($err_level == 'ERROR' || $err_level == 'UNKNOW') {
-            error($info);
-        } else {
+        if ($err_level == 'WARNING' || $err_level == 'NOTICE') {
             echo $info;
+        } else {
+            error($info);
         }
     }
 
@@ -72,6 +78,20 @@ class Basic
     public static function exceptionHandler($exception)
     {
         error("程序运行异常: " . $exception->getMessage() . "，位置：" . $exception->getFile() . '，第' . $exception->getLine() . '行。');
+    }
+
+    // 致命错误捕获
+    public static function shutdownFunction()
+    {
+        $error = error_get_last();
+        define('E_FATAL', E_ERROR | E_RECOVERABLE_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR);
+        if ($error && ($error["type"] === ($error["type"] & E_FATAL))) {
+            $errno = $error["type"];
+            $errstr = $error["message"];
+            $errfile = $error["file"];
+            $errline = $error["line"];
+            self::errorHandler($errno, $errstr, $errfile, $errline);
+        }
     }
 
     // 会话处理程序设置
@@ -111,24 +131,112 @@ class Basic
         }
     }
 
-    // 自动实例化模型
-    public static function createModel($name, $new = false)
+    // 实例化模型
+    public static function createModel($name = null, $new = false)
     {
-        if (! isset(self::$models[$name]) || $new) {
-            if (strpos($name, '.') !== false) {
-                $model = explode('.', $name);
-                $class_name = '\\app\\' . $model[0] . '\\model';
-                $len = count($model);
-                for ($i = 1; $i < $len - 1; $i ++) {
-                    $class_name .= '\\' . $model[$i];
-                }
-                $class_name .= '\\' . ucfirst($model[$i]) . 'Model';
-            } else {
-                $class_name = '\\app\\' . M . '\\model\\' . ucfirst($name) . 'Model';
+        // 自动同名模型控制器
+        if (! $name)
+            $name = C;
+        
+        // 获取类名
+        if (strpos($name, '.') !== false) {
+            $path = explode('.', $name);
+            $class_name = '\\app\\' . $path[0] . '\\model';
+            $len = count($path);
+            for ($i = 1; $i < $len - 1; $i ++) {
+                $class_name .= '\\' . $path[$i];
             }
-            self::$models[$name] = new $class_name();
+            $class_name .= '\\' . ucfirst($path[$i]) . 'Model';
+        } else {
+            $class_name = '\\app\\' . M . '\\model\\' . ucfirst($name) . 'Model';
         }
-        return self::$models[$name];
+        
+        // 根据需要实例化
+        $key = md5($class_name);
+        if (! isset(self::$models[$key]) || $new) {
+            self::$models[$key] = new $class_name();
+        }
+        
+        return self::$models[$key];
+    }
+
+    // 创建数据接口
+    public static function createApi($name, $param = null, $rsOriginal = false, $jsonRsArray = false)
+    {
+        
+        // 如果只是传递了方法，则自动完善模块及模型控制器
+        if (strpos($name, '.') === false) {
+            $name = M . '.' . C . '.' . $name;
+        }
+        
+        $path = explode('.', $name); // 第一个为模块 $path[0]，倒数第二个为模型$path[$i]，倒数第一个为方法$path[$i+1]
+        $class_name = '\\app\\' . $path[0] . '\\model';
+        $len = count($path);
+        for ($i = 1; $i < $len - 2; $i ++) {
+            $class_name .= '\\' . $path[$i];
+        }
+        $class_name .= '\\' . ucfirst($path[$i]) . 'Model';
+        $key = md5($class_name);
+        
+        // 实例化类
+        if (isset(self::$models[$key])) {
+            $model = self::$models[$key];
+        } else {
+            $model = new $class_name();
+            self::$models[$key] = $model;
+        }
+        
+        // 调取接口方法
+        if (is_array($param)) {
+            $json = call_user_func_array(array(
+                $model,
+                $path[$i + 1]
+            ), $param);
+        } elseif ($param !== null) {
+            $json = call_user_func(array(
+                $model,
+                $path[$i + 1]
+            ), $param);
+        } else {
+            $json = call_user_func(array(
+                $model,
+                $path[$i + 1]
+            ));
+        }
+        
+        // 返回结果
+        if ($rsOriginal) {
+            return $json;
+        } else {
+            if (! ! $rs = json_decode($json, $jsonRsArray)) {
+                return $rs;
+            } else {
+                switch (json_last_error()) {
+                    case JSON_ERROR_NONE:
+                        $err = '请检查返回数据！';
+                        break;
+                    case JSON_ERROR_DEPTH:
+                        $err = '超过最大堆叠深度!';
+                        break;
+                    case JSON_ERROR_STATE_MISMATCH:
+                        $err = '下溢或模式不匹配!';
+                        break;
+                    case JSON_ERROR_CTRL_CHAR:
+                        $err = '发现意外的控制字符!';
+                        break;
+                    case JSON_ERROR_SYNTAX:
+                        $err = '语法错误!';
+                        break;
+                    case JSON_ERROR_UTF8:
+                        $err = '格式不正确的UTF-8字符，可能编码不正确!';
+                        break;
+                    default:
+                        $err = '未知错误！';
+                        break;
+                }
+                error('接口返回数据错误，接口：' . $name . '，JSON解析错误：' . $err);
+            }
+        }
     }
 }
 

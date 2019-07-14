@@ -36,7 +36,7 @@ class Model
     public $createTimeField = 'create_time';
 
     // 程序执行的SQL语句记录
-    public $exeSql = array();
+    private $exeSql = array();
 
     // 是否解密转义
     private $decode = false;
@@ -54,10 +54,12 @@ class Model
     private $dbDriver;
 
     // 查询语句
-    private $selectSql = "SELECT %distinct% %field% FROM %table% %join% %where% %group% %having% %order% %limit% %union%";
+    private $selectSql = "SELECT %distinct% %field% FROM %table% %join% %where% %group% %having% %order% %union% %limit%";
 
     // 计数语句
-    private $countSql = "SELECT %distinct% COUNT(*) AS sum FROM %table% %join% %where% %having% %limit%";
+    private $countSql = "SELECT %distinct% COUNT(*) AS sum FROM %table% %join% %where% %group% %having% %union%";
+
+    private $countSql2 = "SELECT %distinct% %field% FROM %table% %join% %where% %group% %having% %union%";
 
     // 插入语句
     private $insertSql = "INSERT INTO %table% %field% VALUES %value%";
@@ -143,7 +145,7 @@ class Model
         }
         
         if ($this->showSql && $clear) {
-            exit($sql . '<br />');
+            exit($sql);
         } else {
             return $sql;
         }
@@ -262,9 +264,9 @@ class Model
                     $table_string .= '`' . $key . '` AS ' . $value . ',';
                 }
             }
-            $this->table = substr($table_string, 0, - 1);
+            $this->sql['table'] = substr($table_string, 0, - 1);
         } else {
-            $this->table = $table;
+            $this->sql['table'] = $table;
         }
         return $this;
     }
@@ -311,7 +313,9 @@ class Model
         if ($alias) {
             if (! isset($this->table))
                 error('调用alias之前必须先设置table');
-            $this->table = $this->table . ' AS ' . $alias;
+            if (strpos($this->table, ' AS ') === false) {
+                $this->table = $this->table . ' AS ' . $alias;
+            }
         }
         return $this;
     }
@@ -731,10 +735,6 @@ class Model
      */
     final public function having($having, $inConnect = 'AND', $outConnect = 'AND')
     {
-        // 清理where条件
-        if (isset($this->sql['where'])) {
-            unset($this->sql['where']);
-        }
         if (isset($this->sql['having']) && $this->sql['having']) {
             $this->sql['having'] .= ' ' . $outConnect . '(';
         } else {
@@ -927,20 +927,45 @@ class Model
             return $this->select();
         }
         
-        if (! isset($this->sql['field']))
+        if (! isset($this->sql['field']) || ! $this->sql['field'])
             $this->sql['field'] = '*';
         
         // 如果调用了分页函数且分页，则执行分页处理
         if (isset($this->sql['paging']) && $this->sql['paging']) {
-            // 生成总数计算语句
-            $count_sql = $this->buildSql($this->countSql, false);
-            // 获取记录总数
-            if (! ! $rs = $this->getDb()->one($count_sql)) {
-                $total = $rs->sum;
-                // 分页内容
-                $limit = Paging::getInstance()->limit($total, true);
-                // 获取分页参数并设置分页
-                $this->limit($limit);
+            if ($this->sql['group']) { // 解决使用分组时count(*)分页不准问题
+                if (get_db_type() == 'mysql') {
+                    $this->limit(Paging::getInstance()->quikLimit()); // 分页
+                    $this->sql['field'] = 'SQL_CALC_FOUND_ROWS ' . $this->sql['field']; // 添加查询总记录
+                    $sql = $this->buildSql($this->selectSql);
+                    $result = $this->getDb()->all($sql, $type);
+                    $count_sql = "select FOUND_ROWS() as sum";
+                    if (! ! $rs = $this->getDb()->one($count_sql)) {
+                        $total = $rs->sum;
+                        // 分页内容
+                        $limit = Paging::getInstance()->limit($total, true); // 生成分页代码
+                    }
+                } else {
+                    $count_sql = $this->buildSql($this->countSql2, false);
+                    // 获取记录总数
+                    if (! ! $rs = $this->getDb()->all($count_sql)) {
+                        $total = count($rs);
+                        // 分页内容
+                        $limit = Paging::getInstance()->limit($total, true);
+                        // 获取分页参数并设置分页
+                        $this->limit($limit);
+                    }
+                }
+            } else {
+                // 生成总数计算语句
+                $count_sql = $this->buildSql($this->countSql, false);
+                // 获取记录总数
+                if (! ! $rs = $this->getDb()->one($count_sql)) {
+                    $total = $rs->sum;
+                    // 分页内容
+                    $limit = Paging::getInstance()->limit($total, true);
+                    // 获取分页参数并设置分页
+                    $this->limit($limit);
+                }
             }
         }
         // 构建查询语句
@@ -948,7 +973,9 @@ class Model
         if ($type === false) {
             return $sql;
         }
-        $result = $this->getDb()->all($sql, $type);
+        if (! isset($result)) {
+            $result = $this->getDb()->all($sql, $type);
+        }
         return $this->outData($result);
     }
 
@@ -1106,6 +1133,19 @@ class Model
     {
         $this->checkKey($field);
         $this->sql['field'] = "SUM(`$field`)";
+        $sql = $this->buildSql($this->selectSql);
+        $result = $this->getDb()->one($sql, 2);
+        if ($result[0]) {
+            return $this->outData($result[0]);
+        } else {
+            return 0;
+        }
+    }
+
+    // 返回统计数据
+    final public function count()
+    {
+        $this->sql['field'] = "COUNT(*)";
         $sql = $this->buildSql($this->selectSql);
         $result = $this->getDb()->one($sql, 2);
         if ($result[0]) {

@@ -175,9 +175,27 @@ function alert_close($info, $status = 0)
  *            是否强制新建对象
  * @return mixed
  */
-function model($name, $new = false)
+function model($name = null, $new = false)
 {
     return Basic::createModel($name, $new);
+}
+
+/**
+ * api读取数据
+ *
+ * @param string $name
+ *            接口名称，如：add或 admin.user.addd
+ * @param array $param
+ *            参数
+ * @param string $rsOriginal
+ *            结果不处理直接返回
+ * @param string $jsonRsArray
+ *            返回Json数组方式
+ * @return mixed
+ */
+function api($name, $param = null, $rsOriginal = false, $jsonRsArray = false)
+{
+    return Basic::createApi($name, $param, $rsOriginal, $jsonRsArray);
 }
 
 // 输出模板内容
@@ -222,21 +240,13 @@ function page($tatal, $morePageStr = false)
     return $page->limit($tatal, $morePageStr);
 }
 
-/**
- * 内容输出助手函数
- *
- * @param mixed $data            
- */
+// 内容输出助手函数
 function response($data)
 {
     return core\basic\Response::handle($data);
 }
 
-/**
- * Json内容输出助手函数
- *
- * @param mixed $data            
- */
+// Json内容输出助手函数
 function json($code, $data)
 {
     return core\basic\Response::json($code, $data);
