@@ -206,7 +206,7 @@ class Paging
         if ($this->page > 1) {
             $pre_page = $this->getPreUrl() . '/page/' . ($this->page - 1) . $this->suffix . $this->queryString();
         } else {
-            $pre_page = '';
+            $pre_page = 'javascript:;';
         }
         return $pre_page;
     }
@@ -219,7 +219,7 @@ class Paging
         if ($this->page < $this->pageCount) {
             $next_page = $this->getPreUrl() . '/page/' . ($this->page + 1) . $this->suffix . $this->queryString();
         } else {
-            $next_page = '';
+            $next_page = 'javascript:;';
         }
         return $next_page;
     }
@@ -238,7 +238,11 @@ class Paging
         if (! $this->pageCount)
             return;
         $num_html = '';
-        $total = $this->num;
+        if (M == 'admin') {
+            $total = 5;
+        } else {
+            $total = $this->num;
+        }
         $halfl = intval($total / 2);
         $halfu = ceil($total / 2);
         

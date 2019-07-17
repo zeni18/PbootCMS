@@ -249,7 +249,7 @@ class RoleController extends Controller
             
             // 数据区域选择
             $area_model = model('admin.system.Area');
-            $area_tree = $area_model->getList();
+            $area_tree = $area_model->getSelect();
             $area_checkbox = $this->makeAreaCheckbox($area_tree, $result->acodes);
             $this->assign('area_checkbox', $area_checkbox);
             
