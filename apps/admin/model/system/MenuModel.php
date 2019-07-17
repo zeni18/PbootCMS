@@ -49,7 +49,7 @@ class MenuModel extends Model
     // 获取最后一个code
     public function getLastCode()
     {
-        return parent::table('ay_menu')->order('id DESC')->value('mcode');
+        return parent::table('ay_menu')->order('mcode DESC')->value('mcode');
     }
 
     // 新增菜单,$actions为菜单功能按钮数组

@@ -19,7 +19,6 @@
 	                        <th>父编码</th>
 	                        <th>排序</th>
 	                        <th>URL</th>
-	                        <th>桌面</th>
 	                        <th>状态</th>
 	                        <th>操作</th>
 	                    </tr>
@@ -35,14 +34,7 @@
 	                        <td>[value->pcode]</td>
 	                        <td>[value->sorting]</td>
 	                        <td>[value->url]</td>
-	                        <td>
-	                            {if($value->shortcut)}
-	                            <a href="{url./admin/'.C.'/mod/mcode/'.$value->mcode.'/field/shortcut/value/0}"><i class='fa fa-toggle-on' title="点击关闭显示"></i></a>
-	                            {else}
-	                            <a href="{url./admin/'.C.'/mod/mcode/'.$value->mcode.'/field/shortcut/value/1}"><i class='fa fa-toggle-off' title="点击开启显示"></i></a>
-	                            {/if}
-	                        </td>
-	                        
+
 	                        <td>
 	                            {if($value->status)}
 	                            <a href="{url./admin/'.C.'/mod/mcode/'.$value->mcode.'/field/status/value/0}"><i class='fa fa-toggle-on' title="点击关闭显示"></i></a>

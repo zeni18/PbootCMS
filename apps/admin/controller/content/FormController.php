@@ -240,6 +240,19 @@ class FormController extends Controller
             }
         }
         
+        if (get('action') == 'addmenu') {
+            if ($this->model->addFormMenu($id)) {
+                $this->log('添加自定义表单' . $id . '到菜单成功！');
+                if (! ! $backurl = get('backurl')) {
+                    success('添加成功！', base64_decode($backurl));
+                } else {
+                    success('添加成功！', url('/admin/Form/index'));
+                }
+            } else {
+                location(- 1);
+            }
+        }
+        
         // 修改操作
         if ($_POST) {
             

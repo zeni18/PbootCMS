@@ -72,7 +72,22 @@ class FormModel extends Model
     // 删除自定义表单
     public function delForm($id)
     {
-        return parent::table('ay_form')->where("id=$id")->delete();
+        $form = parent::table('ay_form')->field('fcode,form_name')
+            ->where("id=$id")
+            ->find();
+        
+        // 删除可能存在的菜单
+        if (! ! $rs = parent::table('ay_menu')->like('url', '/Form/index/fcode/' . $form->fcode . '/action/showdata')->find()) {
+            parent::table('ay_menu')->where("mcode='" . $rs->mcode . "'")->delete();
+            $menu = session('menu_tree');
+            foreach ($menu as $key => $value) {
+                if (! ! $delkey = result_value_search($rs->mcode, $menu[$key]->son, 'mcode')) {
+                    unset($menu[$key]->son[$delkey]);
+                }
+            }
+        }
+        $result = parent::table('ay_form')->where("id=$id")->delete(); // 删除表单
+        return $result;
     }
 
     // 修改自定义表单
@@ -158,5 +173,47 @@ class FormModel extends Model
     public function delFormData($table, $id)
     {
         return parent::table($table)->where("id=$id")->delete();
+    }
+
+    // 增加表单数据查看到菜单
+    public function addFormMenu($id)
+    {
+        $form = parent::table('ay_form')->field('fcode,form_name')
+            ->where("id=$id")
+            ->find();
+        
+        // 判断是否已经在菜单中
+        if (parent::table('ay_menu')->like('url', '/Form/index/fcode/' . $form->fcode . '/action/showdata')->find()) {
+            return false;
+        }
+        
+        // 构建数据
+        $lastmcode = parent::table('ay_menu')->order('mcode DESC')->value('mcode');
+        $mcode = get_auto_code($lastmcode);
+        $data = array(
+            'mcode' => $mcode,
+            'pcode' => 'M157',
+            'name' => $form->form_name,
+            'url' => '/Form/index/fcode/' . $form->fcode . '/action/showdata',
+            'sorting' => 599,
+            'status' => 1,
+            'shortcut' => 0,
+            'ico' => 'fa-plus-square-o',
+            'create_user' => session('username'),
+            'update_user' => session('username')
+        );
+        
+        // 加入菜单
+        $menu = session('menu_tree');
+        foreach ($menu as $key => $value) {
+            if ($value->mcode == 'M157') {
+                // 未在缓存菜单中才执行添加
+                if (result_value_search($mcode, $menu[$key]->son, 'mcode') === false) {
+                    $menu[$key]->son[] = array_to_object($data);
+                    return parent::table('ay_menu')->autoTime()->insert($data); // 插入到数据库
+                }
+                break;
+            }
+        }
     }
 }

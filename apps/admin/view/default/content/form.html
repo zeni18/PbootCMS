@@ -13,8 +13,8 @@
 	            	<thead>
 	                    <tr>
 	                    	<th>编码</th>
-	                        <th>表单</th>
-	                        <th>表名</th>
+							<th>表单名称</th>
+	                        <th>表名称</th>
 	                        <th>数据</th>
 	                        <th>字段</th>
 	                        <th>操作</th>
@@ -24,8 +24,8 @@
 	                    {foreach $forms(key,value)}
 	                    <tr>
 	                    	<td>[value->fcode]</td>
+							<td>[value->form_name]</td>
 	                    	<td>[value->table_name]</td>
-	                    	<td>[value->form_name]</td>
 	                    	<td>
 	                    	{if($value->id==1)}
 	                    	<a href="{url./admin/Message/index}"><i class="fa fa-list"></i> 查看数据</a></td>
@@ -34,10 +34,13 @@
 	                    	{/if}
 	                    	<td><a href="{url./admin/Form/index/fcode/'.$value->fcode.'/action/showfield}"><i class="fa fa-pencil-square-o"></i> 编辑字段</a></td>
 	                        <td>
+								
 	                        	{if($value->id!=1)}
+									<a href="{url./admin/Form/mod/id/'.$value->id.'/action/addmenu}?backurl={$backurl}" class="layui-btn layui-btn-xs layui-btn-primary">添加到菜单</a>
 	                        		<a href="{url./admin/Form/del/id/'.$value->id.'/action/delform}" onclick="return confirm('您确定要删除么？')" class="layui-btn layui-btn-xs layui-btn-danger" title="删除">删除</a>
 	                            {/if}
 	                            <a href="{url./admin/Form/mod/id/'.$value->id.'/action/modform}?backurl={$backurl}" class="layui-btn layui-btn-xs">修改</a>
+								
 	                        </td>
 	                    </tr>
 	                    {/foreach}
@@ -108,7 +111,6 @@
 	            </table>
 	            {/foreach}
 	            <div class="page">{$pagebar}</div>
-	            <div><a href="{url./admin/Form/index}" class="layui-btn">返回表单</a></div>
 	  	   </div>
 	  	 </div>
 	  </div>

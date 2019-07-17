@@ -484,13 +484,14 @@ function in_object($needle, $object)
 }
 
 // 结果集中查找指定字段父节点是否存在
-function result_value_search($needle, $result, $key)
+function result_value_search($needle, $result, $skey)
 {
-    foreach ($result as $value) {
-        if ($value->$key == $needle) {
-            return true;
+    foreach ($result as $key => $value) {
+        if ($value->$skey == $needle) {
+            return $key;
         }
     }
+    return false;
 }
 
 // 多维数组合并
