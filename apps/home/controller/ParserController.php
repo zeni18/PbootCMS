@@ -2910,10 +2910,21 @@ class ParserController extends Controller
                     foreach ($matches1[0] as $key => $value) {
                         $data->content = str_replace($value, '#rega:' . $key . '#', $data->content);
                     }
+                    
+                    // 去除包含关系的短tags,实现长关键字优先
+                    foreach ($tags as $key => $value) {
+                        foreach ($tags as $key2 => $value2) {
+                            if (strpos($value2->name, $value->name) !== false && $key != $key2) {
+                                unset($tags[$key]);
+                            }
+                        }
+                    }
+                    
                     // 执行内链替换
                     foreach ($tags as $value) {
                         $data->content = preg_replace('/' . $value->name . '/', '<a href="' . $value->link . '">' . $value->name . '</a>', $data->content, $this->config('content_tags_replace_num') ?: 3);
                     }
+                    
                     // 还原A链接
                     $pattern = '/\#rega:([0-9]+)\#/';
                     if (preg_match_all($pattern, $data->content, $matches2)) {

@@ -679,6 +679,8 @@ class ParserModel extends Model
     // 文章内链
     public function getTags()
     {
-        return parent::table('ay_tags')->field('name,link')->select();
+        return parent::table('ay_tags')->field('name,link')
+            ->order('length(name) desc')
+            ->select();
     }
 }
