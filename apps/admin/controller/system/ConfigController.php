@@ -82,6 +82,9 @@ class ConfigController extends Controller
                 case 'watermark':
                     success('修改成功！', url('/admin/Config/index?#tab=t5', false));
                     break;
+                case 'security':
+                    success('修改成功！', url('/admin/Config/index?#tab=t6', false));
+                    break;
                 case 'upgrade':
                     success('修改成功！', url('/admin/Upgrade/index?#tab=t2', false));
                     break;

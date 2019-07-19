@@ -67,7 +67,7 @@ class AdminController extends Controller
                 if ($matches[3]) {
                     create_session_dir($matches[5], $matches[3]);
                 }
-            } elseif (isset($_SERVER['TMP']) && ! is_writable($_SERVER['TMP'] . '/sess_' . session_id())) {
+            } elseif (isset($_SERVER['TMP']) && ! file_exists($_SERVER['TMP'] . '/sess_' . session_id())) {
                 error(' 操作系统缓存目录写入权限不足！' . $_SERVER['TMP']);
             }
             alert_back('表单提交校验失败,请刷新后重试！');

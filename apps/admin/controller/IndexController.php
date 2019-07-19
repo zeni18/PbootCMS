@@ -113,6 +113,11 @@ class IndexController extends Controller
             json(0, '密码不能为空！');
         }
         
+        if (! ! $time = $this->checkLoginBlack()) {
+            $this->log('登入锁定!');
+            json(0, '您登陆失败次数太多已被锁定，请' . $time . '秒后再试！');
+        }
+        
         // 执行用户登录
         $where = array(
             'username' => $username,
@@ -155,6 +160,7 @@ class IndexController extends Controller
             $this->log('登入成功!');
             json(1, url('admin/Index/home'));
         } else {
+            $this->setLoginBlack();
             $this->log('登入失败!');
             session('checkcode', mt_rand(10000, 99999)); // 登陆失败，随机打乱原有验证码
             json(0, '用户名或密码错误！');
@@ -265,5 +271,53 @@ class IndexController extends Controller
         } else {
             json(0, $upload);
         }
+    }
+
+    // 检查是否在黑名单
+    private function checkLoginBlack()
+    {
+        // 读取黑名单
+        $ip_black = RUN_PATH . '/config/' . md5('login_black') . '.php';
+        if (file_exists($ip_black)) {
+            $data = require $ip_black;
+            $user_ip = get_user_ip();
+            $lock_time = $this->config('lock_time') ?: 900;
+            $lock_count = $this->config('lock_count') ?: 5;
+            if (isset($data[$user_ip]) && $data[$user_ip]['count'] >= $lock_count && time() - $data[$user_ip]['time'] < $lock_time) {
+                return $lock_time - (time() - $data[$user_ip]['time']); // 返回剩余秒数
+            }
+        }
+        return false;
+    }
+
+    // 添加登陆黑名单
+    private function setLoginBlack()
+    {
+        // 读取黑名单
+        $ip_black = RUN_PATH . '/config/' . md5('login_black') . '.php';
+        if (file_exists($ip_black)) {
+            $data = require $ip_black;
+        } else {
+            $data = array();
+        }
+        
+        // 添加IP
+        $user_ip = get_user_ip();
+        $lock_time = $this->config('lock_time') ?: 900;
+        $lock_count = $this->config('lock_count') ?: 5;
+        if (isset($data[$user_ip]) && $data[$user_ip]['count'] < $lock_count && time() - $data[$user_ip]['time'] < $lock_time) {
+            $data[$user_ip] = array(
+                'time' => time(),
+                'count' => $data[get_user_ip()]['count'] + 1
+            );
+        } else {
+            $data[$user_ip] = array(
+                'time' => time(),
+                'count' => 1
+            );
+        }
+        
+        // 写入黑名单
+        return file_put_contents($ip_black, "<?php\nreturn " . var_export($data, true) . ";");
     }
 }

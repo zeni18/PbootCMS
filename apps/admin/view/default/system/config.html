@@ -8,6 +8,7 @@
 	    <li  lay-id="t3">百度接口</li>
 	    <li  lay-id="t4">WebAPI</li>
 	    <li  lay-id="t5">图片水印</li>
+	    <li  lay-id="t6">安全配置</li>
 	  </ul>
 		  <div class="layui-tab-content">
 		  	   <div class="layui-tab-item layui-show">
@@ -29,23 +30,7 @@
 		                     	<input type="text" name="wap_domain"  value="{$configs.wap_domain.value}" placeholder="如：m.pbootcms.com"  class="layui-input">
 		                     </div>
 		                </div>
-		                
-		                <div class="layui-form-item">
-		                     <label class="layui-form-label">后台验证码</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="admin_check_code" value="1" {if([$configs.admin_check_code.value]==1)} checked="checked" {/if} title="启用">
-								<input type="radio" name="admin_check_code" value="0" {if([$configs.admin_check_code.value]==0)} checked="checked" {/if} title="禁用">
-		                     </div>
-		                </div>
-		                
-		                 <div class="layui-form-item">
-		                     <label class="layui-form-label">留言验证码</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="message_check_code" value="1" {if([$configs.message_check_code.value]==1)} checked="checked" {/if} title="启用">
-								<input type="radio" name="message_check_code" value="0" {if([$configs.message_check_code.value]==0)} checked="checked" {/if} title="禁用">
-		                     </div>
-		                </div>
-		                
+
 		                <div class="layui-form-item">
 		                     <label class="layui-form-label">伪静态开关</label>
 		                     <div class="layui-input-block">
@@ -366,6 +351,50 @@
 					</div>
 				 </form>
 		  	   </div> 
+		  	   
+		  	    <div class="layui-tab-item">
+		  	   	   <form action="{url./admin/Config/index}" method="post" class="layui-form">
+			  	   	   <input type="hidden" name="formcheck" value="{$formcheck}" > 
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">后台验证码</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="admin_check_code" value="1" {if([$configs.admin_check_code.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="admin_check_code" value="0" {if([$configs.admin_check_code.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">留言验证码</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="message_check_code" value="1" {if([$configs.message_check_code.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="message_check_code" value="0" {if([$configs.message_check_code.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">登陆失败阀值</label>
+		                     <div class="layui-input-inline">
+								<input type="text" name="lock_count" value="{$configs.lock_count.value}" placeholder="请输入登陆失败几次后锁定IP，默认5次" class="layui-input">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                   <label class="layui-form-label">失败锁定时间</label>
+		                   <div class="layui-input-inline">
+		                  		<input type="text" name="lock_time" value="{$configs.lock_time.value}" placeholder="请输入登陆异常锁定时间，默认为900秒" class="layui-input">
+		                   </div>
+			            </div>
+		                
+		                <div class="layui-form-item">
+							 <div class="layui-input-block">
+							    <button class="layui-btn" lay-submit name="submit" value="security">立即提交</button>
+							    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+							 </div>
+						</div>
+	              </form>
+		  	   </div>
+		  	   
 		  </div>
 	 </div>
 </div>
