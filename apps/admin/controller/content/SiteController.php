@@ -19,7 +19,7 @@ class SiteController extends Controller
         $this->model = new SiteModel();
     }
 
-    // 显示系统设置
+    // 显示站点信息
     public function index()
     {
         // 获取主题列表
@@ -33,7 +33,7 @@ class SiteController extends Controller
         $this->display('content/site.html');
     }
 
-    // 修改系统设置
+    // 修改站点信息
     public function mod()
     {
         if (! $_POST) {
@@ -56,7 +56,7 @@ class SiteController extends Controller
         path_delete(RUN_PATH . '/config'); // 清理缓存的配置文件
         if ($this->model->checkSite()) {
             if ($this->model->modSite($data)) {
-                $this->log('修改系统设置成功！');
+                $this->log('修改站点信息成功！');
                 success('修改成功！', - 1);
             } else {
                 location(- 1);
@@ -64,7 +64,7 @@ class SiteController extends Controller
         } else {
             $data['acode'] = session('acode');
             if ($this->model->addSite($data)) {
-                $this->log('修改系统设置成功！');
+                $this->log('修改站点信息成功！');
                 success('修改成功！', - 1);
             } else {
                 location(- 1);
