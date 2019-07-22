@@ -66,6 +66,11 @@ class IndexController extends Controller
             }
         }
         $this->assign('dbsecurity', $dbsecurity);
+        
+        if (! session('pwsecurity')) {
+            location(url('/admin/Index/ucenter'));
+        }
+        
         $this->assign('server', get_server_info());
         $this->assign('branch', $this->config('upgrade_branch') ?: '1.X');
         $this->assign('revise', $this->config('revise_version') ?: '0');
@@ -277,7 +282,7 @@ class IndexController extends Controller
     private function checkLoginBlack()
     {
         // 读取黑名单
-        $ip_black = RUN_PATH . '/config/' . md5('login_black') . '.php';
+        $ip_black = RUN_PATH . '/data/' . md5('login_black') . '.php';
         if (file_exists($ip_black)) {
             $data = require $ip_black;
             $user_ip = get_user_ip();
@@ -294,7 +299,7 @@ class IndexController extends Controller
     private function setLoginBlack()
     {
         // 读取黑名单
-        $ip_black = RUN_PATH . '/config/' . md5('login_black') . '.php';
+        $ip_black = RUN_PATH . '/data/' . md5('login_black') . '.php';
         if (file_exists($ip_black)) {
             $data = require $ip_black;
         } else {
@@ -318,6 +323,7 @@ class IndexController extends Controller
         }
         
         // 写入黑名单
+        check_file($ip_black, true);
         return file_put_contents($ip_black, "<?php\nreturn " . var_export($data, true) . ";");
     }
 }

@@ -2388,7 +2388,7 @@ class ParserController extends Controller
     // 解析IF条件标签
     public function parserIfLabel($content)
     {
-        $pattern = '/\{pboot:if\(([^}]+)\)\}([\s\S]*?)\{\/pboot:if\}/';
+        $pattern = '/\{pboot:if\(([^}^\$]+)\)\}([\s\S]*?)\{\/pboot:if\}/';
         $pattern2 = '/pboot:([0-9])+if/';
         if (preg_match_all($pattern, $content, $matches)) {
             $count = count($matches[0]);

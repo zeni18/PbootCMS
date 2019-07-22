@@ -4,7 +4,7 @@ return array(
     'app_version' => '1.4.2',
     
     // 发布时间
-    'release_time' => '20190720',
+    'release_time' => '20190722',
     
     // 修订版本
     'revise_version' => '0'

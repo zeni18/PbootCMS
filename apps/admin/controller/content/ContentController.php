@@ -50,7 +50,7 @@ class ContentController extends Controller
             $sort_model = model('admin.content.ContentSort');
             $sort_select = $sort_model->getListSelect($mcode);
             $this->assign('search_select', $this->makeSortSelect($sort_select, get('scode')));
-            $this->assign('sort_select', $this->makeSortSelect($sort_select));
+            $this->assign('sort_select', $this->makeSortSelect($sort_select, session('addscode')));
             $this->assign('subsort_select', $this->makeSortSelect($sort_select));
             
             // 模型名称
@@ -120,6 +120,9 @@ class ContentController extends Controller
                 }
             }
             
+            // 记住新增栏目
+            session('addscode', $scode);
+            
             // 构建数据
             $data = array(
                 'acode' => session('acode'),
@@ -180,7 +183,7 @@ class ContentController extends Controller
                 if (! ! $backurl = get('backurl')) {
                     success('新增成功！', base64_decode($backurl));
                 } else {
-                    success('新增成功！', url('/admin/Content/index/mcode/' . get('mcode')));
+                    success('新增成功！', url('/admin/Content/index/mcode/' . get('mcode') . '#tab=t2'));
                 }
             } else {
                 $this->log('新增文章失败！');
@@ -196,7 +199,7 @@ class ContentController extends Controller
             // 文章分类
             $sort_model = model('admin.content.ContentSort');
             $sort_select = $sort_model->getListSelect($mcode);
-            $this->assign('sort_select', $this->makeSortSelect($sort_select));
+            $this->assign('sort_select', $this->makeSortSelect($sort_select, session('addscode')));
             $this->assign('subsort_select', $this->makeSortSelect($sort_select));
             
             // 模型名称

@@ -87,7 +87,7 @@ class ContentSortModel extends Model
         $tree = get_tree($result, 0, 'scode', 'pcode');
         // 对于父栏目非列表的栏目进行追加到后面
         foreach ($result as $value) {
-            if ($value->pcode != 0 && ! result_value_search($value->pcode, $result, 'scode')) {
+            if ($value->pcode != 0 && result_value_search($value->pcode, $result, 'scode') === false) {
                 $value->son = get_tree($result, $value->scode, 'scode', 'pcode');
                 $tree[] = $value;
             }
