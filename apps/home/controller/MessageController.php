@@ -78,7 +78,7 @@ class MessageController extends Controller
                 session('lastsub', time()); // 记录最后提交时间
                 $this->log('留言提交成功！');
                 if ($this->config('message_send_mail') && $this->config('message_send_to')) {
-                    $mail_subject = "【PbootCMS】您有新的表单数据，请注意查收！";
+                    $mail_subject = "【PbootCMS】您有新的" . $value->form_name . "信息，请注意查收！";
                     $mail_body .= '<br>来自网站 ' . get_http_url() . ' （' . date('Y-m-d H:i:s') . '）';
                     sendmail($this->config(), $this->config('message_send_to'), $mail_subject, $mail_body);
                 }

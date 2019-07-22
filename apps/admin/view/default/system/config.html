@@ -170,8 +170,6 @@
 			                 </div>
 			            </div>
 		            
-		               
-		                
 		                <div class="layui-form-item">
 		                     <label class="layui-form-label">留言发送邮件</label>
 		                     <div class="layui-input-block">
@@ -181,7 +179,15 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">留言接收邮箱</label>
+		                     <label class="layui-form-label">表单发送邮件</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="form_send_mail" value="1" {if([$configs.form_send_mail.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="form_send_mail" value="0" {if([$configs.form_send_mail.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">信息接收邮箱</label>
 		                     <div class="layui-input-inline">
 		                     	<input type="text" name="message_send_to"  value="{$configs.message_send_to.value}" placeholder="请输入留言接收邮箱"  class="layui-input">
 		                     </div>
@@ -369,6 +375,14 @@
 		                     <div class="layui-input-block">
 		                     	<input type="radio" name="message_check_code" value="1" {if([$configs.message_check_code.value]==1)} checked="checked" {/if} title="启用">
 								<input type="radio" name="message_check_code" value="0" {if([$configs.message_check_code.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">表单验证码</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="form_check_code" value="1" {if([$configs.form_check_code.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="form_check_code" value="0" {if([$configs.form_check_code.value]==0)} checked="checked" {/if} title="禁用">
 		                     </div>
 		                </div>
 		                
