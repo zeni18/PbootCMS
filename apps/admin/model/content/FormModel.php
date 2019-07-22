@@ -182,8 +182,22 @@ class FormModel extends Model
             ->where("id=$id")
             ->find();
         
+        $menus = session('menu_tree');
+        
         // 判断是否已经在菜单中
-        if (parent::table('ay_menu')->like('url', '/Form/index/fcode/' . $form->fcode . '/action/showdata')->find()) {
+        if (! ! $menu = parent::table('ay_menu')->like('url', '/Form/index/fcode/' . $form->fcode . '/action/showdata')->find()) {
+            if ($form->form_name != $menu->name) {
+                // 更新缓存菜单
+                parent::table('ay_menu')->where('mcode="' . $menu->mcode . '"')->update('name="' . $form->form_name . '"');
+                foreach ($menus as $key => $value) {
+                    if ($value->mcode == 'M157') {
+                        if (($skey = result_value_search($menu->mcode, $menus[$key]->son, 'mcode')) !== false) {
+                            $menus[$key]->son[$skey]->name = $form->form_name;
+                        }
+                        break;
+                    }
+                }
+            }
             return false;
         }
         
@@ -204,12 +218,11 @@ class FormModel extends Model
         );
         
         // 加入菜单
-        $menu = session('menu_tree');
-        foreach ($menu as $key => $value) {
+        foreach ($menus as $key => $value) {
             if ($value->mcode == 'M157') {
                 // 未在缓存菜单中才执行添加
-                if (result_value_search($mcode, $menu[$key]->son, 'mcode') === false) {
-                    $menu[$key]->son[] = array_to_object($data);
+                if (result_value_search($mcode, $menus[$key]->son, 'mcode') === false) {
+                    $menus[$key]->son[] = array_to_object($data);
                     return parent::table('ay_menu')->autoTime()->insert($data); // 插入到数据库
                 }
                 break;
