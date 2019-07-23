@@ -363,7 +363,7 @@
 		,outputXssFilter: true
 		// xss过滤白名单 名单来源: https://raw.githubusercontent.com/leizongmin/js-xss/master/lib/default.js
 		,whitList: {
-			iframe: ['frameborder','border','marginwidth','marginheight','width','height','src','id','class', 'style'],
+			iframe: ['frameborder','border','marginwidth','marginheight','width','height','src','id','class', 'style', 'allowfullscreen'],
 			embed:  ['class', 'style', 'src', 'width', 'height', 'type', 'wmode','loop','menu','controls','preload','play','quality', 'allowfullscreen'],
 			source: ['src','type'],
 			a:      ['target', 'href', 'title', 'class', 'style','name','id'],
