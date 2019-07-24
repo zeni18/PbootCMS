@@ -325,18 +325,8 @@ class ParserController extends Controller
                                 case 'link':
                                     if ($value['outlink']) {
                                         $one_html = str_replace($matches2[0][$j], $value['outlink'], $one_html);
-                                    } elseif ($value['type'] == 1) {
-                                        if ($value['filename']) {
-                                            $one_html = str_replace($matches2[0][$j], url('/home/about/index/scode/' . $value['filename']), $one_html);
-                                        } else {
-                                            $one_html = str_replace($matches2[0][$j], url('/home/about/index/scode/' . $value['scode']), $one_html);
-                                        }
                                     } else {
-                                        if ($value['filename']) {
-                                            $one_html = str_replace($matches2[0][$j], url('/home/list/index/scode/' . $value['filename']), $one_html);
-                                        } else {
-                                            $one_html = str_replace($matches2[0][$j], url('/home/list/index/scode/' . $value['scode']), $one_html);
-                                        }
+                                        $one_html = str_replace($matches2[0][$j], $this->parserLink('list', $value['type'], $value['scode'], $value['filename']), $one_html);
                                     }
                                     break;
                                 case 'soncount':
@@ -449,18 +439,8 @@ class ParserController extends Controller
                     foreach ($data as $key => $value) {
                         if ($value['outlink']) {
                             $out_html .= $separator . '<a href="' . $value['outlink'] . '">' . $value['name'] . '</a>';
-                        } elseif ($value['type'] == 1) {
-                            if ($value['filename']) {
-                                $out_html .= $separator . '<a href="' . url('/home/about/index/scode/' . $value['filename']) . '">' . $value['name'] . '</a>';
-                            } else {
-                                $out_html .= $separator . '<a href="' . url('/home/about/index/scode/' . $value['scode']) . '">' . $value['name'] . '</a>';
-                            }
-                        } elseif ($value['type'] == 2) {
-                            if ($value['filename']) {
-                                $out_html .= $separator . '<a href="' . url('/home/list/index/scode/' . $value['filename']) . '">' . $value['name'] . '</a>';
-                            } else {
-                                $out_html .= $separator . '<a href="' . url('/home/list/index/scode/' . $value['scode']) . '">' . $value['name'] . '</a>';
-                            }
+                        } else {
+                            $out_html .= $separator . '<a href="' . $this->parserLink('list', $value['type'], $value['scode'], $value['filename']) . '">' . $value['name'] . '</a>';
                         }
                     }
                 }
@@ -483,18 +463,8 @@ class ParserController extends Controller
                     case 'link':
                         if ($sort->outlink) {
                             $content = str_replace($matches[0][$i], $sort->outlink, $content);
-                        } elseif ($sort->type == 1) {
-                            if ($sort->filename) {
-                                $content = str_replace($matches[0][$i], url('/home/about/index/scode/' . $sort->filename), $content);
-                            } else {
-                                $content = str_replace($matches[0][$i], url('/home/about/index/scode/' . $sort->scode), $content);
-                            }
                         } else {
-                            if ($sort->filename) {
-                                $content = str_replace($matches[0][$i], url('/home/list/index/scode/' . $sort->filename), $content);
-                            } else {
-                                $content = str_replace($matches[0][$i], url('/home/list/index/scode/' . $sort->scode), $content);
-                            }
+                            $content = str_replace($matches[0][$i], $this->parserLink('list', $sort->type, $sort->scode, $sort->filename), $content);
                         }
                         break;
                     case 'tcode': // 顶级栏目ID
@@ -514,18 +484,8 @@ class ParserController extends Controller
                         $top_sort = $this->model->getSort($tcode);
                         if ($top_sort->outlink) {
                             $toplink = $top_sort->outlink;
-                        } elseif ($top_sort->type == 1) {
-                            if ($top_sort->filename) {
-                                $toplink = url('/home/about/index/scode/' . $top_sort->filename);
-                            } else {
-                                $toplink = url('/home/about/index/scode/' . $top_sort->scode);
-                            }
                         } else {
-                            if ($top_sort->filename) {
-                                $toplink = url('/home/list/index/scode/' . $top_sort->filename);
-                            } else {
-                                $toplink = url('/home/list/index/scode/' . $top_sort->scode);
-                            }
+                            $toplink = $this->parserLink('list', $top_sort->type, $top_sort->scode, $top_sort->filename);
                         }
                         $content = str_replace($matches[0][$i], $toplink, $content);
                         break;
@@ -544,18 +504,8 @@ class ParserController extends Controller
                         }
                         if ($parent_sort->outlink) {
                             $parentlink = $top_sort->outlink;
-                        } elseif ($parent_sort->type == 1) {
-                            if ($parent_sort->filename) {
-                                $parentlink = url('/home/about/index/scode/' . $parent_sort->filename);
-                            } else {
-                                $parentlink = url('/home/about/index/scode/' . $parent_sort->scode);
-                            }
                         } else {
-                            if ($parent_sort->filename) {
-                                $parentlink = url('/home/list/index/scode/' . $parent_sort->filename);
-                            } else {
-                                $parentlink = url('/home/list/index/scode/' . $parent_sort->scode);
-                            }
+                            $parentlink = $this->parserLink('list', $parent_sort->type, $parent_sort->scode, $parent_sort->filename);
                         }
                         $content = str_replace($matches[0][$i], $parentlink, $content);
                         break;
@@ -734,18 +684,8 @@ class ParserController extends Controller
                             case 'link':
                                 if ($value->outlink) {
                                     $one_html = str_replace($matches2[0][$j], $value->outlink, $one_html);
-                                } elseif ($value->type == 1) {
-                                    if ($value->filename) {
-                                        $one_html = str_replace($matches2[0][$j], url('/home/about/index/scode/' . $value->filename), $one_html);
-                                    } else {
-                                        $one_html = str_replace($matches2[0][$j], url('/home/about/index/scode/' . $value->scode), $one_html);
-                                    }
                                 } else {
-                                    if ($value->filename) {
-                                        $one_html = str_replace($matches2[0][$j], url('/home/list/index/scode/' . $value->filename), $one_html);
-                                    } else {
-                                        $one_html = str_replace($matches2[0][$j], url('/home/list/index/scode/' . $value->scode), $one_html);
-                                    }
+                                    $one_html = str_replace($matches2[0][$j], $this->parserLink('list', $value->type, $value->scode, $value->filename), $one_html);
                                 }
                                 break;
                             case 'ico':
@@ -1233,7 +1173,7 @@ class ParserController extends Controller
                     continue;
                 }
                 $params = $this->parserParam($matches[2][$i]);
-                $content = $this->ParserContent($matches[1][$i], $matches[0][$i], $content, $data, $params, $sort);
+                $content = $this->parserContent($matches[1][$i], $matches[0][$i], $content, $data, $params, $sort, true);
             }
         }
         return $content;
@@ -1279,7 +1219,7 @@ class ParserController extends Controller
                 $out_html = $matches[2][$i];
                 for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
                     $params = $this->parserParam($matches2[2][$j]);
-                    $out_html = $this->parserList($matches2[1][$j], $matches2[0][$j], $out_html, $data, $params, 1);
+                    $out_html = $this->parserContent($matches2[1][$j], $matches2[0][$j], $out_html, $data, $params, $scode);
                 }
                 // 执行替换
                 $content = str_replace($matches[0][$i], $out_html, $content);
@@ -1548,7 +1488,7 @@ class ParserController extends Controller
                                 $one_html = str_replace($matches2[0][$j], $value['tags'], $one_html);
                                 break;
                             case 'link':
-                                $one_html = str_replace($matches2[0][$j], url('/home/list/index/scode/' . $value['scode']) . '?tags=' . $value['tags'], $one_html);
+                                $one_html = str_replace($matches2[0][$j], $this->parserLink('list', 2, $value['scode']) . '?tags=' . $value['tags'], $one_html);
                                 break;
                         }
                     }
@@ -2627,28 +2567,18 @@ class ParserController extends Controller
             case 'link':
                 if ($data->outlink) { // 外链
                     $content = str_replace($search, $data->outlink, $content);
-                } elseif ($data->filename) { // 自定义名称
-                    $content = str_replace($search, url('/home/content/index/id/' . $data->filename), $content);
-                } else { // 编码
-                    $content = str_replace($search, url('/home/content/index/id/' . $data->id), $content);
+                } else {
+                    $content = str_replace($search, $this->parserLink('content', $data->type, $data->id, $data->filename), $content);
                 }
                 break;
             case 'sortlink':
-                if ($data->sortfilename) {
-                    $content = str_replace($search, url('/home/list/index/scode/' . $data->sortfilename), $content);
-                } else {
-                    $content = str_replace($search, url('/home/list/index/scode/' . $data->scode), $content);
-                }
+                $content = str_replace($search, $this->parserLink('list', $data->type, $data->scode, $data->sortfilename), $content);
                 break;
             case 'subsortlink':
                 if ($data->subscode) {
-                    if ($data->subfilename) {
-                        $content = str_replace($search, url('/home/list/index/scode/' . $data->subfilename), $content);
-                    } else {
-                        $content = str_replace($search, url('/home/list/index/scode/' . $data->subscode), $content);
-                    }
+                    $content = str_replace($search, $this->parserLink('list', $data->type, $data->subscode, $data->subfilename), $content);
                 } else {
-                    $content = str_replace($search, '', $content);
+                    $content = str_replace($search, 'javascript:;', $content);
                 }
                 break;
             case 'sortname':
@@ -2722,10 +2652,10 @@ class ParserController extends Controller
     }
 
     // 解析内容详情标签
-    protected function ParserContent($label, $search, $content, $data, $params, $sort)
+    protected function parserContent($label, $search, $content, $data, $params, $sort, $count = false)
     {
         // 新增计数代码
-        if (! isset($this->var['addvisits'])) {
+        if (! isset($this->var['addvisits']) && $count) {
             $visits = "<script src='" . url('/home/Do/visits/id/' . $data->id) . "' async='async'></script>";
             $content = preg_replace('/(<\/body>)/i', $visits . "\n$1", $content);
             $this->var['addvisits'] = true;
@@ -2735,26 +2665,16 @@ class ParserController extends Controller
             case 'link':
                 if ($data->outlink) {
                     $content = str_replace($search, $data->outlink, $content);
-                } elseif ($data->filename) {
-                    $content = str_replace($search, url('/home/content/index/id/' . $data->filename), $content);
                 } else {
-                    $content = str_replace($search, url('/home/content/index/id/' . $data->id), $content);
+                    $content = str_replace($search, $this->parserLink('content', $data->type, $data->id, $data->filename), $content);
                 }
                 break;
             case 'sortlink':
-                if ($data->sortfilename) {
-                    $content = str_replace($search, url('/home/list/index/scode/' . $data->sortfilename), $content);
-                } else {
-                    $content = str_replace($search, url('/home/list/index/scode/' . $data->scode), $content);
-                }
+                $content = str_replace($search, $this->parserLink('list', $data->type, $data->scode, $data->sortfilename), $content);
                 break;
             case 'subsortlink':
                 if ($data->subscode) {
-                    if ($data->subfilename) {
-                        $content = str_replace($search, url('/home/list/index/scode/' . $data->subfilename), $content);
-                    } else {
-                        $content = str_replace($search, url('/home/list/index/scode/' . $data->subscode), $content);
-                    }
+                    $content = str_replace($search, $this->parserLink('list', $data->type, $data->subscode, $data->subfilename), $content);
                 } else {
                     $content = str_replace($search, '', $content);
                 }
@@ -2819,11 +2739,7 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $pre = $this->model->getContentPre($sort->scode, $data->id)) {
-                    if ($pre->filename) {
-                        $content = str_replace($search, '<a href="' . url('/home/content/index/id/' . $pre->filename) . '">' . $this->adjustLabelData($params, $pre->title) . '</a>', $content);
-                    } else {
-                        $content = str_replace($search, '<a href="' . url('/home/content/index/id/' . $pre->id) . '">' . $this->adjustLabelData($params, $pre->title) . '</a>', $content);
-                    }
+                    $content = str_replace($search, '<a href="' . $this->parserLink('content', 2, $pre->id, $pre->filename) . '">' . $this->adjustLabelData($params, $pre->title) . '</a>', $content);
                 } else {
                     if (isset($params['notext'])) {
                         $content = str_replace($search, $params['notext'], $content);
@@ -2836,13 +2752,9 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $pre = $this->model->getContentPre($sort->scode, $data->id)) {
-                    if ($pre->filename) {
-                        $content = str_replace($search, url('/home/content/index/id/' . $pre->filename), $content);
-                    } else {
-                        $content = str_replace($search, url('/home/content/index/id/' . $pre->id), $content);
-                    }
+                    $content = str_replace($search, $this->parserLink('content', 2, $pre->id, $pre->filename), $content);
                 } else {
-                    $content = str_replace($search, '#', $content);
+                    $content = str_replace($search, 'javascript:;', $content);
                 }
                 break;
             case 'pretitle':
@@ -2862,11 +2774,7 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $next = $this->model->getContentNext($sort->scode, $data->id)) {
-                    if ($next->filename) {
-                        $content = str_replace($search, '<a href="' . url('/home/content/index/id/' . $next->filename) . '">' . $this->adjustLabelData($params, $next->title) . '</a>', $content);
-                    } else {
-                        $content = str_replace($search, '<a href="' . url('/home/content/index/id/' . $next->id) . '">' . $this->adjustLabelData($params, $next->title) . '</a>', $content);
-                    }
+                    $content = str_replace($search, '<a href="' . $this->parserLink('content', 2, $next->id, $next->filename) . '">' . $this->adjustLabelData($params, $next->title) . '</a>', $content);
                 } else {
                     if (isset($params['notext'])) {
                         $content = str_replace($search, $params['notext'], $content);
@@ -2879,13 +2787,9 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $next = $this->model->getContentNext($sort->scode, $data->id)) {
-                    if ($next->filename) {
-                        $content = str_replace($search, url('/home/content/index/id/' . $next->filename), $content);
-                    } else {
-                        $content = str_replace($search, url('/home/content/index/id/' . $next->id), $content);
-                    }
+                    $content = str_replace($search, $this->parserLink('content', 2, $next->id, $next->filename), $content);
                 } else {
-                    $content = str_replace($search, '#', $content);
+                    $content = str_replace($search, 'javascript:;', $content);
                 }
                 break;
             case 'nexttitle':
@@ -2960,5 +2864,34 @@ class ParserController extends Controller
                 }
         }
         return $content;
+    }
+
+    // 解析生成链接
+    protected function parserLink($page, $type, $id, $filename = null)
+    {
+        if ($type == 1) {
+            if ($filename) {
+                $link = url('/home/about/index/scode/' . $filename);
+            } else {
+                $link = url('/home/about/index/scode/' . $id);
+            }
+        } else {
+            if ($page == 'list') {
+                if ($filename) {
+                    $link = url('/home/list/index/scode/' . $filename);
+                } else {
+                    $link = url('/home/list/index/scode/' . $id);
+                }
+            } elseif ($page == 'content') {
+                if ($filename) {
+                    $link = url('/home/content/index/id/' . $filename);
+                } else {
+                    $link = url('/home/content/index/id/' . $id);
+                }
+            } else {
+                $link = 'javascript:;';
+            }
+        }
+        return $link;
     }
 }
