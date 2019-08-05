@@ -138,7 +138,7 @@ class Url
                 if ($url_rule_type == 1) {
                     $link = SITE_DIR . '/index.php';
                 } elseif ($url_rule_type == 2) {
-                    $link = SITE_DIR . '/';
+                    $link = SITE_DIR;
                 } else {
                     $link = SITE_DIR . '/?';
                 }

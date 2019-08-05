@@ -97,10 +97,10 @@
 		                        <td>
 		                        	{php}$value->contenturl=$value->contenturl?:'content';{/php}
 		                        	{if($value->filename)}
-		                        	<input type="hidden" name="urls[]" value="{homeurl./home/Index/'.$value->filename.'}">
+		                        	<input type="hidden" name="urls[[value->id]]" value="{homeurl./home/Index/'.$value->filename.'}">
 		                        	<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 		                        	{else}
-		                        	<input type="hidden" name="urls[]" value="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->id.'}">
+		                        	<input type="hidden" name="urls[[value->id]]" value="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->id.'}">
 		                        	<a href="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->id.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 		                        	{/if}
 		                            {fun=get_btn_del($value->id)}

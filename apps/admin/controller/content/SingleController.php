@@ -100,10 +100,11 @@ class SingleController extends Controller
                 $urls[] = $domain . homeurl('/home/Index/' . $data->contenturl . $url_connector . $data->scode);
             }
             $result = post_baidu($api, $urls);
-            $this->log('百度推送：' . $urls[0]);
             if (isset($result->error)) {
+                $this->log('百度推送失败：' . $urls[0]);
                 alert_back('推送发生错误：' . $result->message);
             } elseif (isset($result->success)) {
+                $this->log('百度推送成功：' . $urls[0]);
                 alert_back('成功推送' . $result->success . '条，今天剩余可推送' . $result->remain . '条数!');
             } else {
                 alert_back('发生未知错误！');
@@ -124,17 +125,28 @@ class SingleController extends Controller
             $data = $this->model->getSingle($id);
             $data->contenturl = $data->contenturl ?: 'about';
             if ($data->filename) {
-                $urls[] = $domain . url('/home/Index/' . $data->filename);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->filename);
             } else {
-                $urls[] = $domain . url('/home/Index/' . $data->contenturl . $url_connector . $data->scode);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->contenturl . $url_connector . $data->scode);
             }
             $result = post_baidu($api, $urls);
-            $this->log('熊掌号推送：' . $urls[0]);
+            
+            if ($type == 'batch') {
+                $success = 'success_batch';
+                $remain = 'remain_batch';
+            } else {
+                $success = 'success_realtime';
+                $remain = 'remain_realtime';
+            }
+            
             if (isset($result->error)) {
+                $this->log('熊掌号推送失败：' . $urls[0]);
                 alert_back('推送发生错误：' . $result->message);
-            } elseif (isset($result->success_realtime)) {
-                alert_back('成功推送' . $result->success_realtime . '条，今天剩余可推送' . $result->remain_realtime . '条数!');
+            } elseif (isset($result->$success) || isset($result->$remain)) {
+                $this->log('熊掌号推送成功：' . $urls[0]);
+                alert_back('成功推送' . $result->$success . '条，今天剩余可推送' . $result->$remain . '条数!');
             } elseif (isset($result->success)) {
+                $this->log('熊掌号推送失败：' . $urls[0]);
                 alert_back('推送失败，不合规地址' . count($result->not_same_site) . '条！');
             } else {
                 alert_back('发生未知错误！');
