@@ -10,6 +10,7 @@ namespace app\home\controller;
 
 use core\basic\Controller;
 use app\home\model\SitemapModel;
+use core\basic\Url;
 
 class SitemapController extends Controller
 {
@@ -26,34 +27,44 @@ class SitemapController extends Controller
         header("Content-type:text/xml;charset=utf-8");
         $str = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n" . '<urlset>';
         $str .= $this->makeNode('', date('Y-m-d'), 1); // 根目录
+        
+        $url_rule_level = $this->config('url_rule_level') ?: 1;
+        $url_break_char = $this->config('url_break_char') ?: '_';
+        $connector = ($url_rule_level == 1) ? $url_break_char : '/';
+        
         $sorts = $this->model->getSorts();
         foreach ($sorts as $value) {
             if ($value->outlink) {
-                $link = $value->outlink;
+                continue;
             } elseif ($value->type == 1) {
+                $value->contenturl = $value->contenturl ?: 'about';
                 if ($value->filename) {
-                    $link = url('/home/about/index/scode/' . $value->filename);
+                    $link = Url::home('/home/Index/' . $value->filename);
                 } else {
-                    $link = url('/home/about/index/scode/' . $value->scode);
+                    $link = Url::home('/home/Index/' . $value->contenturl . $connector . $value->id);
                 }
                 $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
             } else {
+                $value->listurl = $value->listurl ?: 'list';
                 if ($value->filename) {
-                    $link = url('/home/list/index/scode/' . $value->filename);
+                    $link = Url::home('home/Index/' . $value->filename);
                 } else {
-                    $link = url('/home/list/index/scode/' . $value->scode);
+                    $link = Url::home('home/Index/' . $value->listurl . $connector . $value->scode);
                 }
                 $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
-                $contents = $this->model->getList($value->scode);
+                $contents = $this->model->getSortContent($value->scode);
                 foreach ($contents as $value2) {
                     if ($value2->outlink) { // 外链
-                        $link = $value2->outlink;
-                    } elseif ($value2->filename) { // 自定义名称
-                        $link = url('/home/content/index/id/' . $value2->filename);
+                        continue;
                     } else {
-                        $link = url('/home/content/index/id/' . $value2->id);
+                        $value2->contenturl = $value2->contenturl ?: 'content';
+                        if ($value2->filename) {
+                            $link = Url::home('home/Index/' . $value2->filename);
+                        } else {
+                            $link = Url::home('home/Index/' . $value2->contenturl . $connector . $value2->id);
+                        }
                     }
-                    $str .= $this->makeNode($link, date('Y-m-d'), 0.6);
+                    $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
                 }
             }
         }

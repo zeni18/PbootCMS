@@ -51,7 +51,11 @@ class Sqlite implements Builder
                 error("读取数据库文件失败：" . iconv('gbk', 'utf-8', $e->getMessage()));
             }
         } else {
-            error('未检测到您服务器环境的SQLite3数据库扩展，请检查php.ini中是否已经开启该扩展！');
+            if (extension_loaded('pdo_sqlite')) {
+                error('未检测到您服务器环境的sqlite3数据库扩展，请检查php.ini中是否已经开启该扩展！<br>另外，检测到您服务器支持pdo_sqlite扩展，您也可以修改数据库配置连接驱动为pdo_sqlite试试！');
+            } else {
+                error('未检测到您服务器环境的sqlite3数据库扩展，请检查php.ini中是否已经开启该扩展！');
+            }
         }
         return $conn;
     }

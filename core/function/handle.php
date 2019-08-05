@@ -361,6 +361,9 @@ function parse_info_tpl($info_tpl, $string, $jump_url, $time)
         $tpl_content = str_replace('{time}', $time, $tpl_content);
         $tpl_content = str_replace('{sitedir}', SITE_DIR, $tpl_content);
         $tpl_content = str_replace('{coredir}', CORE_DIR, $tpl_content);
+        $tpl_content = str_replace('{appversion}', APP_VERSION, $tpl_content);
+        $tpl_content = str_replace('{serveros}', PHP_OS, $tpl_content);
+        $tpl_content = str_replace('{serversoft}', $_SERVER['SERVER_SOFTWARE'], $tpl_content);
         return $tpl_content;
     } else {
         exit('<div style="font-size:50px;">:(</div>提示信息的模板文件不存在！');
@@ -756,14 +759,18 @@ function get_month_days($date, $start = 0, $interval = 1, $retamp = false)
     return $return;
 }
 
-// 是否伪静态模式
-function is_rewrite()
+// 框架地址地址前缀
+function url_index_path($indexfile = null)
 {
-    $indexfile = $_SERVER["SCRIPT_NAME"];
-    if (Config::get('url_type') == 2 && strrpos($indexfile, 'index.php') !== false) {
-        return true;
+    $indexfile = $indexfile ?: $_SERVER["SCRIPT_NAME"];
+    if (Config::get('app_url_type') == 2 && strripos($indexfile, 'index.php') !== false) {
+        return SITE_DIR;
+    } elseif (Config::get('app_url_type') == 3 && strripos($indexfile, 'index.php') !== false) {
+        return SITE_DIR . '/?p=';
+    } elseif (Config::get('app_url_type') == 3 && strripos($indexfile, 'index.php') === false) {
+        return $indexfile . '?p=';
     } else {
-        return false;
+        return $indexfile;
     }
 }
 
@@ -884,14 +891,34 @@ function strlen_both($string)
     return $n;
 }
 
-// 缓存配置
-function cache_config($refresh = false)
+// 获取地址参数
+function query_string($unset = null)
 {
-    // 系统配置缓存
-    $config_cache = RUN_PATH . '/config/' . md5('config') . '.php';
-    if (! file_exists($config_cache) || $refresh) {
-        $model = model('admin.system.Config');
-        Config::set(md5('config'), $model->getConfig(), false);
+    if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
+        parse_str($qs, $output);
+        unset($output['page']);
+        $unset = strpos($unset, ',') ? explode(',', $unset) : $unset;
+        if (is_array($unset)) {
+            foreach ($unset as $value) {
+                if (isset($output[$value])) {
+                    unset($output[$value]);
+                }
+            }
+        } else {
+            if (isset($output[$unset])) {
+                unset($output[$unset]);
+            }
+        }
+        // 避免路径参数编码
+        if (isset($output['p'])) {
+            $p = 'p=' . $output['p'];
+            unset($output['p']);
+            $qs = $output ? $p . '&' . http_build_query($output) : $p;
+        } else {
+            $qs = http_build_query($output);
+        }
     }
-    Config::assign($config_cache); // 注入配置
-}
+    return $qs ? '?' . $qs : '';
+}  
+
+

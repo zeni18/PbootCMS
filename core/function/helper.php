@@ -28,6 +28,18 @@ function url($url, $addExt = true)
 }
 
 /**
+ * 生成前端路径
+ *
+ * @param string $url
+ *            前端地址参数
+ * @return mixed
+ */
+function homeurl($url)
+{
+    return Url::home($url);
+}
+
+/**
  * 自定义错误页面
  *
  * @param string $_string内容            
@@ -193,9 +205,9 @@ function model($name = null, $new = false)
  *            返回Json数组方式
  * @return mixed
  */
-function api($name, $param = null, $rsOriginal = false, $jsonRsArray = false)
+function api($args = null)
 {
-    return Basic::createApi($name, $param, $rsOriginal, $jsonRsArray);
+    return Basic::createApi(func_get_args());
 }
 
 // 输出模板内容

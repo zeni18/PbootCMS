@@ -44,6 +44,15 @@ class SingleController extends Controller
             $this->assign('baidu_xzh_appid', $this->config('baidu_xzh_appid'));
             $this->assign('baidu_xzh_token', $this->config('baidu_xzh_token'));
             
+            // 模型名称
+            $this->assign('model_name', model('admin.content.Model')->getName($mcode));
+            
+            // 前端地址连接符判断
+            $url_rule_level = $this->config('url_rule_level') ?: 1;
+            $url_break_char = $this->config('url_break_char') ?: '_';
+            $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
+            $this->assign('url_connector', $url_connector);
+            
             $this->assign('contents', $result);
         }
         $this->display('content/single.html');
@@ -68,15 +77,30 @@ class SingleController extends Controller
     // 单页内容修改
     public function mod()
     {
+        // 前端地址连接符判断
+        if (get('baiduzz') || get('baiduxzh')) {
+            $url_rule_level = $this->config('url_rule_level') ?: 1;
+            $url_break_char = $this->config('url_break_char') ?: '_';
+            $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
+        }
+        
         // 站长推送
-        if (! ! $scode = get('baiduzz')) {
+        if (! ! $id = get('baiduzz')) {
             $domain = get_http_url();
             if (! $token = $this->config('baidu_zz_token')) {
                 alert_back('请先到系统配置中填写百度链接推送token值！');
             }
+            
             $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
-            $urls[] = $domain . url('/home/about/index/scode/' . $scode);
+            $data = $this->model->getSingle($id);
+            $data->contenturl = $data->contenturl ?: 'about';
+            if ($data->filename) {
+                $urls[] = $domain . homeurl('/home/Index/' . $data->filename);
+            } else {
+                $urls[] = $domain . homeurl('/home/Index/' . $data->contenturl . $url_connector . $data->scode);
+            }
             $result = post_baidu($api, $urls);
+            $this->log('百度推送：' . $urls[0]);
             if (isset($result->error)) {
                 alert_back('推送发生错误：' . $result->message);
             } elseif (isset($result->success)) {
@@ -87,16 +111,25 @@ class SingleController extends Controller
         }
         
         // 熊掌号推送
-        if (! ! $scode = get('baiduxzh')) {
+        if (! ! $id = get('baiduxzh')) {
             $domain = get_http_url();
             $appid = $this->config('baidu_xzh_appid');
             $token = $this->config('baidu_xzh_token');
+            $type = ($this->config('baidu_xzh_type')) ? 'batch' : 'realtime';
+            
             if (! $appid || ! $token) {
                 alert_back('请先到系统配置中填写百度熊掌号推送appid及token值！');
             }
-            $api = "http://data.zz.baidu.com/urls?appid=$appid&token=$token&type=realtime";
-            $urls[] = $domain . url('/home/about/index/scode/' . $scode);
+            $api = "http://data.zz.baidu.com/urls?appid=$appid&token=$token&type=$type";
+            $data = $this->model->getSingle($id);
+            $data->contenturl = $data->contenturl ?: 'about';
+            if ($data->filename) {
+                $urls[] = $domain . url('/home/Index/' . $data->filename);
+            } else {
+                $urls[] = $domain . url('/home/Index/' . $data->contenturl . $url_connector . $data->scode);
+            }
             $result = post_baidu($api, $urls);
+            $this->log('熊掌号推送：' . $urls[0]);
             if (isset($result->error)) {
                 alert_back('推送发生错误：' . $result->message);
             } elseif (isset($result->success_realtime)) {

@@ -62,6 +62,12 @@ class ContentController extends Controller
             $this->assign('baidu_zz_token', $this->config('baidu_zz_token'));
             $this->assign('baidu_xzh_appid', $this->config('baidu_xzh_appid'));
             $this->assign('baidu_xzh_token', $this->config('baidu_xzh_token'));
+            
+            // 前端地址连接符判断
+            $url_rule_level = $this->config('url_rule_level') ?: 1;
+            $url_break_char = $this->config('url_break_char') ?: '_';
+            $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
+            $this->assign('url_connector', $url_connector);
         }
         
         $this->display('content/content.html');
@@ -103,6 +109,10 @@ class ContentController extends Controller
                 alert_back('文章标题不能为空！');
             }
             
+            if ($filename && ! preg_match('/^[\w\-]+$/', $filename)) {
+                alert_back('自定义路径名称只允许字母、数字、横线组成!');
+            }
+            
             // 自动提起前一百个字符为描述
             if (! $description && isset($_POST['content'])) {
                 $description = escape_string(clear_html_blank(substr_both(strip_tags($_POST['content']), 0, 150)));
@@ -116,7 +126,7 @@ class ContentController extends Controller
             // 检查自定义文件名称
             if ($filename) {
                 while ($this->model->checkFilename("filename='$filename'")) {
-                    $filename = $filename . '_' . mt_rand(1, 20);
+                    $filename = $filename . '-' . mt_rand(1, 20);
                 }
             }
             
@@ -183,7 +193,7 @@ class ContentController extends Controller
                 if (! ! $backurl = get('backurl')) {
                     success('新增成功！', base64_decode($backurl));
                 } else {
-                    success('新增成功！', url('/admin/Content/index/mcode/' . get('mcode') . '#tab=t2'));
+                    success('新增成功！', url('/admin/Content/index/mcode/' . get('mcode')));
                 }
             } else {
                 $this->log('新增文章失败！');
@@ -322,8 +332,8 @@ class ContentController extends Controller
                     }
                     break;
                 case 'baiduzz':
-                    $list = post('list');
-                    if (! $list) {
+                    $urls = post('urls');
+                    if (! $urls) {
                         alert_back('请选择要推送的内容！');
                     }
                     // 依次推送
@@ -332,12 +342,12 @@ class ContentController extends Controller
                         alert_back('请先到系统配置中填写百度链接推送token值！');
                     }
                     $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
-                    foreach ($list as $key => $value) {
-                        $url = $domain . url('/home/content/index/id/' . $value);
+                    foreach ($urls as $key => $value) {
+                        $url = $domain . $value;
                         $this->log('百度推送：' . $url);
-                        $urls[] = $url;
+                        $post_urls[] = $url;
                     }
-                    $result = post_baidu($api, $urls);
+                    $result = post_baidu($api, $post_urls);
                     if (isset($result->error)) {
                         alert_back('推送发生错误：' . $result->message);
                     } elseif (isset($result->success)) {
@@ -346,24 +356,25 @@ class ContentController extends Controller
                         alert_back('发生未知错误！');
                     }
                 case 'baiduxzh':
-                    $list = post('list');
-                    if (! $list) {
+                    $urls = post('urls');
+                    if (! $urls) {
                         alert_back('请选择要推送的内容！');
                     }
                     // 依次推送
                     $domain = get_http_url();
                     $appid = $this->config('baidu_xzh_appid');
                     $token = $this->config('baidu_xzh_token');
+                    $type = ($this->config('baidu_xzh_type')) ? 'batch' : 'realtime';
                     if (! $appid || ! $token) {
                         alert_back('请先到系统配置中填写百度熊掌号推送appid及token值！');
                     }
-                    $api = "http://data.zz.baidu.com/urls?appid=$appid&token=$token&type=realtime";
-                    foreach ($list as $key => $value) {
-                        $url = $domain . url('/home/content/index/id/' . $value);
+                    $api = "http://data.zz.baidu.com/urls?appid=$appid&token=$token&type=$type";
+                    foreach ($urls as $key => $value) {
+                        $url = $domain . $value;
                         $this->log('熊掌号推送：' . $url);
-                        $urls[] = $url;
+                        $post_urls[] = $url;
                     }
-                    $result = post_baidu($api, $urls);
+                    $result = post_baidu($api, $post_urls);
                     if (isset($result->error)) {
                         alert_back('推送发生错误：' . $result->message);
                     } elseif (isset($result->success_realtime)) {
@@ -423,6 +434,10 @@ class ContentController extends Controller
                 alert_back('文章标题不能为空！');
             }
             
+            if ($filename && ! preg_match('/^[\w\-]+$/', $filename)) {
+                alert_back('自定义路径名称只允许字母、数字、横线组成!');
+            }
+            
             // 自动提起前一百个字符为描述
             if (! $description && isset($_POST['content'])) {
                 $description = escape_string(clear_html_blank(substr_both(strip_tags($_POST['content']), 0, 150)));
@@ -434,8 +449,8 @@ class ContentController extends Controller
             }
             
             if ($filename) {
-                while ($this->model->checkFilename("filename='$filename' and id<>$id")) {
-                    $filename = $filename . '_' . mt_rand(1, 20);
+                while ($this->model->checkFilename("filename='$filename'", "id<>$id")) {
+                    $filename = $filename . '-' . mt_rand(1, 20);
                 }
             }
             

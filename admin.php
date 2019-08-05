@@ -11,7 +11,7 @@
 define('IS_INDEX', true);
 
 // 入口文件地址绑定
-define('URL_BLIND', 'admin');
+define('URL_BIND', 'admin');
 
 // PHP版本检测
 if (PHP_VERSION < '5.3') {

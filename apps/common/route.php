@@ -29,14 +29,12 @@ return array(
         'admin/Form' => 'admin/content.Form',
         'admin/Tags' => 'admin/content.Tags',
         
-        // =======前端路由============为前端美观，使用了小写URL，此处也用小写
-        'home/index' => 'home/index/index',
-        'home/list' => 'home/list/index/scode',
-        'home/about' => 'home/about/index/scode',
-        'home/content' => 'home/content/index/id',
-        'home/sitemap.xml' => 'home/Sitemap/index',
-        
-        // =======接口路由============API路径统一小写URL，此处也用小写
+        // 前台及接口路径统一小写URL
+        // =======前台路由============
+        'home/sitemap.xml' => 'home/Sitemap/index', // 站点地图1
+        'home/sitemap' => 'home/Sitemap/index', // 站点地图2
+                                                
+        // =======接口路由============
         'api/list' => 'api/list/index/scode',
         'api/content' => 'api/content/index/id',
         'api/about' => 'api/about/index/scode',

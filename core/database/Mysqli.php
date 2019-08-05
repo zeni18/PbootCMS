@@ -44,12 +44,18 @@ class Mysqli implements Builder
     public function conn($cfg)
     {
         if (! extension_loaded('mysqli')) {
-            die('未检测到您服务器环境的mysqli数据库扩展，请检查php.ini中是否已经开启该扩展！');
+            if (extension_loaded('pdo_mysql')) {
+                error('未检测到您服务器环境的mysqli数据库扩展，请检查php.ini中是否已经开启该扩展！<br>另外，检测到您服务器支持pdo_mysql扩展，您也可以修改数据库配置连接驱动为pdo_mysql试试！');
+            } else {
+                error('未检测到您服务器环境的mysqli数据库扩展，请检查php.ini中是否已经开启该扩展！');
+            }
         }
+        
         // 优化>php5.3版本 在win2008以上服务器连接
         if ($cfg['host'] == 'localhost') {
             $cfg['host'] = '127.0.0.1';
         }
+        
         $conn = @new \Mysqli($cfg['host'], $cfg['user'], $cfg['passwd'], $cfg['dbname'], $cfg['port']);
         if (mysqli_connect_errno()) {
             error("连接数据库服务器失败：" . iconv('gbk', 'utf-8', mysqli_connect_error()));

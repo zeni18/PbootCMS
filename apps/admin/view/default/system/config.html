@@ -9,6 +9,7 @@
 	    <li  lay-id="t4">WebAPI</li>
 	    <li  lay-id="t5">图片水印</li>
 	    <li  lay-id="t6">安全配置</li>
+	    <li  lay-id="t7">URL规则</li>
 	  </ul>
 		  <div class="layui-tab-content">
 		  	   <div class="layui-tab-item layui-show">
@@ -31,15 +32,6 @@
 		                     </div>
 		                </div>
 
-		                <div class="layui-form-item">
-		                     <label class="layui-form-label">伪静态开关</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="url_type" value="2" {if([$configs.url_type.value]==2)} checked="checked" {/if} title="启用">
-								<input type="radio" name="url_type" value="1" {if([$configs.url_type.value]==1)} checked="checked" {/if} title="禁用">
-								<span class="layui-icon layui-icon-about tips" data-content="此功能需要服务器环境的支持！"></span>
-		                     </div>
-		                </div>
-		                
 		                <div class="layui-form-item">
 		                     <label class="layui-form-label">前端静态缓存</label>
 		                     <div class="layui-input-block">
@@ -233,6 +225,14 @@
 		                     	<input type="text" name="baidu_xzh_token"  value="{$configs.baidu_xzh_token.value}" placeholder="请输入百度熊掌号token"  class="layui-input">
 		                     </div>
 		               </div>
+		               
+		               <div class="layui-form-item">
+		                     <label class="layui-form-label">熊掌号推送类型</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="baidu_xzh_type" value="0" {if([$configs.baidu_xzh_type.value]==0)} checked="checked" {/if} title="天级">
+								<input type="radio" name="baidu_xzh_type" value="1" {if([$configs.baidu_xzh_type.value]==1)} checked="checked" {/if} title="周级">
+		                     </div>
+		               </div>
 		                
 		                <div class="layui-form-item">
 							 <div class="layui-input-block">
@@ -379,6 +379,14 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
+		                     <label class="layui-form-label">留言审核</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="message_verify" value="1" {if([$configs.message_verify.value]=='1'||[$configs.message_verify.value]=='')} checked="checked" {/if} title="启用">
+								<input type="radio" name="message_verify" value="0" {if([$configs.message_verify.value]=='0')} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
 		                     <label class="layui-form-label">表单验证码</label>
 		                     <div class="layui-input-block">
 		                     	<input type="radio" name="form_check_code" value="1" {if([$configs.form_check_code.value]==1)} checked="checked" {/if} title="启用">
@@ -387,22 +395,72 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">登陆失败阀值</label>
+		                     <label class="layui-form-label">登录失败阀值</label>
 		                     <div class="layui-input-inline">
-								<input type="text" name="lock_count" value="{$configs.lock_count.value}" placeholder="请输入登陆失败几次后锁定IP，默认5次" class="layui-input">
+								<input type="text" name="lock_count" value="{$configs.lock_count.value}" placeholder="请输入登录失败几次后锁定IP，默认5次" class="layui-input">
 		                     </div>
 		                </div>
 		                
 		                <div class="layui-form-item">
 		                   <label class="layui-form-label">失败锁定时间</label>
 		                   <div class="layui-input-inline">
-		                  		<input type="text" name="lock_time" value="{$configs.lock_time.value}" placeholder="请输入登陆异常锁定时间，默认为900秒" class="layui-input">
+		                  		<input type="text" name="lock_time" value="{$configs.lock_time.value}" placeholder="请输入登录异常锁定时间，默认为900秒" class="layui-input">
 		                   </div>
 			            </div>
 		                
 		                <div class="layui-form-item">
 							 <div class="layui-input-block">
 							    <button class="layui-btn" lay-submit name="submit" value="security">立即提交</button>
+							    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+							 </div>
+						</div>
+	              </form>
+		  	   </div>
+		  	   
+		  	   <div class="layui-tab-item">
+		  	   	   <form action="{url./admin/Config/index}" method="post" class="layui-form">
+			  	   	   <input type="hidden" name="formcheck" value="{$formcheck}" > 
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">URL层级</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="url_rule_level" value="1" {if([$configs.url_rule_level.value]==1||![$configs.url_rule_level.value])} checked="checked" {/if} title="一级">
+								<input type="radio" name="url_rule_level" value="2" {if([$configs.url_rule_level.value]==2)} checked="checked" {/if} title="二级">
+		                     	<span class="layui-icon layui-icon-about tips" data-content="一级示例：/news-1.html<br>二级示例：/news/1.html"></span>
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">地址模式</label>
+		                     <div class="layui-input-block">
+		                     	<P>
+		                     		<input type="radio" name="url_rule_type" value="1" {if([$configs.url_rule_type.value]==1)} checked="checked" {/if} title="普通模式，例：https://www.pbootcms.com/index.php/news/1.html">
+		                     		<span class="layui-icon layui-icon-about tips" data-content="基本模式需要服务器支持pathinfo,特别是nginx下pathinfo要手动配置！"></span>
+		                     	</P>
+		                     	<P>
+		                     		<input type="radio" name="url_rule_type" value="2" {if([$configs.url_rule_type.value]==2)} checked="checked" {/if} title="伪静态模式，例：https://www.pbootcms.com/news/1.html">
+		                     		<span class="layui-icon layui-icon-about tips" data-content="伪静态时需要服务器环境的支持，并需要添加伪静态规则！"></span>
+								</P>
+		                     	<P>
+									<input type="radio" name="url_rule_type" value="3" {if([$configs.url_rule_type.value]==3||![$configs.url_rule_type.value])} checked="checked" {/if} title="兼容模式，例：https://www.pbootcms.com/?news/1.html">
+								</P>
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">目录模式</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="url_rule_dir" value="1" {if([$configs.url_rule_dir.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="url_rule_dir" value="0" {if(![$configs.url_rule_dir.value])} checked="checked" {/if} title="禁用">
+		                     	<span class="layui-icon layui-icon-about tips" data-content="开启后将不含有.html后缀！"></span>
+		                     </div>
+		                </div>
+		                
+		             
+		                
+		                <div class="layui-form-item">
+							 <div class="layui-input-block">
+							    <button class="layui-btn" lay-submit name="submit" value="urlrule">立即提交</button>
 							    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
 							 </div>
 						</div>

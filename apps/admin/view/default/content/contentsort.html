@@ -21,7 +21,7 @@
 		                        <th>父编码</th>
 		                        <th>模型</th>
 		                        <th>列表页模板</th>
-		                        <th>内容页模板</th>
+		                        <th>详情页模板</th>
 		                        <th>排序</th>
 		                        <th>状态</th>
 		                        <th>操作</th>
@@ -67,6 +67,24 @@
 		                            {/if}
 		                        </td>
 		                        <td>
+		                        	{if($value->type==1)}
+			                        	{php}$value->contenturl=$value->contenturl?:'about';{/php}
+			                           	{if($value->filename)}
+			                        		<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        	{else}
+			                        		<a href="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        	{/if}
+		                        	{/if}
+		                        	
+		                        	{if($value->type==2)}
+			                        	{php}$value->listurl=$value->listurl?:'list';{/php}
+			                           	{if($value->filename)}
+			                        		<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        	{else}
+			                        		<a href="{homeurl./home/Index/'.$value->listurl.[$url_connector].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        	{/if}
+		                        	{/if}
+		                        	
 		                            {fun=get_btn_del($value->scode,'scode')}
 		                            {fun=get_btn_mod($value->scode,'scode')}
 		                        </td>
@@ -141,7 +159,7 @@
 			                </div>
 			                
 			                 <div class="layui-form-item">
-			                     <label class="layui-form-label">内容页模板</label>
+			                     <label class="layui-form-label">详情页模板</label>
 			                     <div class="layui-input-block">
 				                     <select name="contenttpl" id="contenttpl" >
 				                     	<option value="">无</option>
@@ -284,7 +302,7 @@
 		                </div>
 		                
 		                 <div class="layui-form-item">
-		                     <label class="layui-form-label">内容页模板</label>
+		                     <label class="layui-form-label">详情页模板</label>
 		                     <div class="layui-input-block">
 			                     <select name="contenttpl" id="contenttpl" >
 			                     	<option value="">无</option>
@@ -321,7 +339,7 @@
 	  </ul>
 	  <div class="layui-tab-content">
 	  	<div class="layui-tab-item layui-show">
-	  		<form action="{url./admin/ContentSort/mod/scode/'.[$get.scode].'}" method="post" class="layui-form" lay-filter="sort">
+	  		<form action="{url./admin/ContentSort/mod/scode/'.[$get.scode].'}{$backurl}" method="post" class="layui-form" lay-filter="sort">
 	  	     	<input type="hidden" name="formcheck" value="{$formcheck}" > 
 	  	     	<div class="layui-tab">
 				  <ul class="layui-tab-title">
@@ -377,7 +395,7 @@
 		                </div>
 		                
 		                 <div class="layui-form-item">
-		                     <label class="layui-form-label">内容页模板</label>
+		                     <label class="layui-form-label">详情页模板</label>
 		                     <div class="layui-input-block">
 			                     <select name="contenttpl" id="contenttpl" >
 			                     	<option value="{$sort->contenttpl}">{$sort->contenttpl}</option>

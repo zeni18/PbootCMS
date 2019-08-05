@@ -7,9 +7,6 @@ return array(
     // 授权用户手机
     'sn_user' => '',
     
-    // 设置URL模式,1、基本模式,2、伪静态模式
-    'url_type' => 1,
-    
     // 模板内容输出缓存开关
     'tpl_html_cache' => 0,
     

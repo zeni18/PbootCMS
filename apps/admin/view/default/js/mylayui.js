@@ -48,17 +48,17 @@ layui.use(['element','upload','laydate','form'], function(){
        },
 	  success: function (response, status) {
 			if (response.code == 1) {
-				layer.msg("登入成功！", {icon: 1});
+				layer.msg("登录成功！", {icon: 1});
 				window.location.href = response.data;
 			} else {
 				form.find("#checkcode").val("");
 				$('#codeimg').click();//更新验证码
-				layer.msg("登入失败：" + response.data, {icon: 5});
+				layer.msg("登录失败：" + response.data, {icon: 5});
 			} 
       },
       error:function(xhr,status,error){
-    	  layer.msg("登入请求发生错误!", {icon: 5});
-    	  $('#note').html('登入请求发生错误，请按照如下方式排查：<br>1、前台内页是否正常访问？否则检查pathinfo配置；<br>2、如果前台正常，请删除根目录下runtime目录重试;<br>3、如果还是不行，请检查目录写入权限是否正确。<br>4、如果还不行那就出钱请人部署吧！');
+    	  layer.msg("登录请求发生错误!", {icon: 5});
+    	  $('#note').html('登录请求发生错误，请按照如下方式排查：<br>1、前台内页是否正常访问？否则检查pathinfo配置；<br>2、如果前台正常，请删除根目录下runtime目录重试;<br>3、如果还是不行，请检查目录写入权限是否正确。<br>4、如果还不行那就出钱请人部署吧！');
       }
 	});
     return false;

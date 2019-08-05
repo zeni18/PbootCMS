@@ -47,6 +47,8 @@ class ModelController extends Controller
             $mcode = get_auto_code($this->model->getLastCode());
             $name = post('name');
             $type = post('type');
+            $listurl = post('listurl');
+            $contenturl = post('contenturl');
             $listtpl = basename(post('listtpl'));
             $contenttpl = basename(post('contenttpl'));
             $status = post('status');
@@ -55,11 +57,50 @@ class ModelController extends Controller
                 alert_back('模型名称不能为空！');
             }
             
+            if ($type == 1) {
+                $listurl = '';
+                if (! $contenturl)
+                    $contenturl = 'about';
+                if (! $contenttpl)
+                    $contenttpl = $contenturl . '.html';
+            } else {
+                if (! $listurl)
+                    $listurl = 'list';
+                if (! $contenturl)
+                    $contenturl = 'content';
+                if (! $listtpl)
+                    $listtpl = $listurl . '.html';
+                if (! $contenttpl)
+                    $contenttpl = $contenturl . '.html';
+            }
+            
+            if ($listurl && ! preg_match('/^[\w\-]+$/', $listurl)) {
+                alert_back('列表页URL名称只允许字母、数字、横线组成!');
+            }
+            
+            if (! preg_match('/^[\w\-]+$/', $contenturl)) {
+                alert_back('详情页URL名称只允许字母、数字、横线组成!');
+            }
+            
+            if ($listurl && $listurl == $contenturl) {
+                alert_back('列表页和详情页的URL名称不能相同！');
+            }
+            
+            if ($listurl && $this->model->checkListUrl($listurl, $type)) {
+                alert_back('列表页URL名称与其他模型冲突！');
+            }
+            
+            if ($this->model->checkContentUrl($contenturl, $type)) {
+                alert_back('详情页URL名称与其他模型冲突！');
+            }
+            
             // 构建数据
             $data = array(
                 'mcode' => $mcode,
                 'name' => $name,
                 'type' => $type,
+                'listurl' => $listurl,
+                'contenturl' => $contenturl,
                 'listtpl' => $listtpl,
                 'contenttpl' => $contenttpl,
                 'status' => $status,
@@ -124,6 +165,8 @@ class ModelController extends Controller
             // 获取数据
             $name = post('name');
             $type = post('type');
+            $listurl = post('listurl');
+            $contenturl = post('contenturl');
             $listtpl = basename(post('listtpl'));
             $contenttpl = basename(post('contenttpl'));
             $status = post('status');
@@ -132,10 +175,49 @@ class ModelController extends Controller
                 alert_back('模型名称不能为空！');
             }
             
+            if ($type == 1) {
+                $listurl = '';
+                if (! $contenturl)
+                    $contenturl = 'about';
+                if (! $contenttpl)
+                    $contenttpl = $contenturl . '.html';
+            } else {
+                if (! $listurl)
+                    $listurl = 'list';
+                if (! $contenturl)
+                    $contenturl = 'content';
+                if (! $listtpl)
+                    $listtpl = $listurl . '.html';
+                if (! $contenttpl)
+                    $contenttpl = $contenturl . '.html';
+            }
+            
+            if ($listurl && ! preg_match('/^[\w\-]+$/', $listurl)) {
+                alert_back('列表页URL名称只允许字母、数字、横线组成!');
+            }
+            
+            if (! preg_match('/^[\w\-]+$/', $contenturl)) {
+                alert_back('详情页URL名称只允许字母、数字、横线组成!');
+            }
+            
+            if ($listurl && $listurl == $contenturl) {
+                alert_back('列表页和详情页的URL名称不能相同！');
+            }
+            
+            if ($listurl && $this->model->checkListUrl($listurl, $type, 'id<>' . $id)) {
+                alert_back('列表页URL名称与其他模型冲突！');
+            }
+            
+            if ($this->model->checkContentUrl($contenturl, $type, 'id<>' . $id)) {
+                alert_back('详情页URL名称与其他模型冲突！');
+            }
+            
             // 构建数据
             $data = array(
                 'name' => $name,
                 'type' => $type,
+                'listurl' => $listurl,
+                'contenturl' => $contenturl,
                 'listtpl' => $listtpl,
                 'contenttpl' => $contenttpl,
                 'status' => $status,

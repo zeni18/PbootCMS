@@ -94,7 +94,7 @@
 	  </ul>
 	  <div class="layui-tab-content">
 	  	   <div class="layui-tab-item layui-show">
-	  	  		<form action="{url./admin/Role/mod/rcode/'.[$get.rcode].'}?{$server.QUERY_STRING}" method="post" class="layui-form">
+	  	  		<form action="{url./admin/Role/mod/rcode/'.[$get.rcode].'}{$backurl}" method="post" class="layui-form">
 	  	  			<input type="hidden" name="formcheck" value="{$formcheck}" > 
 	  	  			<div class="layui-form-item">
 	                     <label class="layui-form-label">角色名称</label>

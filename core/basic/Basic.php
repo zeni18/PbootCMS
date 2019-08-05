@@ -119,9 +119,9 @@ class Basic
                 if (Config::get('session_in_sitepath')) {
                     $save_path = RUN_PATH . '/session/';
                     if (! check_dir($save_path, true))
-                        error('设置的会话目录创建失败！');
+                        error('设置的会话目录创建失败！' . $save_path);
                     ini_set("session.save_handler", "files");
-                    $depth = 2;
+                    $depth = 1;
                     ini_set("session.save_path", $depth . ';' . $save_path);
                     if (! is_dir($save_path . '/0/0') || ! is_dir($save_path . '/v/v')) {
                         create_session_dir($save_path, $depth);
@@ -161,8 +161,17 @@ class Basic
     }
 
     // 创建数据接口
-    public static function createApi($name, $param = null, $rsOriginal = false, $jsonRsArray = false)
+    public static function createApi($args = null)
     {
+        // 直接调用方式
+        if (! is_array($args)) {
+            $args = func_get_args();
+        }
+        
+        // 分离参数
+        $name = $args[0];
+        unset($args[0]);
+        $param = $args;
         
         // 如果只是传递了方法，则自动完善模块及模型控制器
         if (strpos($name, '.') === false) {
@@ -178,7 +187,6 @@ class Basic
         $class_name .= '\\' . ucfirst($path[$i]) . 'Model';
         $key = md5($class_name);
         
-        // 实例化类
         if (isset(self::$models[$key])) {
             $model = self::$models[$key];
         } else {
@@ -188,54 +196,17 @@ class Basic
         
         // 调取接口方法
         if (is_array($param)) {
-            $json = call_user_func_array(array(
+            $rs = call_user_func_array(array(
                 $model,
                 $path[$i + 1]
             ), $param);
-        } elseif ($param !== null) {
-            $json = call_user_func(array(
-                $model,
-                $path[$i + 1]
-            ), $param);
-        } else {
-            $json = call_user_func(array(
-                $model,
-                $path[$i + 1]
-            ));
         }
         
-        // 返回结果
-        if ($rsOriginal) {
-            return $json;
+        // 返回结果,如果不是json数据，则转换
+        if (! ! $return = json_decode($rs)) {
+            return $rs;
         } else {
-            if (! ! $rs = json_decode($json, $jsonRsArray)) {
-                return $rs;
-            } else {
-                switch (json_last_error()) {
-                    case JSON_ERROR_NONE:
-                        $err = '请检查返回数据！';
-                        break;
-                    case JSON_ERROR_DEPTH:
-                        $err = '超过最大堆叠深度!';
-                        break;
-                    case JSON_ERROR_STATE_MISMATCH:
-                        $err = '下溢或模式不匹配!';
-                        break;
-                    case JSON_ERROR_CTRL_CHAR:
-                        $err = '发现意外的控制字符!';
-                        break;
-                    case JSON_ERROR_SYNTAX:
-                        $err = '语法错误!';
-                        break;
-                    case JSON_ERROR_UTF8:
-                        $err = '格式不正确的UTF-8字符，可能编码不正确!';
-                        break;
-                    default:
-                        $err = '未知错误！';
-                        break;
-                }
-                error('接口返回数据错误，接口：' . $name . '，JSON解析错误：' . $err);
-            }
+            return json_encode($rs);
         }
     }
 }

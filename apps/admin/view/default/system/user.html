@@ -12,6 +12,7 @@
 	  	   		<form action="{url./admin/User/index}" method="get" class="layui-form">
 		  	   		<div class="layui-form-item nospace">
 		  	   			<div class="layui-input-inline">
+		  	   			  {$pathinfo}
 					       <select name="field" lay-verify="required">
 	                            <option value="ucode" {if(get('field')=='ucode')}selected="selected" {/if} >用户编码</option>
 								<option value="username" {if(get('field')=='username')}selected="selected" {/if}>用户名</option>
@@ -147,7 +148,7 @@
 	  </ul>
 	  <div class="layui-tab-content">
 	  	   <div class="layui-tab-item layui-show">
-	  	   		 <form action="{url./admin/User/mod/ucode/'.[$get.ucode].'}?{$server.QUERY_STRING}" method="post" class="layui-form">
+	  	   		 <form action="{url./admin/User/mod/ucode/'.[$get.ucode].'}{$backurl}" method="post" class="layui-form">
 	  	   		 	<input type="hidden" name="formcheck" value="{$formcheck}" > 
 	  	   		 	<div class="layui-form-item">
 	                     <label class="layui-form-label">用户账号</label>

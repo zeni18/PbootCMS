@@ -21,9 +21,11 @@ class SitemapModel extends Model
             'a.pcode',
             'a.scode',
             'a.name',
-            'b.type',
             'a.filename',
-            'a.outlink'
+            'a.outlink',
+            'b.type',
+            'b.listurl',
+            'b.contenturl'
         );
         $join = array(
             'ay_model b',
@@ -31,7 +33,6 @@ class SitemapModel extends Model
             'LEFT'
         );
         $result = parent::table('ay_content_sort a')->field($fields)
-            ->where("a.acode='" . get_lg() . "'")
             ->where('a.status=1')
             ->join($join)
             ->order('a.pcode,a.sorting,a.id')
@@ -40,13 +41,15 @@ class SitemapModel extends Model
     }
 
     // 指定列表内容
-    public function getList($scode)
+    public function getSortContent($scode)
     {
         $fields = array(
             'a.id',
             'a.filename',
             'a.date',
-            'c.type'
+            'c.type',
+            'c.listurl',
+            'c.contenturl'
         );
         $join = array(
             array(
@@ -62,7 +65,6 @@ class SitemapModel extends Model
         );
         
         $where = array(
-            "a.acode='" . get_lg() . "'",
             'a.status=1',
             'c.type=2'
         );

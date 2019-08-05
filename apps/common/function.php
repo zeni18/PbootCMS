@@ -102,7 +102,7 @@ function get_btn_add($btnName = '新 增')
     $user_level = session('levels');
     if (! in_array('/' . M . '/' . C . '/add', $user_level) && session('id') != 1)
         return;
-    $btn_html = "<a href='" . url("/" . M . '/' . C . "/add") . "?backurl=" . base64_encode(URL) . "' class='layui-btn layui-btn-primary'>$btnName</a>";
+    $btn_html = "<a href='" . url("/" . M . '/' . C . "/add") . get_btn_qs() . "' class='layui-btn layui-btn-primary'>$btnName</a>";
     return $btn_html;
 }
 
@@ -129,7 +129,7 @@ function get_btn_mod($idValue, $id = 'id', $btnName = '修改')
     $user_level = session('levels');
     if (! in_array('/' . M . '/' . C . '/mod', $user_level) && session('id') != 1)
         return;
-    $btn_html = "<a href='" . url("/" . M . '/' . C . "/mod/$id/$idValue") . "?backurl=" . base64_encode(URL) . "'  class='layui-btn layui-btn-xs'>$btnName</a>";
+    $btn_html = "<a href='" . url("/" . M . '/' . C . "/mod/$id/$idValue") . get_btn_qs() . "'  class='layui-btn layui-btn-xs'>$btnName</a>";
     return $btn_html;
 }
 
@@ -139,15 +139,56 @@ function get_btn($btnName, $theme, $btnAction, $idValue, $id = 'id')
     $user_level = session('levels');
     if (! in_array('/' . M . '/' . C . '/' . $btnAction, $user_level) && session('id') != 1)
         return;
-    $btn_html = "<a href='" . url("/" . M . '/' . C . "/$btnAction/$id/$idValue") . "?backurl=" . base64_encode(URL) . "'  class='layui-btn layui-btn-xs $theme'>$btnName</a>";
+    $btn_html = "<a href='" . url("/" . M . '/' . C . "/$btnAction/$id/$idValue") . get_btn_qs() . "'  class='layui-btn layui-btn-xs $theme'>$btnName</a>";
     return $btn_html;
 }
 
-// 缓存语言信息
-function cache_lg($refresh = false)
+// 获取按钮返回参数
+function get_btn_qs()
 {
-    // 多语言缓存，不存在时自动缓存
-    $lg_cache = RUN_PATH . '/config/' . md5('language') . '.php';
+    if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
+        return "&backurl=" . base64_encode(URL);
+    } else {
+        return "?backurl=" . base64_encode(URL);
+    }
+}
+
+// 获取返回URL
+function get_backurl()
+{
+    if (! ! $backurl = get('backurl')) {
+        if (isset($_SERVER["QUERY_STRING"]) && ! ! get('p')) {
+            return "&backurl=" . $backurl;
+        } else {
+            return "?backurl=" . $backurl;
+        }
+    } else {
+        return;
+    }
+}
+
+// 获取返回tab跳转地址
+function get_tab($tid)
+{
+    if (isset($_SERVER["QUERY_STRING"]) && ! ! get('p')) {
+        return "&#tab=" . $tid;
+    } else {
+        return "?#tab=" . $tid;
+    }
+}
+
+// 缓存语言信息
+function cache_config($refresh = false)
+{
+    // 系统配置缓存
+    $config_cache = RUN_PATH . '/config/' . md5('config') . '.php';
+    if (! file_exists($config_cache) || $refresh) {
+        $model = model('admin.system.Config');
+        Config::set(md5('config'), $model->getConfig(), false, true);
+    }
+    
+    // 多语言缓存
+    $lg_cache = RUN_PATH . '/config/' . md5('area') . '.php';
     if (! file_exists($lg_cache) || $refresh) {
         $model = model('admin.system.Config');
         $area = $model->getAreaTheme(); // 获取所有语言
@@ -159,24 +200,7 @@ function cache_lg($refresh = false)
             error('系统没有任何可用区域，请核对后再试！');
         }
         $lgs['lgs'] = $map;
-        Config::set(md5('language'), $lgs, false);
-    }
-    Config::assign($lg_cache); // 注入多语言
-                               
-    // 语言绑定域名， 如果匹配到多语言绑定则自动设置当前语言
-    $lgs = Config::get('lgs');
-    if (count($lgs) > 1) {
-        $domain = get_http_host();
-        foreach ($lgs as $value) {
-            if ($value['domain'] == $domain) {
-                cookie('lg', $value['acode']);
-            }
-        }
-    }
-    
-    // 未设置语言时使用默认语言
-    if (! isset($_COOKIE['lg'])) {
-        cookie('lg', get_default_lg());
+        Config::set(md5('area'), $lgs, false, true);
     }
 }
 

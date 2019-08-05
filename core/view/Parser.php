@@ -47,7 +47,8 @@ class Parser
         self::$content .= "<?php return " . var_export(array_unique(self::$tplInc), 1) . "; ?>";
         
         // =====以下为直接输出方法=========
-        self::parOutputUrl(); // 输出地址输出
+        self::parOutputUrl(); // 输出地址
+        self::parOutputHomeUrl(); // 输出前端地址
         self::parOutputDefine(); // 输出常量
         self::parOutputVar(); // 输出变量
         self::parOutputObjVal(); // 输出对象
@@ -120,12 +121,21 @@ class Parser
         }
     }
 
-    // 解析地址输出 {url./home/index/index}
+    // 解析地址输出 {url./admin/index/index}
     private static function parOutputUrl()
     {
         $pattern = '/\{url\.([^\}]+)\}/';
         if (preg_match($pattern, self::$content)) {
             self::$content = preg_replace($pattern, "<?php echo \\core\\basic\\Url::get('$1');?>", self::$content);
+        }
+    }
+
+    // 解析地址输出 {homeurl./home/index/index}
+    private static function parOutputHomeUrl()
+    {
+        $pattern = '/\{homeurl\.([^\}]+)\}/';
+        if (preg_match($pattern, self::$content)) {
+            self::$content = preg_replace($pattern, "<?php echo \\core\\basic\\Url::home('$1');?>", self::$content);
         }
     }
 

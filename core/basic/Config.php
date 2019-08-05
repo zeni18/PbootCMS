@@ -91,12 +91,6 @@ class Config
             die('系统框架文件丢失，惯性配置文件不存在！');
         }
         
-        // 载入用户路由配置文件
-        if (file_exists(CONF_PATH . '/route.php')) {
-            $config = require CONF_PATH . '/route.php';
-            $configs = mult_array_merge($configs, $config);
-        }
-        
         // 载入用户主配置文件
         if (file_exists(CONF_PATH . '/config.php')) {
             $config = require CONF_PATH . '/config.php';
@@ -131,6 +125,18 @@ class Config
         // 载入应用版本文件
         if (file_exists(APP_PATH . '/common/version.php')) {
             $config = require APP_PATH . '/common/version.php';
+            $configs = mult_array_merge($configs, $config);
+        }
+        
+        // 载入系统配置缓存
+        if (file_exists(RUN_PATH . '/config/' . md5('config') . '.php')) {
+            $config = require RUN_PATH . '/config/' . md5('config') . '.php';
+            $configs = mult_array_merge($configs, $config);
+        }
+        
+        // 载入区域配置缓存
+        if (file_exists(RUN_PATH . '/config/' . md5('area') . '.php')) {
+            $config = require RUN_PATH . '/config/' . md5('area') . '.php';
             $configs = mult_array_merge($configs, $config);
         }
         

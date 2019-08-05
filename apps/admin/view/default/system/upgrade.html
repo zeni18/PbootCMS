@@ -54,8 +54,8 @@
 	                     <label class="layui-form-label">更新分支</label>
 	                     <div class="layui-input-inline">
 	                     	 <select name="upgrade_branch">
-				             	<option value="1.X" {if([$branch]=='1.X')}selected{/if}>1.X 稳定版</option>
-				             	<option value="1.X.dev" {if([$branch]=='1.X.dev')}selected{/if} >1.X 测试版</option>
+				             	<option value="2.X" {if([$branch]=='2.X')}selected{/if}>2.X 稳定版</option>
+				             	<option value="2.X.dev" {if([$branch]=='2.X.dev')}selected{/if} >2.X 测试版</option>
 				             </select>
 	                     </div>
 	                </div>
@@ -86,7 +86,7 @@
 //页面加载时检查更新
 $.ajax({
     type: 'GET',
-	url: 'https://www.pbootcms.com/index.php/upgrade/check/version/{APP_VERSION}.{RELEASE_TIME}.{$revise}/branch/{$branch}',
+	url: 'https://www.pbootcms.com/index.php?p=upgrade/check&version={APP_VERSION}.{RELEASE_TIME}.{$revise}&branch={$branch}',
 	dataType: 'json',
 	success: function (response, status) {
 		 if(response.code==1){

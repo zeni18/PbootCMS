@@ -34,9 +34,6 @@ class Paging
     // 存储前置URL
     private $preUrl;
 
-    // 存储地址后缀
-    private $suffix;
-
     // 分页实例
     private static $paging;
 
@@ -80,13 +77,6 @@ class Paging
         
         // 计算页数
         $this->pageCount = @ceil($this->rowTotal / $this->pageSize);
-        
-        // 地址后缀
-        if (is_rewrite()) {
-            $this->suffix = Config::get('url_suffix');
-        } else {
-            $this->suffix = '';
-        }
         
         // 获取当前页面
         $this->page = $this->page();
@@ -148,23 +138,108 @@ class Paging
         }
     }
 
-    // 过滤分页，避免异常翻页URL
+    // 过滤pathinfo中分页参数
     private function getPreUrl()
     {
         if (! isset($this->preUrl) && URL) {
             $url = parse_url(URL);
             $path = preg_replace('/\/page\/[0-9]+/i', '', $url['path']);
-            $url_html_suffix = Config::get('url_suffix');
-            if (substr($path, - strlen($url_html_suffix)) == $url_html_suffix) {
-                $path = substr($path, 0, - strlen($url_html_suffix));
+            $url_rule_suffix = Config::get('url_rule_suffix');
+            if (! ! $pos = strripos($path, $url_rule_suffix)) {
+                $path = substr($path, 0, $pos);
             }
-            if ($path == '/') {
-                $this->preUrl = url('home/index/index', false);
-            } else {
-                $this->preUrl = $path;
-            }
+            $this->preUrl = $path;
         }
         return $this->preUrl;
+    }
+
+    // 构建链接地址
+    private function buildPath($page)
+    {
+        if ($page) {
+            if (defined('CMS_PAGE')) {
+                $url_rule_type = Config::get('url_rule_type') ?: 3;
+                $url_rule_dir = Config::get('url_rule_dir') ?: 0;
+                $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
+                $url_rule_level = Config::get('url_rule_level') ?: 1;
+                $url_break_char = Config::get('url_break_char') ?: '_';
+                $suffix = $url_rule_dir ? '/' : $url_rule_suffix;
+                
+                if ($url_rule_type == 1 || $url_rule_type == 2) {
+                    if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) { // 去分页参数
+                        $prepath = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($this->getPreUrl(), '/'));
+                    } else {
+                        $prepath = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', '$1', rtrim($this->getPreUrl(), '/'));
+                    }
+                    if ($prepath) {
+                        if ($page == 1) {
+                            $path = $prepath . $suffix . query_string('p,s');
+                        } else {
+                            $path = $prepath . $url_break_char . $page . $suffix . query_string('p,s');
+                        }
+                    } else {
+                        $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;
+                    }
+                } else {
+                    if (isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) {
+                        parse_str($qs, $output);
+                        $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
+                        unset($output[$path_qs]); // 去除路径参数
+                                                  
+                        // 非目录模式去后缀扩展
+                        $temp_suffix = substr($url_rule_suffix, 1);
+                        if (! ! $pos = strripos($path_qs, '_' . $temp_suffix)) {
+                            $path = substr($path_qs, 0, $pos); // 去扩展
+                        } else {
+                            $path = $path_qs;
+                        }
+                        
+                        // 去除原分页参数
+                        if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) {
+                            $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
+                        } else {
+                            $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
+                        }
+                        
+                        // 首页链接处理
+                        if ($page == 1) {
+                            $path = SITE_DIR . '/?' . $path . $suffix;
+                        } else {
+                            $path = SITE_DIR . '/?' . $path . $url_break_char . $page . $suffix;
+                        }
+                        
+                        // 重组地址
+                        if (! ! $qs = http_build_query($output)) {
+                            $path = $path . '&' . $qs;
+                        }
+                    } else {
+                        $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;
+                    }
+                }
+                return $path;
+            } else {
+                // 对于路径保留变量给予去除
+                if (M == 'home' && Config::get('url_rule_type') == 2) {
+                    $unset = 'p,s';
+                } elseif (Config::get('app_url_type') == 2) {
+                    $unset = 'p,s';
+                } else {
+                    $unset = null;
+                }
+                
+                if ($page == 1) {
+                    return $this->getPreUrl() . query_string($unset);
+                } else {
+                    if (query_string($unset)) {
+                        return $this->getPreUrl() . query_string($unset) . '&page=' . $page;
+                    } else {
+                        return $this->getPreUrl() . '?page=' . $page;
+                    }
+                }
+            }
+        } else {
+            return 'javascript:;';
+        }
     }
 
     // 分页条
@@ -194,19 +269,19 @@ class Paging
     private function pageIndex()
     {
         if (! $this->pageCount)
-            return;
-        return $this->getPreUrl() . '/page/1' . $this->suffix . $this->queryString();
+            return $this->buildPath('');
+        return $this->buildPath(1);
     }
 
     // 上一页链接
     private function pagePre()
     {
         if (! $this->pageCount)
-            return;
+            return $this->buildPath('');
         if ($this->page > 1) {
-            $pre_page = $this->getPreUrl() . '/page/' . ($this->page - 1) . $this->suffix . $this->queryString();
+            $pre_page = $this->buildPath($this->page - 1);
         } else {
-            $pre_page = 'javascript:;';
+            $pre_page = $this->buildPath('');
         }
         return $pre_page;
     }
@@ -215,11 +290,11 @@ class Paging
     private function pageNext()
     {
         if (! $this->pageCount)
-            return;
+            return $this->buildPath('');
         if ($this->page < $this->pageCount) {
-            $next_page = $this->getPreUrl() . '/page/' . ($this->page + 1) . $this->suffix . $this->queryString();
+            $next_page = $this->buildPath($this->page + 1);
         } else {
-            $next_page = 'javascript:;';
+            $next_page = $this->buildPath('');
         }
         return $next_page;
     }
@@ -228,8 +303,8 @@ class Paging
     private function pageLast()
     {
         if (! $this->pageCount)
-            return;
-        return $this->getPreUrl() . '/page/' . $this->pageCount . $this->suffix . $this->queryString();
+            return $this->buildPath('');
+        return $this->buildPath($this->pageCount);
     }
 
     // 数字分页,要修改数字显示的条数，请修改类头部num属性值
@@ -237,15 +312,17 @@ class Paging
     {
         if (! $this->pageCount)
             return;
-        $num_html = '';
+        
         if (M == 'admin') {
             $total = 5;
         } else {
             $total = $this->num;
         }
+        
         $halfl = intval($total / 2);
         $halfu = ceil($total / 2);
         
+        $num_html = '';
         if ($this->page > $halfu) {
             $num_html .= '<span class="page-num">···</span>';
         }
@@ -255,25 +332,25 @@ class Paging
                 if ($i > $this->pageCount)
                     break;
                 if ($this->page == $i) {
-                    $num_html .= '<a href="' . $this->getPreUrl() . '/page/' . $i . $this->suffix . $this->queryString() . '" class="page-num page-num-current">' . $i . '</a>';
+                    $num_html .= '<a href="' . $this->buildPath($i) . '" class="page-num page-num-current">' . $i . '</a>';
                 } else {
-                    $num_html .= '<a href="' . $this->getPreUrl() . '/page/' . $i . $this->suffix . $this->queryString() . '" class="page-num">' . $i . '</a>';
+                    $num_html .= '<a href="' . $this->buildPath($i) . '" class="page-num">' . $i . '</a>';
                 }
             }
         } elseif ($this->page + $halfl >= $this->pageCount) { // 当前页为倒数页以内
             for ($i = $this->pageCount - $total + 1; $i <= $this->pageCount; $i ++) {
                 if ($this->page == $i) {
-                    $num_html .= '<a href="' . $this->getPreUrl() . '/page/' . $i . $this->suffix . $this->queryString() . '" class="page-num page-num-current">' . $i . '</a>';
+                    $num_html .= '<a href="' . $this->buildPath($i) . '" class="page-num page-num-current">' . $i . '</a>';
                 } else {
-                    $num_html .= '<a href="' . $this->getPreUrl() . '/page/' . $i . $this->suffix . $this->queryString() . '" class="page-num">' . $i . '</a>';
+                    $num_html .= '<a href="' . $this->buildPath($i) . '" class="page-num">' . $i . '</a>';
                 }
             }
         } else { // 正常的前后各5页
             for ($i = $this->page - $halfl; $i <= $this->page + $halfl; $i ++) {
                 if ($this->page == $i) {
-                    $num_html .= '<a href="' . $this->getPreUrl() . '/page/' . $i . $this->suffix . $this->queryString() . '" class="page-num page-num-current">' . $i . '</a>';
+                    $num_html .= '<a href="' . $this->buildPath($i) . '" class="page-num page-num-current">' . $i . '</a>';
                 } else {
-                    $num_html .= '<a href="' . $this->getPreUrl() . '/page/' . $i . $this->suffix . $this->queryString() . '" class="page-num">' . $i . '</a>';
+                    $num_html .= '<a href="' . $this->buildPath($i) . '" class="page-num">' . $i . '</a>';
                 }
             }
         }
@@ -298,21 +375,7 @@ class Paging
                 $select_html .= '<option value="' . $i . '">跳到' . $i . '页</option>';
             }
         }
-        $select_html .= '</select><script>function changepage(tag){window.location.href="' . $this->getPreUrl() . '/page/"+tag.value+"' . $this->suffix . $this->queryString() . '";}</script>';
+        $select_html .= '</select><script>function changepage(tag){window.location.href="' . $this->buildPath('"+tag.value+"') . '";}</script>';
         return $select_html;
-    }
-
-    // URL查询字符
-    private function queryString()
-    {
-        if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
-            parse_str($qs, $output);
-            if (isset($output['page'])) {
-                unset($output['page']);
-            }
-            $qs = http_build_query($output);
-            if ($qs)
-                return '?' . $qs;
-        }
     }
 }

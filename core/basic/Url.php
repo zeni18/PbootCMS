@@ -24,9 +24,13 @@ class Url
         $path = trim_slash($path); // 去除两端斜线
         
         if (! isset(self::$urls[$path])) {
+            
             $path_arr = explode('/', $path); // 地址数组
-            if ($addExt) {
-                $url_ext = Config::get('url_suffix'); // 地址后缀
+            
+            if ($addExt && Config::get('app_url_type') == 2 && strrpos(strtolower($_SERVER["SCRIPT_NAME"]), 'index.php') !== false) {
+                $url_ext = Config::get('url_rule_suffix'); // 伪静态文件形式
+            } elseif (Config::get('app_url_type') == 1 || Config::get('app_url_type') == 2) {
+                $url_ext = '/'; // pathinfo目录形式
             } else {
                 $url_ext = '';
             }
@@ -61,22 +65,13 @@ class Url
                 }
             }
             
-            // 入口文件绑定匹配
-            if (defined('URL_BLIND') && $path_arr[0] == M) {
-                $cut_str = trim_slash(URL_BLIND);
-            } else {
-                $cut_str = '';
-            }
-            
             // 域名绑定处理匹配
-            if (! ! $domains = Config::get('app_domain_blind')) {
+            $cut_str = '';
+            if (! ! $domains = Config::get('app_domain_bind')) {
                 foreach ($domains as $key => $value) {
                     $value = trim_slash($value); // 去除两端斜线
                     if (strpos($path, $value . '/') === 0) {
-                        // 域名绑定的长度大于入口绑定的长度，则替换裁剪长度
-                        if ($cut_str && strpos($value, $cut_str) === false && strpos($cut_str, $value) === 0) {
-                            $cut_str = $value;
-                        }
+                        $cut_str = $value;
                         $server_name = get_http_host();
                         if ($server_name != $key) { // 绑定的域名与当前域名不一致时，添加主机地址
                             $host = is_https() ? 'https://' . $key : 'http://' . $key;
@@ -88,6 +83,11 @@ class Url
                 }
             }
             
+            // 入口文件绑定匹配
+            if (defined('URL_BIND') && $path_arr[0] == M) {
+                $cut_str = trim_slash(URL_BIND);
+            }
+            
             // 执行URL简化
             if ($cut_str) {
                 $path = substr($path, strlen($cut_str) + 1);
@@ -95,35 +95,56 @@ class Url
             
             // 保存处理过的地址
             if ($path) {
-                if ($path_arr[0] != M && $path_arr[0] == 'home') { // 对于后台处理home模块链接做特殊处理
-                    $path = substr($path, 5);
-                    if (Config::get('url_type') == 2) {
-                        self::$urls[$path] = $host . SITE_DIR . '/' . $path . $url_ext;
-                    } else {
-                        self::$urls[$path] = $host . SITE_DIR . '/index.php/' . $path;
-                    }
-                } else {
-                    if (is_rewrite()) {
-                        self::$urls[$path] = $host . self::getPrePath() . '/' . $path . $url_ext;
-                    } else {
-                        self::$urls[$path] = $host . self::getPrePath() . '/' . $path;
-                    }
-                }
+                self::$urls[$path] = $host . url_index_path() . '/' . $path . $url_ext;
             } else {
-                self::$urls[$path] = $host . self::getPrePath(); // 获取根路径前置地址
+                self::$urls[$path] = $host . url_index_path(); // 获取根路径前置地址
             }
         }
         return self::$urls[$path];
     }
 
-    // 获取地址前缀
-    private static function getPrePath()
+    // 生成前端地址
+    public static function home($path)
     {
-        if (is_rewrite()) {
-            $pre_path = SITE_DIR;
-        } else {
-            $pre_path = $_SERVER["SCRIPT_NAME"];
+        if (! isset(self::$urls[$path])) {
+            $url_rule_type = Config::get('url_rule_type') ?: 3;
+            $url_rule_dir = Config::get('url_rule_dir') ?: 0;
+            $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
+            $path = ltrim($path, '/');
+            
+            // 去除模块及控制器部分
+            if (! ! $pos = strpos($path, '/', 5)) {
+                $path = substr($path, $pos + 1);
+            }
+            
+            $path = trim($path, '/');
+            $suffix = $url_rule_dir ? '/' : $url_rule_suffix;
+            
+            switch ($url_rule_type) {
+                case '1': // 普通模式
+                    $link = SITE_DIR . '/index.php' . '/' . $path . $suffix;
+                    break;
+                case '2': // 伪静态模式
+                    $link = SITE_DIR . '/' . $path . $suffix;
+                    break;
+                case '3': // 兼容模式
+                    $link = SITE_DIR . '/?' . $path . $suffix;
+                    break;
+                default:
+                    error('地址模式设置错误,请登录后台重新设置！');
+            }
+            
+            if (! $path) {
+                if ($url_rule_type == 1) {
+                    $link = SITE_DIR . '/index.php';
+                } elseif ($url_rule_type == 2) {
+                    $link = SITE_DIR . '/';
+                } else {
+                    $link = SITE_DIR . '/?';
+                }
+            }
+            self::$urls[$path] = $link;
         }
-        return $pre_path;
+        return self::$urls[$path];
     }
 }

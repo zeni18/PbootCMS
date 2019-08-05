@@ -21,6 +21,7 @@ class Controller
         $content = $view->parser($file);
         $content = $this->runtime($content);
         echo $this->gzip($content);
+        exit();
     }
 
     // 解析模板
@@ -43,6 +44,7 @@ class Controller
         $content = $this->gzip($content);
         if ($display) {
             echo $content;
+            exit();
         } else {
             return $content;
         }

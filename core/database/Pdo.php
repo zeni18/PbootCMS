@@ -43,9 +43,20 @@ class Pdo implements Builder
     // 连接数据库，接受数据库连接参数，返回数据库连接对象
     public function conn($cfg)
     {
-        if (! extension_loaded('PDO')) {
-            die('未检测到您服务器环境的PDO数据库扩展，请检查php.ini中是否已经开启对应的数据库扩展！');
+        if (get_db_type() == 'sqlite' && ! extension_loaded('pdo_sqlite')) {
+            if (extension_loaded('SQLite3')) {
+                error('未检测到您服务器环境的pdo_sqlite数据库扩展，请检查php.ini中是否已经开启该扩展！<br>另外，检测到您服务器支持sqlite3扩展，您也可以修改数据库配置连接驱动为sqlite试试！');
+            } else {
+                error('未检测到您服务器环境的pdo_sqlite数据库扩展，请检查php.ini中是否已经开启对应的数据库扩展！');
+            }
+        } elseif (get_db_type() == 'mysql' && ! extension_loaded('pdo_mysql')) {
+            if (extension_loaded('mysqli')) {
+                error('未检测到您服务器环境的pdo_mysqli数据库扩展，请检查php.ini中是否已经开启该扩展！<br>另外，检测到您服务器支持mysqli扩展，您也可以修改数据库配置连接驱动为mysqli试试！');
+            } else {
+                error('未检测到您服务器环境的pdo_mysqli数据库扩展，请检查php.ini中是否已经开启对应的数据库扩展！');
+            }
         }
+        
         $charset = Config::get('database.charset') ?: 'utf8';
         switch (Config::get('database.type')) {
             case 'pdo_mysql':

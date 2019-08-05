@@ -4,7 +4,7 @@
 	{if([$list])}
 	<div class="layui-tab layui-tab-brief" lay-filter="tab">
 	  <ul class="layui-tab-title">
-	    <li class="layui-this" lay-id="t1">{$model_name}列表</li>
+	    <li class="layui-this" lay-id="t1">{$model_name}内容</li>
 	    <li lay-id="t2">{$model_name}新增</li>
 	  </ul>
 	  <div class="layui-tab-content">
@@ -12,6 +12,7 @@
 	  	   		<form action="{url./admin/Content/index/mcode/'.get('mcode').'}" method="get" class="layui-form">
 		  	   		<div class="layui-form-item nospace">
 		  	   			<div class="layui-input-inline">
+		  	   				{$pathinfo}
 					       <select name="scode">
 	                          	<option value="">全部栏目</option>
                                 {$search_select}
@@ -94,10 +95,17 @@
 			                    </td>
 			                    <td>[value->visits]</td>
 		                        <td>
-		                        	<a href="{url./home/content/index/id/'.$value->id.'}?nocache=1" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{php}$value->contenturl=$value->contenturl?:'content';{/php}
+		                        	{if($value->filename)}
+		                        	<input type="hidden" name="urls[]" value="{homeurl./home/Index/'.$value->filename.'}">
+		                        	<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{else}
+		                        	<input type="hidden" name="urls[]" value="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->id.'}">
+		                        	<a href="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->id.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{/if}
 		                            {fun=get_btn_del($value->id)}
 		                            {if(check_level('mod'))}
-		                            	<a href="{url./admin/Content/mod/mcode/'.get('mcode').'/id/'.$value->id.'}?backurl={$backurl}" class="layui-btn layui-btn-xs" >修改</a>
+		                            	<a href="{url./admin/Content/mod/mcode/'.get('mcode').'/id/'.$value->id.'}{$btnqs}" class="layui-btn layui-btn-xs" >修改</a>
 		                            {/if}
 		                        </td>
 		                    </tr>
@@ -140,7 +148,7 @@
 	  	   </div>
 	  	   
 	  	   <div class="layui-tab-item">
-	  	  		<form action="{url./admin/Content/add/mcode/'.get('mcode').'}?{$server.QUERY_STRING}" method="post" class="layui-form" lay-filter="content" id="edit">
+	  	  		<form action="{url./admin/Content/add/mcode/'.get('mcode').'}" method="post" class="layui-form" lay-filter="content" id="edit">
 		  	     	<input type="hidden" name="formcheck" value="{$formcheck}" > 
 		  	     	<div class="layui-tab">
 					  <ul class="layui-tab-title">
@@ -150,7 +158,7 @@
 					  <div class="layui-tab-content">
 					    <div class="layui-tab-item layui-show">
 					    	<div class="layui-form-item">
-			                     <label class="layui-form-label">内容栏目</label>
+			                     <label class="layui-form-label">内容栏目   <span class="layui-text-red">*</span></label>
 			                     <div class="layui-input-block">
 			                     	<select name="scode" lay-verify="required">
 				                        <option value="">请选择内容栏目</option>
@@ -160,7 +168,7 @@
 			                </div>
 			                
 			                <div class="layui-form-item">
-			                     <label class="layui-form-label">内容标题</label>
+			                     <label class="layui-form-label">内容标题   <span class="layui-text-red">*</span></label>
 			                     <div class="layui-input-block">
 			                     	<input type="text" name="title" required lay-verify="required" placeholder="请输入内容标题" class="layui-input">
 			                     </div>
@@ -406,14 +414,14 @@
 			                <div class="layui-form-item">
 			                     <label class="layui-form-label">SEO关键字</label>
 			                     <div class="layui-input-block">
-			                     	<input type="text" name="keywords" placeholder="请输入内容页SEO关键字" class="layui-input">
+			                     	<input type="text" name="keywords" placeholder="请输入详情页SEO关键字" class="layui-input">
 			                     </div>
 			                </div>
 			                
 			                <div class="layui-form-item">
 			                     <label class="layui-form-label">SEO描述</label>
 			                     <div class="layui-input-block">
-			                     	<textarea name="description" placeholder="请输入内容页SEO描述" class="layui-textarea"></textarea>
+			                     	<textarea name="description" placeholder="请输入详情页SEO描述" class="layui-textarea"></textarea>
 			                     </div>
 			                </div>
 			                
@@ -447,7 +455,7 @@
 	  </ul>
 	  <div class="layui-tab-content">
 	  	<div class="layui-tab-item layui-show">
-	  		<form action="{url./admin/Content/mod/id/'.[$get.id].'}?{$server.QUERY_STRING}" method="post" class="layui-form" id="edit">
+	  		<form action="{url./admin/Content/mod/id/'.[$get.id].'}{$backurl}" method="post" class="layui-form" id="edit">
 	  			<input type="hidden" name="formcheck" value="{$formcheck}" > 
 	  			<div class="layui-tab">
 					  <ul class="layui-tab-title">
@@ -457,7 +465,7 @@
 					  <div class="layui-tab-content">
 					    <div class="layui-tab-item layui-show">
 					    	<div class="layui-form-item">
-			                     <label class="layui-form-label">内容栏目</label>
+			                     <label class="layui-form-label">内容栏目   <span class="layui-text-red">*</span></label>
 			                     <div class="layui-input-block">
 			                     	<select name="scode" lay-verify="required">
 				                        <option value="">请选择内容栏目</option>
@@ -467,7 +475,7 @@
 			                </div>
 			                
 			                <div class="layui-form-item">
-			                     <label class="layui-form-label">内容标题</label>
+			                     <label class="layui-form-label">内容标题   <span class="layui-text-red">*</span></label>
 			                     <div class="layui-input-block">
 			                     	<input type="text" name="title" required lay-verify="required" value="{$content->title}" placeholder="请输入内容标题" class="layui-input">
 			                     </div>
@@ -747,14 +755,14 @@
 			                <div class="layui-form-item">
 			                     <label class="layui-form-label">SEO关键字</label>
 			                     <div class="layui-input-block">
-			                     	<input type="text" name="keywords" value="{$content->keywords}"  placeholder="请输入内容页SEO关键字" class="layui-input">
+			                     	<input type="text" name="keywords" value="{$content->keywords}"  placeholder="请输入详情页SEO关键字" class="layui-input">
 			                     </div>
 			                </div>
 			                
 			                <div class="layui-form-item">
 			                     <label class="layui-form-label">SEO描述</label>
 			                     <div class="layui-input-block">
-			                     	<textarea name="description" placeholder="请输入内容页SEO描述" class="layui-textarea">{$content->description}</textarea>
+			                     	<textarea name="description" placeholder="请输入详情页SEO描述" class="layui-textarea">{$content->description}</textarea>
 			                     </div>
 			                </div>
 			                

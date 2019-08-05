@@ -13,19 +13,34 @@ use core\basic\Config;
 class Check
 {
 
+    // 启动应用检查
+    public static function checkApp()
+    {
+        if (! is_dir(APP_PATH)) {
+            error('您的系统文件无法正常读取，请检查是否上传完整！');
+        }
+        
+        // 判断自动转换状态
+        if (function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()) {
+            error('您的服务器环境PHP.ini中magic_quotes_gpc配置为On状态，会导致数据存储异常，请先设置为Off状态，或者切换更高版本PHP。');
+        }
+        
+        // 判断目录列表函数
+        if (! function_exists('scandir')) {
+            error('您的服务器环境PHP.ini配置中已经禁用scandir函数，会导致无法正常读取配置及模板文件，请先去除。');
+        }
+        
+        // 检查gd扩展
+        if (! extension_loaded('gd')) {
+            error('您的服务器环境不支持gd扩展,将无法使用验证码！');
+        }
+    }
+
     // 检查PHP版本
     public static function checkPHP()
     {
         if (PHP_VERSION < '5.3') {
             error('您服务器的PHP版本太低，本程序要求版本不小于 5.3');
-        }
-    }
-
-    // 检查go扩展库
-    public static function checkGo()
-    {
-        if (! extension_loaded('gd')) {
-            error('您的服务器环境不支持gd扩展,将无法使用验证码！');
         }
     }
 
@@ -54,43 +69,12 @@ class Check
             check_dir(CONF_PATH, true);
         }
         
-        check_dir(RUN_PATH, true);
-        check_dir(DOC_PATH . STATIC_DIR . '/upload', true);
-        
-        // 检查中文路径问题
-        if (__FILE__ != iconv('GB2312', 'UTF-8', __FILE__)) {
-            error('站点目录请不要使用中文路径！');
-        }
-        
         // 目录权限判断
-        if (! is_writable(RUN_PATH)) {
-            error('缓存目录写入权限不足！' . RUN_PATH);
+        if (! check_dir(RUN_PATH, true)) {
+            error('缓存目录创建失败，可能写入权限不足！' . RUN_PATH);
         }
-        if (! is_writable(DOC_PATH . STATIC_DIR . '/upload')) {
-            error('上传目录写入权限不足！' . DOC_PATH . STATIC_DIR . '/upload');
-        }
-    }
-
-    // 启动应用检查
-    public static function checkApp()
-    {
-        if (! is_dir(APP_PATH)) {
-            error('系统尚未初始化，请打开系统调试模式！');
-        }
-        
-        // 获取系统发布的应用
-        $apps = Config::get('public_app', true);
-        // 检查发布的模块是否存在
-        ! $apps ? error('请设置可访问模块！') : '';
-        
-        // 判断自动转换状态
-        if (function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()) {
-            error('您系统PHP.ini配置magic_quotes_gpc为On状态，会导致数据存储异常，请先设置为Off状态.');
-        }
-        
-        // 判断目录列表函数
-        if (! function_exists('scandir')) {
-            error('您系统PHP.ini配置中已经禁用scandir函数，会导致无法正常读取配置及模板文件，请先去除.');
+        if (! check_dir(DOC_PATH . STATIC_DIR . '/upload', true)) {
+            error('上传目录创建失败，可能写入权限不足！' . DOC_PATH . STATIC_DIR . '/upload');
         }
     }
 

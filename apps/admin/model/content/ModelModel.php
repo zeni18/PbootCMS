@@ -104,6 +104,10 @@ class ModelModel extends Model
     // 删除内容模型
     public function delModel($id)
     {
+        $model = parent::table('ay_model')->where('id=' . $id)->find();
+        if (parent::table('ay_content_sort')->where("mcode='$model->mcode'")->find()) {
+            alert_back('模型下面有栏目，不允许直接删除！');
+        }
         return parent::table('ay_model')->where("id=$id")
             ->where("issystem=0")
             ->delete();
@@ -115,5 +119,21 @@ class ModelModel extends Model
         return parent::table('ay_model')->autoTime()
             ->where("id=$id")
             ->update($data);
+    }
+
+    // 检查列表页URL名字
+    public function checkListUrl($listurl, $type, $where = array())
+    {
+        return parent::table('ay_model')->where("listurl='$listurl' AND type<>$type")
+            ->where($where)
+            ->find();
+    }
+
+    // 检查详情页URL名字
+    public function checkContentUrl($contenturl, $type, $where = array())
+    {
+        return parent::table('ay_model')->where("contenturl='$contenturl' AND type<>$type")
+            ->where($where)
+            ->find();
     }
 }

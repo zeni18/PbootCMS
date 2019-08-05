@@ -11,13 +11,13 @@ return array(
     'sn' => '281BE285D7',
     
     // 内核版本
-    'core_version' => '1.6.1',
+    'core_version' => '1.7.0',
     
     // 配置模块
     'public_app' => 'home,admin,api',
     
-    // 设置URL模式,1、基本模式,2、伪静态模式，3、兼容模式
-    'url_type' => 1,
+    // 设置URL模式(此处不影响CMS前端模式),1、基本模式,2、伪静态模式，3、兼容模式
+    'app_url_type' => 3,
     
     // 模板编译缓存开关
     'tpl_parser_cache' => 1,
@@ -31,14 +31,17 @@ return array(
     // URL允许的特殊字符，正则模型或直接写 ,如：\*
     'url_allow_char' => '',
     
+    // 前台URL分隔符
+    'url_break_char' => '_',
+    
     // URL地址后缀名
-    'url_suffix' => '.html',
+    'url_rule_suffix' => '.html',
     
     // URL地址路由，如：// 'home/index' => 'home/index/index'
     'url_route' => array(),
     
     // 应用域名绑定 ，支持到模块、控制器、方法，如：'localhost'=>'admin'
-    'app_domain_blind' => array(),
+    'app_domain_bind' => array(),
     
     // 模块模板路径定义,不定义均采用框架默认
     'tpl_dir' => array(

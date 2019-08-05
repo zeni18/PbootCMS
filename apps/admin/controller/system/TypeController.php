@@ -83,7 +83,7 @@ class TypeController extends Controller
                 if (! ! $backurl = get('backurl')) {
                     success('新增成功！', base64_decode($backurl));
                 } else {
-                    success('新增成功！', url('/admin/type/index'));
+                    success('新增成功！', url('/admin/Type/index'));
                 }
             } else {
                 $this->log('新增类型' . $tcode . '-' . $item . '失败！');

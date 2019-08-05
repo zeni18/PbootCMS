@@ -1,4 +1,11 @@
 <?php
+/**
+ * @copyright (C)2016-2099 Hnaoyun Inc.
+ * @author XingMeng
+ * @email hnxsh@foxmail.com
+ * @date 2018年04月12日
+ *  前台公共控制类
+ */
 namespace app\common;
 
 use core\basic\Controller;
@@ -10,8 +17,24 @@ class HomeController extends Controller
     public function __construct()
     {
         // 自动缓存基础信息
-        cache_lg();
         cache_config();
+        
+        // 语言绑定域名检测， 如果匹配到多语言绑定则自动设置当前语言
+        $lgs = Config::get('lgs');
+        if (count($lgs) > 1) {
+            $domain = get_http_host();
+            foreach ($lgs as $value) {
+                if ($value['domain'] == $domain) {
+                    cookie('lg', $value['acode']);
+                    break;
+                }
+            }
+        }
+        
+        // 未设置语言时使用默认语言
+        if (! isset($_COOKIE['lg'])) {
+            cookie('lg', get_default_lg());
+        }
         
         // 手机自适应主题
         if ($this->config('open_wap')) {

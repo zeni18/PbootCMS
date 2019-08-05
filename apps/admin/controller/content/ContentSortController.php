@@ -46,7 +46,13 @@ class ContentSortController extends Controller
         $this->assign('sort_select', $sort_select);
         
         // 模板文件
-        $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . session('site.theme')));
+        $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme()));
+        
+        // 前端地址连接符判断
+        $url_rule_level = $this->config('url_rule_level') ?: 1;
+        $url_break_char = $this->config('url_break_char') ?: '_';
+        $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
+        $this->assign('url_connector', $url_connector);
         
         $this->display('content/contentsort.html');
     }
@@ -74,6 +80,10 @@ class ContentSortController extends Controller
             $this->outData[$this->count]->outlink = $value->outlink;
             $this->outData[$this->count]->sorting = $value->sorting;
             $this->outData[$this->count]->status = $value->status;
+            $this->outData[$this->count]->filename = $value->filename;
+            $this->outData[$this->count]->type = $value->type;
+            $this->outData[$this->count]->listurl = $value->listurl;
+            $this->outData[$this->count]->contenturl = $value->contenturl;
             $this->outData[$this->count]->create_user = $value->create_user;
             $this->outData[$this->count]->update_user = $value->update_user;
             $this->outData[$this->count]->create_time = $value->create_time;
@@ -188,6 +198,10 @@ class ContentSortController extends Controller
                     alert_back('栏目类型不能为空！');
                 }
                 
+                if ($filename && ! preg_match('/^[\w\-]+$/', $filename)) {
+                    alert_back('栏目自定义路径名称只允许字母、数字、横线组成!');
+                }
+                
                 // 缩放缩略图
                 if ($ico) {
                     resize_img(ROOT_PATH . $ico, '', $this->config('ico.max_width'), $this->config('ico.max_height'));
@@ -255,7 +269,7 @@ class ContentSortController extends Controller
             $this->assign('sort_select', $sort_select);
             
             // 模板文件
-            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . session('site.theme')));
+            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme()));
             
             // 内容模型
             $models = model('admin.content.Model');
@@ -395,14 +409,18 @@ class ContentSortController extends Controller
                 alert_back('栏目类型不能为空！');
             }
             
+            if ($filename && ! preg_match('/^[\w\-]+$/', $filename)) {
+                alert_back('栏目自定义路径名称只允许字母、数字、横线组成!');
+            }
+            
             // 缩放缩略图
             if ($ico) {
                 resize_img(ROOT_PATH . $ico, '', $this->config('ico.max_width'), $this->config('ico.max_height'));
             }
             
             if ($filename) {
-                while ($this->model->checkFilename("filename='$filename' and scode<>'$scode'")) {
-                    $filename = $filename . '_' . mt_rand(1, 20);
+                while ($this->model->checkFilename("filename='$filename'", "scode<>'$scode'")) {
+                    $filename = $filename . '-' . mt_rand(1, 20);
                 }
             }
             
@@ -454,7 +472,7 @@ class ContentSortController extends Controller
             $this->assign('sort_select', $sort_select);
             
             // 模板文件
-            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . session('site.theme')));
+            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme()));
             
             // 内容模型
             $models = model('admin.content.Model');

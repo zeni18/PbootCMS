@@ -291,15 +291,21 @@ class CmsController extends Controller
         }
         
         // 去除特殊键值
+        unset($where3['appid']);
+        unset($where3['timestamp']);
+        unset($where3['signature']);
         unset($where3['keyword']);
         unset($where3['field']);
         unset($where3['scode']);
         unset($where3['page']);
         unset($where3['from']);
         unset($where3['isappinstalled']);
-        unset($where3['appid']);
-        unset($where3['timestamp']);
-        unset($where3['signature']);
+        unset($where3['tdsourcetag']);
+        unset($where3['x']);
+        unset($where3['y']);
+        unset($where3['searchtpl']);
+        unset($where3['p']);
+        unset($where3['s']);
         
         // 读取数据
         $data = $this->model->getLists($acode, $scode, $num, $order, $where1, $where2, $where3, $fuzzy);
@@ -365,6 +371,8 @@ class CmsController extends Controller
                 }
             }
             
+            $status = $this->config('message_verify') == '0' ? 1 : 0;
+            
             // 设置其他字段
             if ($data) {
                 $data['acode'] = get('acode', 'var') ?: $this->lg;
@@ -372,26 +380,26 @@ class CmsController extends Controller
                 $data['user_os'] = get_user_os();
                 $data['user_bs'] = get_user_bs();
                 $data['recontent'] = '';
-                $data['status'] = 0;
+                $data['status'] = $status;
                 $data['create_user'] = 'api';
                 $data['update_user'] = 'api';
             }
             
             // 写入数据
             if ($this->model->addMessage($value->table_name, $data)) {
-                $this->log('API提交表单数据成功！');
+                $this->log('API提交留言数据成功！');
                 if ($this->config('message_send_mail') && $this->config('message_send_to')) {
-                    $mail_subject = "【PbootCMS】您有新的表单数据，请注意查收！";
+                    $mail_subject = "【PbootCMS】您有新的" . $value->form_name . "信息，请注意查收！";
                     $mail_body .= '<br>来自网站' . get_http_url() . '（' . date('Y-m-d H:i:s') . '）';
                     sendmail($this->config(), $this->config('message_send_to'), $mail_subject, $mail_body);
                 }
-                json(1, '表单提交成功！');
+                json(1, '留意提交成功！');
             } else {
-                $this->log('API提交表单数据失败！');
-                json(0, '表单提交失败！');
+                $this->log('API提交留言数据失败！');
+                json(0, '留言提交失败！');
             }
         } else {
-            json(0, '表单提交失败，请使用POST方式提交！');
+            json(0, '留言提交失败，请使用POST方式提交！');
         }
     }
 
@@ -457,8 +465,8 @@ class CmsController extends Controller
             // 写入数据
             if ($this->model->addForm($value->table_name, $data)) {
                 $this->log('API提交表单数据成功！');
-                if ($this->config('message_send_mail') && $this->config('message_send_to')) {
-                    $mail_subject = "【PbootCMS】您有新的表单数据，请注意查收！";
+                if ($this->config('form_send_mail') && $this->config('message_send_to')) {
+                    $mail_subject = "【PbootCMS】您有新的" . $value->form_name . "信息，请注意查收！";
                     $mail_body .= '<br>来自网站' . get_http_url() . '（' . date('Y-m-d H:i:s') . '）';
                     sendmail($this->config(), $this->config('message_send_to'), $mail_subject, $mail_body);
                 }

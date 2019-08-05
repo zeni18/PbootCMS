@@ -16,6 +16,7 @@ define('START_TIME', microtime(true));
 // 设置字符集编码、IE文档模式
 header('Content-Type:text/html; charset=utf-8');
 header('X-UA-Compatible:IE=edge,chrome=1');
+header('X-Powered-By:PbootCMS');
 
 // 设置中国时区
 date_default_timezone_set('Asia/Shanghai');
@@ -82,7 +83,7 @@ set_error_handler('core\basic\Basic::errorHandler');
 // 设置异常捕获函数
 set_exception_handler('core\basic\Basic::exceptionHandler');
 
-// 注册php中止时执行的函数
+// 注册异常中止函数
 register_shutdown_function('core\basic\Basic::shutdownFunction');
 
 // 调试模式设置错误报告级别并进行环境检查
@@ -94,7 +95,6 @@ if (Config::get('debug')) {
 }
 
 // 环境检查
-Check::checkGo(); // 检查go扩展
 Check::checkApp(); // 检查APP配置
 Check::checkBasicDir(); // 检查基础目录
 Basic::setSessionHandler();// 会话处理程序选择

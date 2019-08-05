@@ -28,6 +28,34 @@ class ParserModel extends Model
     // 下一篇
     protected $next;
 
+    // 获取模型数据
+    public function getModel($urlname)
+    {
+        return parent::table('ay_model')->where("listurl='$urlname' OR contenturl='$urlname'")->find();
+    }
+
+    // 检查是否为栏目自定义名称
+    public function checkSortFilename($filename)
+    {
+        $join = array(
+            'ay_model b',
+            'a.mcode=b.mcode',
+            'LEFT'
+        );
+        return parent::table('ay_content_sort a')->field('a.scode,b.type')
+            ->join($join)
+            ->where("a.filename='$filename'")
+            ->find();
+    }
+
+    // 检查是否为内容自定义名称
+    public function checkContentFilename($filename)
+    {
+        return parent::table('ay_content')->field('id')
+            ->where("filename='$filename'")
+            ->find();
+    }
+
     // 站点配置信息
     public function getSite()
     {
@@ -52,7 +80,9 @@ class ParserModel extends Model
         $field = array(
             'a.*',
             'c.name AS parentname',
-            'b.type'
+            'b.type',
+            'b.listurl',
+            'b.contenturl'
         );
         $join = array(
             array(
@@ -78,7 +108,9 @@ class ParserModel extends Model
         $field = array(
             'a.*',
             'c.name AS parentname',
-            'b.type'
+            'b.type',
+            'b.listurl',
+            'b.contenturl'
         );
         $join = array(
             array(
@@ -133,7 +165,9 @@ class ParserModel extends Model
     {
         $fields = array(
             'a.*',
-            'b.type'
+            'b.type',
+            'b.listurl',
+            'b.contenturl'
         );
         $join = array(
             'ay_model b',
@@ -221,7 +255,9 @@ class ParserModel extends Model
                 'a.name',
                 'a.filename',
                 'a.outlink',
-                'b.type'
+                'b.type',
+                'b.listurl',
+                'b.contenturl'
             );
             $join = array(
                 'ay_model b',
@@ -252,6 +288,8 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
+            'd.listurl',
+            'd.contenturl',
             'e.*'
         );
         $join = array(
@@ -323,6 +361,8 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
+            'd.listurl',
+            'd.contenturl',
             'e.*'
         );
         $join = array(
@@ -394,6 +434,8 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
+            'd.listurl',
+            'd.contenturl',
             'e.*'
         );
         $join = array(
@@ -438,6 +480,8 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
+            'd.listurl',
+            'd.contenturl',
             'e.*'
         );
         $join = array(
@@ -498,7 +542,7 @@ class ParserModel extends Model
     }
 
     // 指定分类标签调用
-    public function getAllTags($scode)
+    public function getSortTags($scode)
     {
         $join = array(
             array(
@@ -540,12 +584,37 @@ class ParserModel extends Model
         if (! $this->pre) {
             $this->scodes = array();
             $scodes = $this->getSubScodes($scode);
-            $this->pre = parent::table('ay_content')->field('id,title,filename')
-                ->where("id<$id")
-                ->in('scode', $scodes)
-                ->where("acode='" . get_lg() . "'")
-                ->where('status=1')
-                ->order('id DESC')
+            
+            $field = array(
+                'a.id',
+                'a.title',
+                'a.filename',
+                'a.ico',
+                'c.type',
+                'c.listurl',
+                'c.contenturl'
+            );
+            
+            $join = array(
+                array(
+                    'ay_content_sort b',
+                    'a.scode=b.scode',
+                    'LEFT'
+                ),
+                array(
+                    'ay_model c',
+                    'b.mcode=c.mcode',
+                    'LEFT'
+                )
+            );
+            
+            $this->pre = parent::table('ay_content a')->field($field)
+                ->where("a.id<$id")
+                ->join($join)
+                ->in('a.scode', $scodes)
+                ->where("a.acode='" . get_lg() . "'")
+                ->where('a.status=1')
+                ->order('a.id DESC')
                 ->find();
         }
         return $this->pre;
@@ -557,12 +626,37 @@ class ParserModel extends Model
         if (! $this->next) {
             $this->scodes = array();
             $scodes = $this->getSubScodes($scode);
-            $this->next = parent::table('ay_content')->field('id,title,filename')
-                ->where("id>$id")
-                ->in('scode', $scodes)
-                ->where("acode='" . get_lg() . "'")
-                ->where('status=1')
-                ->order('id ASC')
+            
+            $field = array(
+                'a.id',
+                'a.title',
+                'a.filename',
+                'a.ico',
+                'c.type',
+                'c.listurl',
+                'c.contenturl'
+            );
+            
+            $join = array(
+                array(
+                    'ay_content_sort b',
+                    'a.scode=b.scode',
+                    'LEFT'
+                ),
+                array(
+                    'ay_model c',
+                    'b.mcode=c.mcode',
+                    'LEFT'
+                )
+            );
+            
+            $this->next = parent::table('ay_content a')->field($field)
+                ->where("a.id>$id")
+                ->join($join)
+                ->in('a.scode', $scodes)
+                ->where("a.acode='" . get_lg() . "'")
+                ->where('a.status=1')
+                ->order('a.id ASC')
                 ->find();
         }
         return $this->next;
@@ -681,6 +775,7 @@ class ParserModel extends Model
     public function getTags()
     {
         return parent::table('ay_tags')->field('name,link')
+            ->where("acode='" . get_lg() . "'")
             ->order('length(name) desc')
             ->select();
     }

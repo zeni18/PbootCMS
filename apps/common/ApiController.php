@@ -17,7 +17,6 @@ class ApiController extends Controller
     public function __construct()
     {
         // 自动缓存基础信息
-        cache_lg();
         cache_config();
         $this->checkAccess($this->config());
     }

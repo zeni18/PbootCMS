@@ -15,7 +15,10 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        // 登录后注入菜单信息
+        // 自动缓存基础信息
+        cache_config();
+        
+        // 检测登录，未登录跳转登录页面，已登录执行数据处理
         if ($this->checkLogin()) {
             // 权限检测
             $this->checkLevel();
@@ -31,19 +34,22 @@ class AdminController extends Controller
                 }
             } else {
                 session_unset();
-                error('您账号的区域权限设置有误，无法正常登录！', url('/admin/index/index'), 10);
+                error('您账号的区域权限设置有误，无法正常登录！', url('/admin/Index/index'), 10);
+            }
+            
+            // 内容模型菜单注入
+            $models = model('admin.content.Model');
+            $this->assign('menu_models', $models->getModelMenu());
+            
+            // 注入编码后的回跳地址
+            $this->assign('btnqs', get_btn_qs());
+            $this->assign('backurl', get_backurl());
+            
+            // 兼容模式form使用get搜索时注入pathinfo隐藏域
+            if ($_GET['p'] && $this->config('app_url_type') == 3) {
+                $this->assign('pathinfo', '<input name="p" type="hidden" value="' . get('p') . '">');
             }
         }
-        
-        // 站点基础信息
-        $model = new AdminModel();
-        session('site', $model->getSite());
-        cache_lg();
-        cache_config();
-        
-        // 内容模型菜单注入
-        $models = model('admin.content.Model');
-        $this->assign('menu_models', $models->getModelMenu());
         
         // 不进行表单检验的控制器
         $nocheck = array(
@@ -77,9 +83,7 @@ class AdminController extends Controller
         if (($_POST || ! issetSession('formcheck')) && ! (C == 'Index' && F == 'upload') && ! (C == 'Index' && F == 'login')) {
             session('formcheck', get_uniqid());
         }
-        
         $this->assign('formcheck', session('formcheck')); // 注入formcheck模板变量
-        $this->assign('backurl', base64_encode(URL)); // 注入编码后的回跳地址
     }
 
     // 后台用户登录状态检查
@@ -87,15 +91,15 @@ class AdminController extends Controller
     {
         // 免登录可访问页面
         $public_path = array(
-            '/admin/Index/index', // 登陆页面
-            '/admin/Index/login' // 执行登陆
+            '/admin/Index/index', // 登录页面
+            '/admin/Index/login' // 执行登录
         );
         
         if (session('sid') && $this->checkSid()) { // 如果已经登录直接true
             return true;
         } elseif (in_array('/' . M . '/' . C . '/' . F, $public_path)) { // 免登录可访问页面
             return false;
-        } else { // 未登陆跳转到登陆页面
+        } else { // 未登录跳转到登录页面
             location(url('/admin/Index/index'));
         }
     }
@@ -103,7 +107,7 @@ class AdminController extends Controller
     // 检查会话id
     private function checkSid()
     {
-        $sid = encrypt_string(session_id() . $_SERVER['HTTP_USER_AGENT'] . session('id'));
+        $sid = encrypt_string(session_id() . session('id'));
         if ($sid != session('sid') || session('M') != M) {
             session_destroy();
             return false;
@@ -115,11 +119,11 @@ class AdminController extends Controller
     // 访问权限检查
     private function checkLevel()
     {
-        // 免权限等级认证页面，即所有登陆用户都可以访问
+        // 免权限等级认证页面，即所有登录用户都可以访问
         $public_path = array(
-            '/admin/Index/index', // 登陆页
+            '/admin/Index/index', // 登录页
             '/admin/Index/home', // 主页
-            '/admin/Index/loginOut', // 退出登陆
+            '/admin/Index/loginOut', // 退出登录
             '/admin/Index/ucenter', // 用户中心
             '/admin/Index/area', // 区域选择
             '/admin/Index/clearCache', // 清理缓存

@@ -50,7 +50,6 @@ class ConfigController extends Controller
                     'sn',
                     'sn_user',
                     'pagenum',
-                    'url_type',
                     'tpl_html_cache',
                     'tpl_html_cache_time',
                     'session_in_sitepath'
@@ -69,24 +68,28 @@ class ConfigController extends Controller
             
             $this->log('修改参数配置成功！');
             path_delete(RUN_PATH . '/config'); // 清理缓存的配置文件
+            
             switch (post('submit')) {
                 case 'email':
-                    success('修改成功！', url('/admin/Config/index?#tab=t2', false));
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t2'), false));
                     break;
                 case 'baidu':
-                    success('修改成功！', url('/admin/Config/index?#tab=t3', false));
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t3'), false));
                     break;
                 case 'api':
-                    success('修改成功！', url('/admin/Config/index?#tab=t4', false));
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t4'), false));
                     break;
                 case 'watermark':
-                    success('修改成功！', url('/admin/Config/index?#tab=t5', false));
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t5'), false));
                     break;
                 case 'security':
-                    success('修改成功！', url('/admin/Config/index?#tab=t6', false));
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t6'), false));
+                    break;
+                case 'urlrule':
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t7'), false));
                     break;
                 case 'upgrade':
-                    success('修改成功！', url('/admin/Upgrade/index?#tab=t2', false));
+                    success('修改成功！', url('/admin/Upgrade/index' . get_tab('t2'), false));
                     break;
                 default:
                     success('修改成功！', url('/admin/Config/index', false));
@@ -113,19 +116,6 @@ class ConfigController extends Controller
         if (! preg_match('/^[\w\s\,\-]+$/', $value)) {
             return;
         }
-        // 如果开启伪静态时自动拷贝文件
-        if ($key == 'url_type' && $value == 2) {
-            $soft = get_server_soft();
-            if ($soft == 'iis') {
-                if (! file_exists(ROOT_PATH . '/web.config')) {
-                    copy(ROOT_PATH . '/rewrite/web.config', ROOT_PATH . '/web.config');
-                }
-            } elseif ($soft == 'apache') {
-                if (! file_exists(ROOT_PATH . '/web.config')) {
-                    copy(ROOT_PATH . '/rewrite/.htaccess', ROOT_PATH . '/.htaccess');
-                }
-            }
-        }
         
         $config = file_get_contents(CONF_PATH . '/config.php');
         if (preg_match("'$key'", $config)) {
@@ -143,6 +133,20 @@ class ConfigController extends Controller
     // 修改数据库配置
     private function modDbConfig($key)
     {
+        // 如果开启伪静态时自动拷贝文件
+        if ($key == 'url_rule_type' && post($key) == 2) {
+            $soft = get_server_soft();
+            if ($soft == 'iis') {
+                if (! file_exists(ROOT_PATH . '/web.config')) {
+                    copy(ROOT_PATH . '/rewrite/web.config', ROOT_PATH . '/web.config');
+                }
+            } elseif ($soft == 'apache') {
+                if (! file_exists(ROOT_PATH . '/web.config')) {
+                    copy(ROOT_PATH . '/rewrite/.htaccess', ROOT_PATH . '/.htaccess');
+                }
+            }
+        }
+        
         if ($this->model->checkConfig("name='$key'")) {
             $this->model->modValue($key, post($key));
         } elseif ($key != 'submit' && $key != 'formcheck') {

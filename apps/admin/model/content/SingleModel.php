@@ -27,7 +27,9 @@ class SingleModel extends Model
             'b.mcode',
             'a.ico',
             'a.pics',
-            'a.outlink'
+            'a.outlink',
+            'b.filename',
+            'c.contenturl'
         );
         $join = array(
             array(
@@ -66,7 +68,9 @@ class SingleModel extends Model
             'b.mcode',
             'a.ico',
             'a.pics',
-            'a.outlink'
+            'a.outlink',
+            'b.filename',
+            'c.contenturl'
         );
         $join = array(
             array(
@@ -106,7 +110,9 @@ class SingleModel extends Model
         $field = array(
             'a.*',
             'b.name as sort_name',
-            'c.*'
+            'c.*',
+            'b.filename',
+            'd.contenturl'
         );
         $join = array(
             array(
@@ -118,6 +124,11 @@ class SingleModel extends Model
             array(
                 'ay_content_ext c',
                 'a.id=c.contentid',
+                'LEFT'
+            ),
+            array(
+                'ay_model d',
+                'b.mcode=d.mcode',
                 'LEFT'
             )
         );
