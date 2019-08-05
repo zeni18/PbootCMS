@@ -68,6 +68,14 @@ class ModelController extends Controller
                 alert_back('URL名称只允许字母、数字、横线组成!');
             }
             
+            if ($this->model->checkUrlname($urlname, $type)) {
+                alert_back('URL名称与其他模型冲突，请换一个名称！');
+            }
+            
+            if ($this->model->checkSortFilename($urlname)) {
+                alert_back('URL名称与栏目自定义名称冲突，请换一个名称！');
+            }
+            
             // 构建数据
             $data = array(
                 'mcode' => $mcode,
@@ -157,6 +165,14 @@ class ModelController extends Controller
             
             if ($urlname && ! preg_match('/^[\w\-]+$/', $urlname)) {
                 alert_back('列表页URL名称只允许字母、数字、横线组成!');
+            }
+            
+            if ($this->model->checkUrlname($urlname, $type, "id<>$id")) {
+                alert_back('URL名称与其他模型冲突，请换一个名称！');
+            }
+            
+            if ($this->model->checkSortFilename($urlname)) {
+                alert_back('URL名称与栏目自定义名称冲突，请换一个名称！');
             }
             
             // 构建数据

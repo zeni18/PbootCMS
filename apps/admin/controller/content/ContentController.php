@@ -123,7 +123,7 @@ class ContentController extends Controller
             
             // 检查自定义文件名称
             if ($filename) {
-                while ($this->model->checkFilename("filename='$filename'")) {
+                while ($this->model->checkFilename($filename)) {
                     $filename = $filename . '-' . mt_rand(1, 20);
                 }
             }
@@ -458,7 +458,7 @@ class ContentController extends Controller
             }
             
             if ($filename) {
-                while ($this->model->checkFilename("filename='$filename'", "id<>$id")) {
+                while ($this->model->checkFilename($filename, "id<>$id")) {
                     $filename = $filename . '-' . mt_rand(1, 20);
                 }
             }

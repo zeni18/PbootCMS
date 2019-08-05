@@ -121,11 +121,20 @@ class ModelModel extends Model
             ->update($data);
     }
 
-    // 检查列表页URL名字
+    // 检查URL名字冲突
     public function checkUrlname($urlname, $type, $where = array())
     {
-        return parent::table('ay_model')->where("urlname='$urlname' AND type<>$type")
+        return parent::table('ay_model')->field('id')
+            ->where("urlname='$urlname' AND type<>$type")
             ->where($where)
+            ->find();
+    }
+
+    // 检查栏目名字冲突
+    public function checkSortFilename($urlname)
+    {
+        return parent::table('ay_content_sort')->field('id')
+            ->where("filename='$urlname'")
             ->find();
     }
 }

@@ -237,16 +237,20 @@ class ContentSortModel extends Model
     }
 
     // 检查自定义文件名称
-    public function checkFilename($where1, $where2 = array())
+    public function checkFilename($filename, $where = array())
     {
-        $rs1 = parent::table('ay_content')->field('id')
-            ->where($where1)
+        return parent::table('ay_content_sort')->field('id')
+            ->where("filename='$filename'")
+            ->where($where)
             ->find();
-        $rs2 = parent::table('ay_content_sort')->field('id')
-            ->where($where1)
-            ->where($where2)
+    }
+
+    // 检查URL名字冲突
+    public function checkUrlname($filename)
+    {
+        return parent::table('ay_model')->field('id')
+            ->where("urlname='$filename'")
             ->find();
-        return $rs1 || $rs2;
     }
 
     // 获取当前主题
