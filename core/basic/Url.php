@@ -15,7 +15,7 @@ class Url
     private static $urls = array();
 
     // 接收控制器方法完整访问路径，如：/home/Index/index /模块/控制器/方法/.. 路径，生成可访问地址
-    public static function get($path, $addExt = true)
+    public static function get($path, $suffix = false)
     {
         if (strpos($path, 'http') === 0 || ! $path) {
             return $path;
@@ -27,7 +27,7 @@ class Url
             
             $path_arr = explode('/', $path); // 地址数组
             
-            if ($addExt && Config::get('app_url_type') == 2 && strrpos(strtolower($_SERVER["SCRIPT_NAME"]), 'index.php') !== false) {
+            if ($suffix && Config::get('app_url_type') == 2 && strrpos(strtolower($_SERVER["SCRIPT_NAME"]), 'index.php') !== false) {
                 $url_ext = Config::get('url_rule_suffix'); // 伪静态文件形式
             } elseif (Config::get('app_url_type') == 1 || Config::get('app_url_type') == 2) {
                 $url_ext = '/'; // pathinfo目录形式
@@ -104,21 +104,18 @@ class Url
     }
 
     // 生成前端地址
-    public static function home($path)
+    public static function home($path, $suffix = false)
     {
         if (! isset(self::$urls[$path])) {
             $url_rule_type = Config::get('url_rule_type') ?: 3;
-            $url_rule_dir = Config::get('url_rule_dir') ?: 0;
             $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
+            $suffix = $suffix ? $url_rule_suffix : '/';
             $path = ltrim($path, '/');
             
             // 去除模块及控制器部分
             if (! ! $pos = strpos($path, '/', 5)) {
                 $path = substr($path, $pos + 1);
             }
-            
-            $path = trim($path, '/');
-            $suffix = $url_rule_dir ? '/' : $url_rule_suffix;
             
             switch ($url_rule_type) {
                 case '1': // 普通模式

@@ -28,28 +28,26 @@ class SitemapController extends Controller
         $str = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n" . '<urlset>';
         $str .= $this->makeNode('', date('Y-m-d'), 1); // 根目录
         
-        $url_rule_level = $this->config('url_rule_level') ?: 1;
         $url_break_char = $this->config('url_break_char') ?: '_';
-        $connector = ($url_rule_level == 1) ? $url_break_char : '/';
         
         $sorts = $this->model->getSorts();
         foreach ($sorts as $value) {
             if ($value->outlink) {
                 continue;
             } elseif ($value->type == 1) {
-                $value->contenturl = $value->contenturl ?: 'about';
+                $value->urlname = $value->urlname ?: 'list';
                 if ($value->filename) {
                     $link = Url::home('/home/Index/' . $value->filename);
                 } else {
-                    $link = Url::home('/home/Index/' . $value->contenturl . $connector . $value->id);
+                    $link = Url::home('/home/Index/' . $value->urlname . $url_break_char . $value->scode);
                 }
                 $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
             } else {
-                $value->listurl = $value->listurl ?: 'list';
+                $value->urlname = $value->urlname ?: 'list';
                 if ($value->filename) {
                     $link = Url::home('home/Index/' . $value->filename);
                 } else {
-                    $link = Url::home('home/Index/' . $value->listurl . $connector . $value->scode);
+                    $link = Url::home('home/Index/' . $value->urlname . $url_break_char . $value->scode);
                 }
                 $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
                 $contents = $this->model->getSortContent($value->scode);
@@ -57,11 +55,15 @@ class SitemapController extends Controller
                     if ($value2->outlink) { // 外链
                         continue;
                     } else {
-                        $value2->contenturl = $value2->contenturl ?: 'content';
-                        if ($value2->filename) {
-                            $link = Url::home('home/Index/' . $value2->filename);
+                        $value2->urlname = $value2->urlname ?: 'list';
+                        if ($value2->filename && $value2->sortfilename) {
+                            $link = Url::home('home/Index/' . $value2->sortfilename . '/' . $value2->filename, true);
+                        } elseif ($value2->sortfilename) {
+                            $link = Url::home('home/Index/' . $value2->sortfilename . '/' . $value2->id, true);
+                        } elseif ($value2->contentfilename) {
+                            $link = Url::home('home/Index/' . $value2->urlname . $url_break_char . $value2->scode . '/' . $value2->filename, true);
                         } else {
-                            $link = Url::home('home/Index/' . $value2->contenturl . $connector . $value2->id);
+                            $link = Url::home('home/Index/' . $value2->urlname . $url_break_char . $value2->scode . '/' . $value2->id, true);
                         }
                     }
                     $str .= $this->makeNode($link, date('Y-m-d'), 0.8);

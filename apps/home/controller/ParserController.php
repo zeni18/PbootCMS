@@ -327,7 +327,7 @@ class ParserController extends Controller
                                     if ($value['outlink']) {
                                         $one_html = str_replace($matches2[0][$j], $value['outlink'], $one_html);
                                     } else {
-                                        $one_html = str_replace($matches2[0][$j], $this->parserLink($value['type'], $value['listurl'], $value['contenturl'], 'list', $value['scode'], $value['filename']), $one_html);
+                                        $one_html = str_replace($matches2[0][$j], $this->parserLink($value['type'], $value['urlname'], 'list', $value['scode'], $value['filename'], '', ''), $one_html);
                                     }
                                     break;
                                 case 'soncount':
@@ -441,7 +441,7 @@ class ParserController extends Controller
                         if ($value['outlink']) {
                             $out_html .= $separator . '<a href="' . $value['outlink'] . '">' . $value['name'] . '</a>';
                         } else {
-                            $out_html .= $separator . '<a href="' . $this->parserLink($value['type'], $value['listurl'], $value['contenturl'], 'list', $value['scode'], $value['filename']) . '">' . $value['name'] . '</a>';
+                            $out_html .= $separator . '<a href="' . $this->parserLink($value['type'], $value['urlname'], 'list', $value['scode'], $value['filename'], '', '') . '">' . $value['name'] . '</a>';
                         }
                     }
                 }
@@ -465,7 +465,7 @@ class ParserController extends Controller
                         if ($sort->outlink) {
                             $content = str_replace($matches[0][$i], $sort->outlink, $content);
                         } else {
-                            $content = str_replace($matches[0][$i], $this->parserLink($sort->type, $sort->listurl, $sort->contenturl, 'list', $sort->scode, $sort->filename), $content);
+                            $content = str_replace($matches[0][$i], $this->parserLink($sort->type, $sort->urlname, 'list', $sort->scode, $sort->filename, '', ''), $content);
                         }
                         break;
                     case 'tcode': // 顶级栏目ID
@@ -486,7 +486,7 @@ class ParserController extends Controller
                         if ($top_sort->outlink) {
                             $toplink = $top_sort->outlink;
                         } else {
-                            $toplink = $this->parserLink($top_sort->type, $top_sort->listurl, $top_sort->contenturl, 'list', $top_sort->scode, $top_sort->filename);
+                            $toplink = $this->parserLink($top_sort->type, $top_sort->urlname, 'list', $top_sort->scode, $top_sort->filename, '', '');
                         }
                         $content = str_replace($matches[0][$i], $toplink, $content);
                         break;
@@ -506,7 +506,7 @@ class ParserController extends Controller
                         if ($parent_sort->outlink) {
                             $parentlink = $top_sort->outlink;
                         } else {
-                            $parentlink = $this->parserLink($parent_sort->type, $parent_sort->listurl, $parent_sort->contenturl, 'list', $parent_sort->scode, $parent_sort->filename);
+                            $parentlink = $this->parserLink($parent_sort->type, $parent_sort->urlname, 'list', $parent_sort->scode, $parent_sort->filename, '', '');
                         }
                         $content = str_replace($matches[0][$i], $parentlink, $content);
                         break;
@@ -686,7 +686,7 @@ class ParserController extends Controller
                                 if ($value->outlink) {
                                     $one_html = str_replace($matches2[0][$j], $value->outlink, $one_html);
                                 } else {
-                                    $one_html = str_replace($matches2[0][$j], $this->parserLink($value->type, $value->listurl, $value->contenturl, 'list', $value->scode, $value->filename), $one_html);
+                                    $one_html = str_replace($matches2[0][$j], $this->parserLink($value->type, $value->urlname, 'list', $value->scode, $value->filename, '', ''), $one_html);
                                 }
                                 break;
                             case 'ico':
@@ -767,17 +767,14 @@ class ParserController extends Controller
                 }
                 
                 $url_rule_type = $this->config('url_rule_type') ?: 3;
-                $url_rule_dir = $this->config('url_rule_dir') ?: 0;
                 $url_rule_suffix = $this->config('url_rule_suffix') ?: '.html';
-                $url_rule_level = $this->config('url_rule_level') ?: 1;
                 $url_break_char = $this->config('url_break_char') ?: '_';
-                $suffix = $url_rule_dir ? '/' : $url_rule_suffix;
                 
                 // 附加后缀及参数
                 if ($url_rule_type == 1 || $url_rule_type == 2) {
                     // 获取地址路径
                     $url = parse_url(URL);
-                    $path = preg_replace('/\/page\/[0-9]+/', '', $url['path']); // 去除路径方式分页，回到第一页
+                    $path = preg_replace('/\/page\/[0-9]+/', '', $url['path']); // 去除路径方式分页
                                                                                 
                     // 去后缀扩展
                     if (! ! $pos = strripos($path, $url_rule_suffix)) {
@@ -785,14 +782,14 @@ class ParserController extends Controller
                     }
                     
                     // 去路径分页，回到首页
-                    if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) {
-                        $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($path, '/'));
-                    } else {
+                    if (defined('CMS_PAGE_CUSTOM')) {
                         $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', '$1', rtrim($path, '/'));
+                    } else {
+                        $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($path, '/'));
                     }
                     
                     // 拼接地址
-                    $path .= $suffix . query_string('p,s,' . $field);
+                    $path .= '/' . query_string('p,s,' . $field);
                 } elseif ($url_rule_type == 3) {
                     $output = array();
                     if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
@@ -812,13 +809,13 @@ class ParserController extends Controller
                         unset($output[$field]); // 不筛选该字段
                                                 
                         // 去除原分页参数
-                        if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) {
-                            $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
-                        } else {
+                        if (defined('CMS_PAGE_CUSTOM')) {
                             $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
+                        } else {
+                            $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                         }
                         
-                        $path = SITE_DIR . '/?' . $path . $suffix;
+                        $path = SITE_DIR . '/?' . $path . '/';
                         
                         // 重组地址
                         if (! ! $qs = http_build_query($output)) {
@@ -853,11 +850,8 @@ class ParserController extends Controller
         if (preg_match($pattern, $content)) {
             
             $url_rule_type = $this->config('url_rule_type') ?: 3;
-            $url_rule_dir = $this->config('url_rule_dir') ?: 0;
             $url_rule_suffix = $this->config('url_rule_suffix') ?: '.html';
-            $url_rule_level = $this->config('url_rule_level') ?: 1;
             $url_break_char = $this->config('url_break_char') ?: '_';
-            $suffix = $url_rule_dir ? '/' : $url_rule_suffix;
             
             // 附加后缀及参数
             if ($url_rule_type == 1 || $url_rule_type == 2) {
@@ -871,14 +865,11 @@ class ParserController extends Controller
                 }
                 
                 // 去路径分页，回到首页
-                if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) {
-                    $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($path, '/'));
-                } else {
+                if (defined('CMS_PAGE_CUSTOM')) {
                     $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', '$1', rtrim($path, '/'));
+                } else {
+                    $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($path, '/'));
                 }
-                
-                // 拼接地址
-                $path .= $suffix;
             }
             
             $output = array();
@@ -895,12 +886,12 @@ class ParserController extends Controller
                     }
                     
                     // 去除原分页参数
-                    if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) {
-                        $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
-                    } else {
+                    if (defined('CMS_PAGE_CUSTOM')) {
                         $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
+                    } else {
+                        $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                     }
-                    $path = SITE_DIR . '/?' . $path . $suffix;
+                    $path = SITE_DIR . '/?' . $path;
                 }
                 unset($output['page']); // 去除字符串方式分页，回到第一页
                 unset($output['p']); // 去除保留参数
@@ -1589,7 +1580,7 @@ class ParserController extends Controller
                                 break;
                             case 'link':
                                 $url_rule_type = $this->config('url_rule_type') ?: 3;
-                                $link = $this->parserLink($value['sort']->type, $value['sort']->listurl, $value['sort']->contenturl, 'list', $value['sort']->scode, $value['sort']->filename);
+                                $link = $this->parserLink($value['sort']->type, $value['sort']->urlname, 'list', $value['sort']->scode, $value['sort']->filename, '', '');
                                 if ($url_rule_type == 3) {
                                     $link = $link . '&tags=' . urlencode($value['tags']);
                                 } else {
@@ -2678,18 +2669,18 @@ class ParserController extends Controller
                     $content = str_replace($search, $data->outlink, $content);
                 } else {
                     if ($data->type == 1) {
-                        $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'about', $data->scode, $data->sortfilename), $content);
+                        $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'about', $data->scode, $data->sortfilename, '', ''), $content);
                     } else {
-                        $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'content', $data->id, $data->filename), $content);
+                        $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'content', $data->scode, $data->sortfilename, $data->id, $data->filename), $content);
                     }
                 }
                 break;
             case 'sortlink':
-                $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'list', $data->scode, $data->sortfilename), $content);
+                $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'list', $data->scode, $data->sortfilename, '', ''), $content);
                 break;
             case 'subsortlink':
                 if ($data->subscode) {
-                    $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'list', $data->subscode, $data->subfilename), $content);
+                    $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'list', $data->subscode, $data->subfilename, '', ''), $content);
                 } else {
                     $content = str_replace($search, 'javascript:;', $content);
                 }
@@ -2780,18 +2771,18 @@ class ParserController extends Controller
                     $content = str_replace($search, $data->outlink, $content);
                 } else {
                     if ($data->type == 1) {
-                        $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'about', $data->scode, $data->sortfilename), $content);
+                        $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'about', $data->scode, $data->sortfilename, '', ''), $content);
                     } else {
-                        $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'content', $data->id, $data->filename), $content);
+                        $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'content', $data->scode, $data->sortfilename, $data->id, $data->filename), $content);
                     }
                 }
                 break;
             case 'sortlink':
-                $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'list', $data->scode, $data->sortfilename), $content);
+                $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'list', $data->scode, $data->sortfilename, '', ''), $content);
                 break;
             case 'subsortlink':
                 if ($data->subscode) {
-                    $content = str_replace($search, $this->parserLink($data->type, $data->listurl, $data->contenturl, 'list', $data->subscode, $data->subfilename), $content);
+                    $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'list', $data->subscode, $data->subfilename, '', ''), $content);
                 } else {
                     $content = str_replace($search, '', $content);
                 }
@@ -2856,7 +2847,7 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $pre = $this->model->getContentPre($sort->scode, $data->id)) {
-                    $content = str_replace($search, '<a href="' . $this->parserLink($pre->type, $pre->listurl, $pre->contenturl, 'content', $pre->id, $pre->filename) . '">' . $this->adjustLabelData($params, $pre->title) . '</a>', $content);
+                    $content = str_replace($search, '<a href="' . $this->parserLink($pre->type, $pre->urlname, 'content', $pre->scode, $pre->sortfilename, $pre->id, $pre->filename) . '">' . $this->adjustLabelData($params, $pre->title) . '</a>', $content);
                 } else {
                     if (isset($params['notext'])) {
                         $content = str_replace($search, $params['notext'], $content);
@@ -2869,7 +2860,7 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $pre = $this->model->getContentPre($sort->scode, $data->id)) {
-                    $content = str_replace($search, $this->parserLink($pre->type, $pre->listurl, $pre->contenturl, 'content', $pre->id, $pre->filename), $content);
+                    $content = str_replace($search, $this->parserLink($pre->type, $pre->urlname, 'content', $pre->scode, $pre->sortfilename, $pre->id, $pre->filename), $content);
                 } else {
                     $content = str_replace($search, 'javascript:;', $content);
                 }
@@ -2904,7 +2895,7 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $next = $this->model->getContentNext($sort->scode, $data->id)) {
-                    $content = str_replace($search, '<a href="' . $this->parserLink($next->type, $next->listurl, $next->contenturl, 'content', $next->id, $next->filename) . '">' . $this->adjustLabelData($params, $next->title) . '</a>', $content);
+                    $content = str_replace($search, '<a href="' . $this->parserLink($next->type, $next->urlname, 'content', $next->scode, $next->sortfilename, $next->id, $next->filename) . '">' . $this->adjustLabelData($params, $next->title) . '</a>', $content);
                 } else {
                     if (isset($params['notext'])) {
                         $content = str_replace($search, $params['notext'], $content);
@@ -2917,7 +2908,7 @@ class ParserController extends Controller
                 if ($data->type != 2) // 非列表内容页不解析
                     break;
                 if (! ! $next = $this->model->getContentNext($sort->scode, $data->id)) {
-                    $content = str_replace($search, $this->parserLink($next->type, $next->listurl, $next->contenturl, 'content', $next->id, $next->filename), $content);
+                    $content = str_replace($search, $this->parserLink($next->type, $next->urlname, 'content', $next->scode, $next->sortfilename, $next->id, $next->filename), $content);
                 } else {
                     $content = str_replace($search, 'javascript:;', $content);
                 }
@@ -3010,33 +3001,34 @@ class ParserController extends Controller
     }
 
     // 解析生成内容链接
-    protected function parserLink($type, $listurl, $contenturl, $page, $id, $filename = null)
+    protected function parserLink($type, $urlname, $page, $scode, $sortfilename, $id, $contentfilename)
     {
-        $url_rule_level = $this->config('url_rule_level') ?: 1;
         $url_break_char = $this->config('url_break_char') ?: '_';
-        $connector = ($url_rule_level == 1) ? $url_break_char : '/';
         
         if ($type == 1) {
-            $contenturl = $contenturl ?: 'about';
-            if ($filename) {
-                $link = Url::home('home/Index/' . $filename);
+            $urlname = $urlname ?: 'about';
+            if ($sortfilename) {
+                $link = Url::home('home/Index/' . $sortfilename);
             } else {
-                $link = Url::home('home/Index/' . $contenturl . $connector . $id);
+                $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode);
             }
         } else {
+            $urlname = $urlname ?: 'list';
             if ($page == 'list') {
-                $listurl = $listurl ?: 'list';
-                if ($filename) {
-                    $link = Url::home('home/Index/' . $filename);
+                if ($sortfilename) {
+                    $link = Url::home('home/Index/' . $sortfilename);
                 } else {
-                    $link = Url::home('home/Index/' . $listurl . $connector . $id);
+                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode);
                 }
             } elseif ($page == 'content') {
-                $contenturl = $contenturl ?: 'content';
-                if ($filename) {
-                    $link = Url::home('home/Index/' . $filename);
+                if ($sortfilename && $contentfilename) {
+                    $link = Url::home('home/Index/' . $sortfilename . '/' . $contentfilename, true);
+                } elseif ($sortfilename) {
+                    $link = Url::home('home/Index/' . $sortfilename . '/' . $id, true);
+                } elseif ($contentfilename) {
+                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode . '/' . $contentfilename, true);
                 } else {
-                    $link = Url::home('home/Index/' . $contenturl . $connector . $id);
+                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode . '/' . $id, true);
                 }
             } else {
                 $link = 'javascript:;';
@@ -3045,6 +3037,3 @@ class ParserController extends Controller
         return $link;
     }
 }
-
-
-

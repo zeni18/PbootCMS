@@ -19,7 +19,7 @@ class SingleModel extends Model
         $field = array(
             'a.id',
             'a.scode',
-            'b.name as sort_name',
+            'b.name as sortname',
             'a.title',
             'a.date',
             'a.status',
@@ -29,7 +29,7 @@ class SingleModel extends Model
             'a.pics',
             'a.outlink',
             'b.filename',
-            'c.contenturl'
+            'c.urlname'
         );
         $join = array(
             array(
@@ -60,7 +60,7 @@ class SingleModel extends Model
         $fields = array(
             'a.id',
             'a.scode',
-            'b.name as sort_name',
+            'b.name as sortname',
             'a.title',
             'a.date',
             'a.status',
@@ -70,7 +70,7 @@ class SingleModel extends Model
             'a.pics',
             'a.outlink',
             'b.filename',
-            'c.contenturl'
+            'c.urlname'
         );
         $join = array(
             array(
@@ -109,10 +109,10 @@ class SingleModel extends Model
     {
         $field = array(
             'a.*',
-            'b.name as sort_name',
+            'b.name as sortname',
             'c.*',
             'b.filename',
-            'd.contenturl'
+            'd.urlname'
         );
         $join = array(
             array(

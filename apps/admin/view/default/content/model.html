@@ -15,8 +15,7 @@
 	                    	<th>序号</th>
 	                        <th>名称</th>
 	                        <th>类型</th>
-	                        <th>列表页URL名称</th>
-	                        <th>详情页URL名称</th>
+	                        <th>URL名称</th>
 	                        <th>列表页模板</th>
 	                        <th>详情页模板</th>
 	                        <th>状态</th>
@@ -32,8 +31,7 @@
 								{if($value->type==1)}单页{/if}
 	                        	{if($value->type==2)}列表{/if}
 							</td>
-							<td>[value->listurl]</td>
-	                        <td>[value->contenturl]</td>
+							<td>[value->urlname]</td>
 	                        <td>[value->listtpl]</td>
 	                        <td>[value->contenttpl]</td>
 	                        <td>
@@ -77,17 +75,10 @@
 	                     </div>
 	                </div>
 	                
-	               <div class="layui-form-item">
-	                     <label class="layui-form-label">列表页URL名称 </label>
-	                     <div class="layui-input-block">
-	                     	<input type="text" name="listurl" placeholder="请输入列表页地址名称，如：news，单页时不用填写" class="layui-input">
-	                     </div>
-	                </div>
-	                
 	                <div class="layui-form-item">
-	                     <label class="layui-form-label">详情页URL名称 </label>
+	                     <label class="layui-form-label">URL名称 </label>
 	                     <div class="layui-input-block">
-	                     	<input type="text" name="contenturl"  placeholder="请输入详情页地址名称，如：new" class="layui-input">
+	                     	<input type="text" name="urlname"  placeholder="请输入URL地址名称，如：news" class="layui-input">
 	                     </div>
 	                </div>
 	                
@@ -154,16 +145,9 @@
                 </div>
                 
                 <div class="layui-form-item">
-                     <label class="layui-form-label">列表页URL名称</label>
+                     <label class="layui-form-label">URL名称</label>
                      <div class="layui-input-block">
-                     	<input type="text" name="listurl" value="{$model->listurl}" placeholder="请输入列表页地址名称，如：news，单页时不用填写" class="layui-input">
-                     </div>
-                </div>
-                
-                <div class="layui-form-item">
-                     <label class="layui-form-label">详情页URL名称</label>
-                     <div class="layui-input-block">
-                     	<input type="text" name="contenturl" value="{$model->contenturl}" placeholder="请输入详情页地址名称，如：new" class="layui-input">
+                     	<input type="text" name="urlname" value="{$model->urlname}" placeholder="请输入URL地址名称，如：news" class="layui-input">
                      </div>
                 </div>
                 

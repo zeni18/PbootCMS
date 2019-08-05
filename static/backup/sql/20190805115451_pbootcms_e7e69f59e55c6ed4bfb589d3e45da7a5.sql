@@ -86,7 +86,7 @@ CREATE TABLE `ay_config` (
   `description` varchar(30) NOT NULL COMMENT '描述文本',
   PRIMARY KEY (`id`),
   KEY `ay_config_name` (`name`) 
-) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `ay_config`
@@ -129,9 +129,7 @@ INSERT INTO `ay_config` (`id`,`name`,`value`,`type`,`sorting`,`description`) VAL
 ('34','form_check_code','0','2','255','表单验证码'),
 ('35','lock_count','5','2','255','登陆锁定阈值'),
 ('36','lock_time','900','2','255','登录锁定时间'),
-('37','url_rule_level','1','2','255','路径级别'),
-('38','url_rule_type','3','2','255','路径类型'),
-('39','url_rule_dir','0','2','255','路径目录模式');
+('37','url_rule_type','3','2','255','路径类型');
 
 -- --------------------------------------------------------
 
@@ -746,17 +744,17 @@ CREATE TABLE `ay_content_sort` (
 --
 
 INSERT INTO `ay_content_sort` (`id`,`acode`,`mcode`,`pcode`,`scode`,`name`,`listtpl`,`contenttpl`,`status`,`outlink`,`subname`,`ico`,`pic`,`title`,`keywords`,`description`,`filename`,`sorting`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
-('1','cn','1','0','1','公司简介','','about.html','1','','网站建设「一站式」服务商','','','','','','','255','admin','admin','2018-04-11 17:26:11','2018-04-11 17:26:11'),
-('2','cn','2','0','2','新闻中心','newslist.html','news.html','1','','了解最新公司动态及行业资讯','','','','','','','255','admin','admin','2018-04-11 17:26:46','2018-04-11 17:26:46'),
-('3','cn','2','2','3','公司动态','newslist.html','news.html','1','','了解最新公司动态及行业资讯','','','','','','','255','admin','admin','2018-04-11 17:27:05','2018-04-11 17:27:05'),
-('4','cn','2','2','4','行业动态','newslist.html','news.html','1','','了解最新公司动态及行业资讯','','','','','','','255','admin','admin','2018-04-11 17:27:30','2018-04-11 17:27:30'),
-('5','cn','3','0','5','产品中心','productlist.html','product.html','1','','服务创造价值、存在造就未来','','','','','','','255','admin','admin','2018-04-11 17:27:54','2018-04-11 17:27:54'),
-('6','cn','3','5','6','网站建设','productlist.html','product.html','1','','服务创造价值、存在造就未来','','','','','','','255','admin','admin','2018-04-11 17:28:19','2018-04-11 17:28:19'),
-('7','cn','3','5','7','域名空间','productlist.html','product.html','1','','服务创造价值、存在造就未来','','','','','','','255','admin','admin','2018-04-11 17:28:38','2018-04-11 17:28:38'),
-('8','cn','4','0','8','服务案例','caselist.html','case.html','1','','服务创造价值、存在造就未来','','','','','','','255','admin','admin','2018-04-11 17:29:16','2018-04-11 17:29:16'),
-('9','cn','5','0','9','招贤纳士','joblist.html','job.html','1','','诚聘优秀人士加入我们的团队','','','','','','','255','admin','admin','2018-04-11 17:30:02','2018-04-11 17:30:02'),
-('10','cn','1','0','10','在线留言','','message.html','1','','有什么问题欢迎您随时反馈','','','','','','','255','admin','admin','2018-04-11 17:30:36','2018-04-12 10:55:31'),
-('11','cn','1','0','11','联系我们','','about.html','1','','能为您服务是我们的荣幸','','','','','','','255','admin','admin','2018-04-11 17:31:29','2018-04-11 17:31:29');
+('1','cn','1','0','1','公司简介','','about.html','1','','网站建设「一站式」服务商','','','','','','aboutus','255','admin','admin','2018-04-11 17:26:11','2018-04-11 17:26:11'),
+('2','cn','2','0','2','新闻中心','newslist.html','news.html','1','','了解最新公司动态及行业资讯','','','','','','article','255','admin','admin','2018-04-11 17:26:46','2018-04-11 17:26:46'),
+('3','cn','2','2','3','公司动态','newslist.html','news.html','1','','了解最新公司动态及行业资讯','','','','','','company','255','admin','admin','2018-04-11 17:27:05','2018-04-11 17:27:05'),
+('4','cn','2','2','4','行业动态','newslist.html','news.html','1','','了解最新公司动态及行业资讯','','','','','','industry','255','admin','admin','2018-04-11 17:27:30','2018-04-11 17:27:30'),
+('5','cn','3','0','5','产品中心','productlist.html','product.html','1','','服务创造价值、存在造就未来','','','','','','product','255','admin','admin','2018-04-11 17:27:54','2018-04-11 17:27:54'),
+('6','cn','3','5','6','网站建设','productlist.html','product.html','1','','服务创造价值、存在造就未来','','','','','','website','255','admin','admin','2018-04-11 17:28:19','2018-04-11 17:28:19'),
+('7','cn','3','5','7','域名空间','productlist.html','product.html','1','','服务创造价值、存在造就未来','','','','','','domain','255','admin','admin','2018-04-11 17:28:38','2018-04-11 17:28:38'),
+('8','cn','4','0','8','服务案例','caselist.html','case.html','1','','服务创造价值、存在造就未来','','','','','','case','255','admin','admin','2018-04-11 17:29:16','2018-04-11 17:29:16'),
+('9','cn','5','0','9','招贤纳士','joblist.html','job.html','1','','诚聘优秀人士加入我们的团队','','','','','','job','255','admin','admin','2018-04-11 17:30:02','2018-04-11 17:30:02'),
+('10','cn','1','0','10','在线留言','','message.html','1','','有什么问题欢迎您随时反馈','','','','','','gbook','255','admin','admin','2018-04-11 17:30:36','2018-04-12 10:55:31'),
+('11','cn','1','0','11','联系我们','','about.html','1','','能为您服务是我们的荣幸','','','','','','contact','255','admin','admin','2018-04-11 17:31:29','2018-04-11 17:31:29');
 
 -- --------------------------------------------------------
 
@@ -1115,8 +1113,7 @@ CREATE TABLE `ay_model` (
   `mcode` varchar(20) NOT NULL COMMENT '模型编号',
   `name` varchar(50) NOT NULL COMMENT '模型名称',
   `type` char(1) NOT NULL DEFAULT '2' COMMENT '是否列表类型',
-  `listurl` varchar(100) NOT NULL DEFAULT '' COMMENT '列表页URL名称',
-  `contenturl` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页URL名称',
+  `urlname` varchar(100) NOT NULL DEFAULT '' COMMENT 'URL名称',
   `listtpl` varchar(50) NOT NULL COMMENT '列表页模板',
   `contenttpl` varchar(50) NOT NULL COMMENT '内容页模板',
   `status` char(1) NOT NULL DEFAULT '1' COMMENT '模型状态',
@@ -1133,12 +1130,12 @@ CREATE TABLE `ay_model` (
 -- 转存表中的数据 `ay_model`
 --
 
-INSERT INTO `ay_model` (`id`,`mcode`,`name`,`type`,`listurl`,`contenturl`,`listtpl`,`contenttpl`,`status`,`issystem`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
-('1','1','专题','1','','about','','about.html','1','1','admin','admin','2018-04-11 17:16:01','2019-08-05 11:11:44'),
-('2','2','新闻','2','news','new','newslist.html','news.html','1','1','admin','admin','2018-04-11 17:17:16','2019-08-05 11:12:04'),
-('3','3','产品','2','products','product','productlist.html','product.html','1','0','admin','admin','2018-04-11 17:17:46','2019-08-05 11:12:17'),
-('4','4','案例','2','cases','case','caselist.html','case.html','1','0','admin','admin','2018-04-11 17:19:53','2019-08-05 11:12:26'),
-('5','5','招聘','2','jobs','job','joblist.html','job.html','1','0','admin','admin','2018-04-11 17:24:34','2019-08-05 11:12:37');
+INSERT INTO `ay_model` (`id`,`mcode`,`name`,`type`,`urlname`,`listtpl`,`contenttpl`,`status`,`issystem`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
+('1','1','专题','1','pages','','about.html','1','1','admin','admin','2018-04-11 17:16:01','2019-08-05 11:11:44'),
+('2','2','新闻','2','news','newslist.html','news.html','1','1','admin','admin','2018-04-11 17:17:16','2019-08-05 11:12:04'),
+('3','3','产品','2','products','productlist.html','product.html','1','0','admin','admin','2018-04-11 17:17:46','2019-08-05 11:12:17'),
+('4','4','案例','2','cases','caselist.html','case.html','1','0','admin','admin','2018-04-11 17:19:53','2019-08-05 11:12:26'),
+('5','5','招聘','2','jobs','joblist.html','job.html','1','0','admin','admin','2018-04-11 17:24:34','2019-08-05 11:12:37');
 
 -- --------------------------------------------------------
 

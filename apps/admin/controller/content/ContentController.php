@@ -64,10 +64,8 @@ class ContentController extends Controller
             $this->assign('baidu_xzh_token', $this->config('baidu_xzh_token'));
             
             // 前端地址连接符判断
-            $url_rule_level = $this->config('url_rule_level') ?: 1;
             $url_break_char = $this->config('url_break_char') ?: '_';
-            $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
-            $this->assign('url_connector', $url_connector);
+            $this->assign('url_break_char', $url_break_char);
         }
         
         $this->display('content/content.html');

@@ -22,8 +22,7 @@ class ContentSortModel extends Model
         $field = array(
             'a.*',
             'b.type',
-            'b.listurl',
-            'b.contenturl'
+            'b.urlname'
         );
         $join = array(
             'ay_model b',

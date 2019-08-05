@@ -48,10 +48,8 @@ class SingleController extends Controller
             $this->assign('model_name', model('admin.content.Model')->getName($mcode));
             
             // 前端地址连接符判断
-            $url_rule_level = $this->config('url_rule_level') ?: 1;
             $url_break_char = $this->config('url_break_char') ?: '_';
-            $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
-            $this->assign('url_connector', $url_connector);
+            $this->assign('url_break_char', $url_break_char);
             
             $this->assign('contents', $result);
         }
@@ -79,9 +77,7 @@ class SingleController extends Controller
     {
         // 前端地址连接符判断
         if (get('baiduzz') || get('baiduxzh')) {
-            $url_rule_level = $this->config('url_rule_level') ?: 1;
             $url_break_char = $this->config('url_break_char') ?: '_';
-            $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
         }
         
         // 站长推送
@@ -93,11 +89,11 @@ class SingleController extends Controller
             
             $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
             $data = $this->model->getSingle($id);
-            $data->contenturl = $data->contenturl ?: 'about';
+            $data->urlname = $data->urlname ?: 'about';
             if ($data->filename) {
                 $urls[] = $domain . homeurl('/home/Index/' . $data->filename);
             } else {
-                $urls[] = $domain . homeurl('/home/Index/' . $data->contenturl . $url_connector . $data->scode);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->urlname . $url_break_char . $data->scode);
             }
             $result = post_baidu($api, $urls);
             if (isset($result->error)) {
@@ -123,11 +119,11 @@ class SingleController extends Controller
             }
             $api = "http://data.zz.baidu.com/urls?appid=$appid&token=$token&type=$type";
             $data = $this->model->getSingle($id);
-            $data->contenturl = $data->contenturl ?: 'about';
+            $data->urlname = $data->urlname ?: 'about';
             if ($data->filename) {
                 $urls[] = $domain . homeurl('/home/Index/' . $data->filename);
             } else {
-                $urls[] = $domain . homeurl('/home/Index/' . $data->contenturl . $url_connector . $data->scode);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->urlname . $url_break_char . $data->scode);
             }
             $result = post_baidu($api, $urls);
             

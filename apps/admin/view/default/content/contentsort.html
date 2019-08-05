@@ -19,6 +19,7 @@
 		                        <th>栏目名称</th>
 		                        <th>栏目编码</th>
 		                        <th>父编码</th>
+		                        <th>自定义路径名</th>
 		                        <th>模型</th>
 		                        <th>列表页模板</th>
 		                        <th>详情页模板</th>
@@ -49,6 +50,7 @@
 		                        </td>
 		                        <td>[value->scode]</td>
 		                        <td>[value->pcode]</td>
+		                        <td>[value->filename]</td>
 		                        <td>
 		                        {foreach $allmodels(key2,value2)}	
 		                        	{if($value2->mcode==$value->mcode)}
@@ -68,20 +70,20 @@
 		                        </td>
 		                        <td>
 		                        	{if($value->type==1)}
-			                        	{php}$value->contenturl=$value->contenturl?:'about';{/php}
+			                        	{php}$value->urlname=$value->urlname?:'about';{/php}
 			                           	{if($value->filename)}
 			                        		<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 			                        	{else}
-			                        		<a href="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        		<a href="{homeurl./home/Index/'.$value->urlname.[$url_break_char].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 			                        	{/if}
 		                        	{/if}
 		                        	
 		                        	{if($value->type==2)}
-			                        	{php}$value->listurl=$value->listurl?:'list';{/php}
+			                        	{php}$value->urlname=$value->urlname?:'list';{/php}
 			                           	{if($value->filename)}
 			                        		<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 			                        	{else}
-			                        		<a href="{homeurl./home/Index/'.$value->listurl.[$url_connector].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        		<a href="{homeurl./home/Index/'.$value->urlname.[$url_break_char].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 			                        	{/if}
 		                        	{/if}
 		                        	
@@ -129,6 +131,13 @@
 			                     <label class="layui-form-label">栏目名称</label>
 			                     <div class="layui-input-block">
 			                     	<input type="text" name="name" required lay-verify="required" placeholder="请输入栏目名称" class="layui-input">
+			                     </div>
+			                </div>
+			                
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">自定义路径名</label>
+			                     <div class="layui-input-block">
+			                     	<input type="text" name="filename" placeholder="请输入自定义路径名，如:test" class="layui-input">
 			                     </div>
 			                </div>
 			                
@@ -183,13 +192,6 @@
 			                     <label class="layui-form-label">栏目副名称</label>
 			                     <div class="layui-input-block">
 			                     	<input type="text" name="subname" placeholder="请输入栏目副名称" class="layui-input">
-			                     </div>
-			                </div>
-			                
-			                <div class="layui-form-item">
-			                     <label class="layui-form-label">自定义路径名</label>
-			                     <div class="layui-input-block">
-			                     	<input type="text" name="filename" placeholder="请输入自定义路径名，如:test" class="layui-input">
 			                     </div>
 			                </div>
 			                
@@ -366,6 +368,13 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
+		                     <label class="layui-form-label">自定义路径名</label>
+		                     <div class="layui-input-block">
+		                     	<input type="text" name="filename" value="{$sort->filename}" placeholder="请输入自定义路径名，如:test" class="layui-input">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
 		                     <label class="layui-form-label">内容模型</label>
 		                     <div class="layui-input-block">
 		                     	<select name="mcode" lay-filter="model" lay-verify="required" >
@@ -432,13 +441,6 @@
 		                     <label class="layui-form-label">栏目副名称</label>
 		                     <div class="layui-input-block">
 		                     	<input type="text" name="subname" value="{$sort->subname}" placeholder="请输入栏目副名称" class="layui-input">
-		                     </div>
-		                </div>
-		                
-		                <div class="layui-form-item">
-		                     <label class="layui-form-label">自定义路径名</label>
-		                     <div class="layui-input-block">
-		                     	<input type="text" name="filename" value="{$sort->filename}" placeholder="请输入自定义路径名，如:test" class="layui-input">
 		                     </div>
 		                </div>
 		                

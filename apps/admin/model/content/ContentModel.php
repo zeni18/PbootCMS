@@ -20,9 +20,9 @@ class ContentModel extends Model
     {
         $field = array(
             'a.id',
-            'b.name as sort_name',
+            'b.name as sortname',
             'a.scode',
-            'c.name as subsort_name',
+            'c.name as subsortname',
             'a.subscode',
             'a.title',
             'a.subtitle',
@@ -37,7 +37,8 @@ class ContentModel extends Model
             'a.pics',
             'a.filename',
             'a.outlink',
-            'd.contenturl'
+            'd.urlname',
+            'b.filename as sortfilename'
         );
         $join = array(
             array(
@@ -71,9 +72,9 @@ class ContentModel extends Model
     {
         $fields = array(
             'a.id',
-            'b.name as sort_name',
+            'b.name as sortname',
             'a.scode',
-            'c.name as subsort_name',
+            'c.name as subsortname',
             'a.subscode',
             'a.title',
             'a.subtitle',
@@ -88,7 +89,8 @@ class ContentModel extends Model
             'a.pics',
             'a.filename',
             'a.outlink',
-            'd.contenturl'
+            'd.urlname',
+            'b.filename as sortfilename'
         );
         $join = array(
             array(
@@ -126,9 +128,9 @@ class ContentModel extends Model
     {
         $fields = array(
             'a.id',
-            'b.name as sort_name',
+            'b.name as sortname',
             'a.scode',
-            'c.name as subsort_name',
+            'c.name as subsortname',
             'a.subscode',
             'a.title',
             'a.subtitle',
@@ -143,7 +145,8 @@ class ContentModel extends Model
             'a.pics',
             'a.filename',
             'a.outlink',
-            'd.contenturl'
+            'd.urlname',
+            'b.filename as sortfilename'
         );
         $join = array(
             array(
@@ -202,8 +205,8 @@ class ContentModel extends Model
     {
         $field = array(
             'a.*',
-            'b.name as sort_name',
-            'c.name as subsort_name',
+            'b.name as sortname',
+            'c.name as subsortname',
             'd.*'
         );
         $join = array(

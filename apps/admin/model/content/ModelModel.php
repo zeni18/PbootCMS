@@ -122,17 +122,9 @@ class ModelModel extends Model
     }
 
     // 检查列表页URL名字
-    public function checkListUrl($listurl, $type, $where = array())
+    public function checkUrlname($urlname, $type, $where = array())
     {
-        return parent::table('ay_model')->where("listurl='$listurl' AND type<>$type")
-            ->where($where)
-            ->find();
-    }
-
-    // 检查详情页URL名字
-    public function checkContentUrl($contenturl, $type, $where = array())
-    {
-        return parent::table('ay_model')->where("contenturl='$contenturl' AND type<>$type")
+        return parent::table('ay_model')->where("urlname='$urlname' AND type<>$type")
             ->where($where)
             ->find();
     }

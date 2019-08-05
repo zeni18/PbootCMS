@@ -37,6 +37,7 @@ class IndexController extends Controller
             unset($output['page']); // 去除分页
             if ($output) {
                 $path = key($output); // 第一个参数为路径信息，注意PHP数组会自动将key点符号转换下划线
+                $path = trim($path, '/'); // 去除两端斜杠
                 $url_rule_suffix = substr($this->config('url_rule_suffix'), 1);
                 if (! ! $pos = strripos($path, '_' . $url_rule_suffix)) {
                     $path = substr($path, 0, $pos); // 去扩展
@@ -50,87 +51,61 @@ class IndexController extends Controller
         
         if (isset($path) && is_array($path)) {
             
+            // 地址分隔符
             $url_break_char = $this->config('url_break_char') ?: '_';
             
-            // 判断第二个参数中组合信息
-            if (strpos($path[1], $url_break_char)) {
-                $path1 = explode($url_break_char, $path[1]);
-                $path[1] = $path1[0];
-                $_GET['page'] = $path1[1];
-            }
-            
-            // 判断第一个参数中组合信息,优先第二个参数
+            // 判断第一个参数中组合信息
             if (strpos($path[0], $url_break_char)) {
-                $path0 = explode($url_break_char, $path[0]);
-                $path[0] = $path0[0]; // 作为标识
-                $url_rule_level = $this->config('url_rule_level') ?: 1;
-                if ($url_rule_level == 1) {
-                    $path[1] = $path0[1]; // 内容编号
-                    $_GET['page'] = $path0[2]; // 分页
-                } else {
-                    $_GET['page'] = $path0[1];
+                $param = explode($url_break_char, $path[0]);
+            } else {
+                $param[] = $path[0];
+            }
+            
+            // 判断第一个参数是模型还是自定义分类
+            if (! ! $model = $this->model->checkModelUrlname($param[0])) {
+                $scode = $param[1];
+                if (isset($param[2])) {
+                    $_GET['page'] = $param[2]; // 分页
+                }
+            } else {
+                define('CMS_PAGE_CUSTOM', true); // 自定义名称后比正常少了一个参数
+                $scode = $param[0];
+                if (isset($param[1])) {
+                    $_GET['page'] = $param[1]; // 分页
                 }
             }
             
-            $model = $this->model->getModel($path[0]);
-            if ($model && $model->type == 1) { // 调用单页
-                $this->getAbout($path[1]);
-            } elseif ($model && $path[0] == $model->contenturl) { // 调用详情
-                $this->getContent($path[1]);
-            } elseif ($model && $path[0] == $model->listurl) { // 调用列表
-                $this->getList($path[1]);
-            } else {
-                // 对于参数名称进行自动路由
-                switch ($path[0]) {
-                    case 'list':
-                        $this->getList($path[1]);
-                        break;
-                    case 'about':
-                        $this->getAbout($path[1]);
-                        break;
-                    case 'content':
+            // 路由
+            switch ($param[0]) {
+                case 'search':
+                case 'keyword':
+                    $this->search();
+                    break;
+                case 'addMsg':
+                    $this->addMsg();
+                    break;
+                case 'addForm':
+                    $_GET['fcode'] = $path[2];
+                    $this->addForm();
+                    break;
+                case 'sitemap':
+                    $sitemap = new SitemapController();
+                    $sitemap->index();
+                    break;
+                default:
+                    if (count($path) > 1) {
                         $this->getContent($path[1]);
-                        break;
-                    case 'search':
-                    case 'keyword':
-                        $this->search();
-                        break;
-                    case 'addMsg':
-                        $this->addMsg();
-                        break;
-                    case 'addForm':
-                        $_GET['fcode'] = $path[2];
-                        $this->addForm();
-                        break;
-                    case 'sitemap':
-                        $sitemap = new SitemapController();
-                        $sitemap->index();
-                        break;
-                    default:
-                        if (isset($path[0]) && $path[0]) {
-                            // 自定义栏目名称的情况
-                            if (! ! $rs = $this->model->checkSortFilename($path[0])) {
-                                define('CMS_PAGE_CUSTOM', true); // 分页并正常少了一个参数
-                                $_GET['page'] = $path0[1]; // 自定义名称时第二个参数为分页
-                                switch ($rs->type) {
-                                    case '1':
-                                        $this->getAbout($rs->scode);
-                                        break;
-                                    case '2':
-                                        $this->getList($rs->scode);
-                                        break;
-                                }
-                                exit();
+                    } else {
+                        if (! ! $sort = $this->model->getSort($scode)) {
+                            if ($sort->type == 1) {
+                                $this->getAbout($sort);
+                            } else {
+                                $this->getList($sort);
                             }
-                            
-                            // 自定义内容名称的情况
-                            if (! ! $rs = $this->model->checkContentFilename($path[0])) {
-                                $this->getContent($rs->id);
-                                exit();
-                            }
+                        } else {
+                            $this->_404('您访问的栏目分类不存在，请核对后重试！');
                         }
-                        $this->_404('您访问的地址不存在，请核对后重试！');
-                }
+                    }
             }
         } else {
             $this->getIndex();
@@ -149,28 +124,20 @@ class IndexController extends Controller
     }
 
     // 列表
-    private function getList($scode)
+    private function getList($sort)
     {
-        if (! ! $scode) {
-            if (! ! $sort = $this->model->getSort($scode)) {
-                if ($sort->listtpl) {
-                    define('CMS_PAGE', true); // 使用cms分页处理模型
-                    $content = parent::parser($sort->listtpl); // 框架标签解析
-                    $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-                    $pagetitle = $sort->title ? "{sort:title}" : "{sort:name}"; // 页面标题
-                    $content = str_replace('{pboot:pagetitle}', $pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
-                    $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
-                    $content = $this->parser->parserSortLabel($content, $sort); // CMS分类信息标签解析
-                    $content = $this->parser->parserListLabel($content, $sort->scode); // CMS分类列表标签解析
-                    $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
-                } else {
-                    $this->_404('请到后台设置分类栏目列表页模板！');
-                }
-            } else {
-                $this->_404('您访问的分类不存在，请核对后再试！');
-            }
+        if ($sort->listtpl) {
+            define('CMS_PAGE', true); // 使用cms分页处理模型
+            $content = parent::parser($sort->listtpl); // 框架标签解析
+            $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
+            $pagetitle = $sort->title ? "{sort:title}" : "{sort:name}"; // 页面标题
+            $content = str_replace('{pboot:pagetitle}', $pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+            $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
+            $content = $this->parser->parserSortLabel($content, $sort); // CMS分类信息标签解析
+            $content = $this->parser->parserListLabel($content, $sort->scode); // CMS分类列表标签解析
+            $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
         } else {
-            $this->_404('您访问的地址有误，必须传递栏目scode参数！');
+            $this->_404('请到后台设置分类栏目列表页模板！');
         }
         $this->cache($content, true);
     }
@@ -207,33 +174,25 @@ class IndexController extends Controller
     }
 
     // 单页
-    private function getAbout($scode)
+    private function getAbout($sort)
     {
-        if (! ! $scode) {
-            // 读取数据
-            if (! $data = $this->model->getAbout($scode)) {
-                $this->_404('您访问的内容不存在，请核对后重试！');
-            }
-            
-            // 读取模板
-            if (! ! $sort = $this->model->getSort($data->scode)) {
-                if ($sort->contenttpl) {
-                    define('CMS_PAGE', true); // 使用cms分页处理模型
-                    $content = parent::parser($sort->contenttpl); // 框架标签解析
-                    $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-                    $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
-                    $content = $this->parser->parserSortLabel($content, $sort); // CMS分类信息标签解析
-                    $content = $this->parser->parserCurrentContentLabel($content, $sort, $data); // CMS内容标签解析
-                    $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
-                } else {
-                    $this->_404('请到后台设置分类栏目内容页模板！');
-                }
-            } else {
-                $this->_404('您访问内容的分类已经不存在，请核对后再试！');
-            }
-        } else {
-            $this->_404('您访问的地址有误，必须传递栏目scode参数！');
+        // 读取数据
+        if (! $data = $this->model->getAbout($sort->scode)) {
+            $this->_404('您访问的内容不存在，请核对后重试！');
         }
+        
+        if ($sort->contenttpl) {
+            define('CMS_PAGE', true); // 使用cms分页处理模型
+            $content = parent::parser($sort->contenttpl); // 框架标签解析
+            $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
+            $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
+            $content = $this->parser->parserSortLabel($content, $sort); // CMS分类信息标签解析
+            $content = $this->parser->parserCurrentContentLabel($content, $sort, $data); // CMS内容标签解析
+            $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
+        } else {
+            $this->_404('请到后台设置分类栏目内容页模板！');
+        }
+        
         $this->cache($content, true);
     }
 

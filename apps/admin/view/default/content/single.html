@@ -44,7 +44,7 @@
 	                    {foreach $contents(key,value)}
 	                    <tr>
 	                    	<td>[value->id]</td>
-	                        <td title="[value->scode]">[value->sort_name]</td>
+	                        <td title="[value->scode]">[value->sortname]</td>
 	                         <td title="[value->title]">
 		                        {fun=substr_both($value->title,0,15)}
 		                        {if($value->ico)}
@@ -67,11 +67,11 @@
 		                    </td>
 		                    <td>[value->visits]</td>
 	                        <td>
-	                        	{php}$value->contenturl=$value->contenturl?:'about';{/php}
+	                        	{php}$value->urlname=$value->urlname?:'about';{/php}
 	                           	{if($value->filename)}
 	                        	<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 	                        	{else}
-	                        	<a href="{homeurl./home/Index/'.$value->contenturl.[$url_connector].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+	                        	<a href="{homeurl./home/Index/'.$value->urlname.[$url_break_char].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 	                        	{/if}
 	                            {if(check_level('mod'))}
 	                            	<a href="{url./admin/Single/mod/mcode/'.$value->mcode.'/id/'.$value->id.'}{$btnqs}" class="layui-btn layui-btn-xs" >修改</a>

@@ -24,8 +24,7 @@ class SitemapModel extends Model
             'a.filename',
             'a.outlink',
             'b.type',
-            'b.listurl',
-            'b.contenturl'
+            'b.urlname'
         );
         $join = array(
             'ay_model b',
@@ -48,8 +47,9 @@ class SitemapModel extends Model
             'a.filename',
             'a.date',
             'c.type',
-            'c.listurl',
-            'c.contenturl'
+            'c.urlname',
+            'b.scode',
+            'b.filename as sortfilename'
         );
         $join = array(
             array(

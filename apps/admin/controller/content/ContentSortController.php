@@ -49,10 +49,8 @@ class ContentSortController extends Controller
         $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme()));
         
         // 前端地址连接符判断
-        $url_rule_level = $this->config('url_rule_level') ?: 1;
         $url_break_char = $this->config('url_break_char') ?: '_';
-        $url_connector = ($url_rule_level == 1) ? $url_break_char : '/';
-        $this->assign('url_connector', $url_connector);
+        $this->assign('url_break_char', $url_break_char);
         
         $this->display('content/contentsort.html');
     }
@@ -82,8 +80,7 @@ class ContentSortController extends Controller
             $this->outData[$this->count]->status = $value->status;
             $this->outData[$this->count]->filename = $value->filename;
             $this->outData[$this->count]->type = $value->type;
-            $this->outData[$this->count]->listurl = $value->listurl;
-            $this->outData[$this->count]->contenturl = $value->contenturl;
+            $this->outData[$this->count]->urlname = $value->urlname;
             $this->outData[$this->count]->create_user = $value->create_user;
             $this->outData[$this->count]->update_user = $value->update_user;
             $this->outData[$this->count]->create_time = $value->create_time;

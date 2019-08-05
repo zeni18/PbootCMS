@@ -47,8 +47,7 @@ class ModelController extends Controller
             $mcode = get_auto_code($this->model->getLastCode());
             $name = post('name');
             $type = post('type');
-            $listurl = post('listurl');
-            $contenturl = post('contenturl');
+            $urlname = post('urlname');
             $listtpl = basename(post('listtpl'));
             $contenttpl = basename(post('contenttpl'));
             $status = post('status');
@@ -58,40 +57,15 @@ class ModelController extends Controller
             }
             
             if ($type == 1) {
-                $listurl = '';
-                if (! $contenturl)
-                    $contenturl = 'about';
-                if (! $contenttpl)
-                    $contenttpl = $contenturl . '.html';
+                if (! $urlname)
+                    $urlname = 'about';
             } else {
-                if (! $listurl)
-                    $listurl = 'list';
-                if (! $contenturl)
-                    $contenturl = 'content';
-                if (! $listtpl)
-                    $listtpl = $listurl . '.html';
-                if (! $contenttpl)
-                    $contenttpl = $contenturl . '.html';
+                if (! $urlname)
+                    $urlname = 'list';
             }
             
-            if ($listurl && ! preg_match('/^[\w\-]+$/', $listurl)) {
-                alert_back('列表页URL名称只允许字母、数字、横线组成!');
-            }
-            
-            if (! preg_match('/^[\w\-]+$/', $contenturl)) {
-                alert_back('详情页URL名称只允许字母、数字、横线组成!');
-            }
-            
-            if ($listurl && $listurl == $contenturl) {
-                alert_back('列表页和详情页的URL名称不能相同！');
-            }
-            
-            if ($listurl && $this->model->checkListUrl($listurl, $type)) {
-                alert_back('列表页URL名称与其他模型冲突！');
-            }
-            
-            if ($this->model->checkContentUrl($contenturl, $type)) {
-                alert_back('详情页URL名称与其他模型冲突！');
+            if ($urlname && ! preg_match('/^[\w\-]+$/', $urlname)) {
+                alert_back('URL名称只允许字母、数字、横线组成!');
             }
             
             // 构建数据
@@ -99,8 +73,7 @@ class ModelController extends Controller
                 'mcode' => $mcode,
                 'name' => $name,
                 'type' => $type,
-                'listurl' => $listurl,
-                'contenturl' => $contenturl,
+                'urlname' => $urlname,
                 'listtpl' => $listtpl,
                 'contenttpl' => $contenttpl,
                 'status' => $status,
@@ -165,8 +138,7 @@ class ModelController extends Controller
             // 获取数据
             $name = post('name');
             $type = post('type');
-            $listurl = post('listurl');
-            $contenturl = post('contenturl');
+            $urlname = post('urlname');
             $listtpl = basename(post('listtpl'));
             $contenttpl = basename(post('contenttpl'));
             $status = post('status');
@@ -176,48 +148,22 @@ class ModelController extends Controller
             }
             
             if ($type == 1) {
-                $listurl = '';
-                if (! $contenturl)
-                    $contenturl = 'about';
-                if (! $contenttpl)
-                    $contenttpl = $contenturl . '.html';
+                if (! $urlname)
+                    $urlname = 'about';
             } else {
-                if (! $listurl)
-                    $listurl = 'list';
-                if (! $contenturl)
-                    $contenturl = 'content';
-                if (! $listtpl)
-                    $listtpl = $listurl . '.html';
-                if (! $contenttpl)
-                    $contenttpl = $contenturl . '.html';
+                if (! $urlname)
+                    $urlname = 'list';
             }
             
-            if ($listurl && ! preg_match('/^[\w\-]+$/', $listurl)) {
+            if ($urlname && ! preg_match('/^[\w\-]+$/', $urlname)) {
                 alert_back('列表页URL名称只允许字母、数字、横线组成!');
-            }
-            
-            if (! preg_match('/^[\w\-]+$/', $contenturl)) {
-                alert_back('详情页URL名称只允许字母、数字、横线组成!');
-            }
-            
-            if ($listurl && $listurl == $contenturl) {
-                alert_back('列表页和详情页的URL名称不能相同！');
-            }
-            
-            if ($listurl && $this->model->checkListUrl($listurl, $type, 'id<>' . $id)) {
-                alert_back('列表页URL名称与其他模型冲突！');
-            }
-            
-            if ($this->model->checkContentUrl($contenturl, $type, 'id<>' . $id)) {
-                alert_back('详情页URL名称与其他模型冲突！');
             }
             
             // 构建数据
             $data = array(
                 'name' => $name,
                 'type' => $type,
-                'listurl' => $listurl,
-                'contenturl' => $contenturl,
+                'urlname' => $urlname,
                 'listtpl' => $listtpl,
                 'contenttpl' => $contenttpl,
                 'status' => $status,

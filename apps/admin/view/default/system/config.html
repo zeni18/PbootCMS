@@ -422,15 +422,6 @@
 			  	   	   <input type="hidden" name="formcheck" value="{$formcheck}" > 
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">URL层级</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="url_rule_level" value="1" {if([$configs.url_rule_level.value]==1||![$configs.url_rule_level.value])} checked="checked" {/if} title="一级">
-								<input type="radio" name="url_rule_level" value="2" {if([$configs.url_rule_level.value]==2)} checked="checked" {/if} title="二级">
-		                     	<span class="layui-icon layui-icon-about tips" data-content="一级示例：/news-1.html<br>二级示例：/news/1.html"></span>
-		                     </div>
-		                </div>
-		                
-		                <div class="layui-form-item">
 		                     <label class="layui-form-label">地址模式</label>
 		                     <div class="layui-input-block">
 		                     	<P>
@@ -446,17 +437,6 @@
 								</P>
 		                     </div>
 		                </div>
-		                
-		                <div class="layui-form-item">
-		                     <label class="layui-form-label">目录模式</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="url_rule_dir" value="1" {if([$configs.url_rule_dir.value]==1)} checked="checked" {/if} title="启用">
-								<input type="radio" name="url_rule_dir" value="0" {if(![$configs.url_rule_dir.value])} checked="checked" {/if} title="禁用">
-		                     	<span class="layui-icon layui-icon-about tips" data-content="开启后将不含有.html后缀！"></span>
-		                     </div>
-		                </div>
-		                
-		             
 		                
 		                <div class="layui-form-item">
 							 <div class="layui-input-block">

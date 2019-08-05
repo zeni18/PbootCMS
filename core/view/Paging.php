@@ -159,23 +159,20 @@ class Paging
         if ($page) {
             if (defined('CMS_PAGE')) {
                 $url_rule_type = Config::get('url_rule_type') ?: 3;
-                $url_rule_dir = Config::get('url_rule_dir') ?: 0;
                 $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
-                $url_rule_level = Config::get('url_rule_level') ?: 1;
                 $url_break_char = Config::get('url_break_char') ?: '_';
-                $suffix = $url_rule_dir ? '/' : $url_rule_suffix;
                 
                 if ($url_rule_type == 1 || $url_rule_type == 2) {
-                    if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) { // 去分页参数
-                        $prepath = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($this->getPreUrl(), '/'));
-                    } else {
+                    if (defined('CMS_PAGE_CUSTOM')) { // 去分页参数
                         $prepath = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', '$1', rtrim($this->getPreUrl(), '/'));
+                    } else {
+                        $prepath = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($this->getPreUrl(), '/'));
                     }
                     if ($prepath) {
                         if ($page == 1) {
-                            $path = $prepath . $suffix . query_string('p,s');
+                            $path = $prepath . '/' . query_string('p,s');
                         } else {
-                            $path = $prepath . $url_break_char . $page . $suffix . query_string('p,s');
+                            $path = $prepath . $url_break_char . $page . '/' . query_string('p,s');
                         }
                     } else {
                         $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;
@@ -186,7 +183,7 @@ class Paging
                         $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
                         unset($output[$path_qs]); // 去除路径参数
                                                   
-                        // 非目录模式去后缀扩展
+                        // 去后缀扩展
                         $temp_suffix = substr($url_rule_suffix, 1);
                         if (! ! $pos = strripos($path_qs, '_' . $temp_suffix)) {
                             $path = substr($path_qs, 0, $pos); // 去扩展
@@ -195,22 +192,22 @@ class Paging
                         }
                         
                         // 去除原分页参数
-                        if ($url_rule_level == 1 && ! defined('CMS_PAGE_CUSTOM')) {
-                            $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
-                        } else {
+                        if (defined('CMS_PAGE_CUSTOM')) {
                             $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
+                        } else {
+                            $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                         }
                         
                         // 首页链接处理
                         if ($page == 1) {
-                            $path = SITE_DIR . '/?' . $path . $suffix;
+                            $path = SITE_DIR . '/?' . $path . '/';
                         } else {
-                            $path = SITE_DIR . '/?' . $path . $url_break_char . $page . $suffix;
+                            $path = SITE_DIR . '/?' . $path . $url_break_char . $page . '/';
                         }
                         
-                        // 重组地址
+                        // 附加参数
                         if (! ! $qs = http_build_query($output)) {
-                            $path = $path . '&' . $qs;
+                            $path = rtrim($path, '/') . '&' . $qs;
                         }
                     } else {
                         $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;

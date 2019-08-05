@@ -22,9 +22,9 @@ use core\basic\Smtp;
  *            接收控制器方法访问完整路径，如：/home/index/index
  * @return mixed
  */
-function url($url, $addExt = true)
+function url($url, $suffix = false)
 {
-    return Url::get($url, $addExt);
+    return Url::get($url, $suffix);
 }
 
 /**
@@ -34,9 +34,9 @@ function url($url, $addExt = true)
  *            前端地址参数
  * @return mixed
  */
-function homeurl($url)
+function homeurl($url, $suffix = false)
 {
-    return Url::home($url);
+    return Url::home($url, $suffix);
 }
 
 /**

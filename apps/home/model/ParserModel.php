@@ -29,31 +29,9 @@ class ParserModel extends Model
     protected $next;
 
     // 获取模型数据
-    public function getModel($urlname)
+    public function checkModelUrlname($urlname)
     {
-        return parent::table('ay_model')->where("listurl='$urlname' OR contenturl='$urlname'")->find();
-    }
-
-    // 检查是否为栏目自定义名称
-    public function checkSortFilename($filename)
-    {
-        $join = array(
-            'ay_model b',
-            'a.mcode=b.mcode',
-            'LEFT'
-        );
-        return parent::table('ay_content_sort a')->field('a.scode,b.type')
-            ->join($join)
-            ->where("a.filename='$filename'")
-            ->find();
-    }
-
-    // 检查是否为内容自定义名称
-    public function checkContentFilename($filename)
-    {
-        return parent::table('ay_content')->field('id')
-            ->where("filename='$filename'")
-            ->find();
+        return parent::table('ay_model')->where("urlname='$urlname'")->find();
     }
 
     // 站点配置信息
@@ -81,8 +59,7 @@ class ParserModel extends Model
             'a.*',
             'c.name AS parentname',
             'b.type',
-            'b.listurl',
-            'b.contenturl'
+            'b.urlname'
         );
         $join = array(
             array(
@@ -109,8 +86,7 @@ class ParserModel extends Model
             'a.*',
             'c.name AS parentname',
             'b.type',
-            'b.listurl',
-            'b.contenturl'
+            'b.urlname'
         );
         $join = array(
             array(
@@ -166,8 +142,7 @@ class ParserModel extends Model
         $fields = array(
             'a.*',
             'b.type',
-            'b.listurl',
-            'b.contenturl'
+            'b.urlname'
         );
         $join = array(
             'ay_model b',
@@ -256,8 +231,7 @@ class ParserModel extends Model
                 'a.filename',
                 'a.outlink',
                 'b.type',
-                'b.listurl',
-                'b.contenturl'
+                'b.urlname'
             );
             $join = array(
                 'ay_model b',
@@ -288,8 +262,7 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
-            'd.listurl',
-            'd.contenturl',
+            'd.urlname',
             'e.*'
         );
         $join = array(
@@ -361,8 +334,7 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
-            'd.listurl',
-            'd.contenturl',
+            'd.urlname',
             'e.*'
         );
         $join = array(
@@ -434,8 +406,7 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
-            'd.listurl',
-            'd.contenturl',
+            'd.urlname',
             'e.*'
         );
         $join = array(
@@ -480,8 +451,7 @@ class ParserModel extends Model
             'c.filename as subfilename',
             'd.type',
             'd.name as modelname',
-            'd.listurl',
-            'd.contenturl',
+            'd.urlname',
             'e.*'
         );
         $join = array(
@@ -590,9 +560,10 @@ class ParserModel extends Model
                 'a.title',
                 'a.filename',
                 'a.ico',
+                'a.scode',
+                'b.filename as sortfilename',
                 'c.type',
-                'c.listurl',
-                'c.contenturl'
+                'c.urlname'
             );
             
             $join = array(
@@ -632,9 +603,10 @@ class ParserModel extends Model
                 'a.title',
                 'a.filename',
                 'a.ico',
+                'a.scode',
+                'b.filename as sortfilename',
                 'c.type',
-                'c.listurl',
-                'c.contenturl'
+                'c.urlname'
             );
             
             $join = array(
