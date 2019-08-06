@@ -17,9 +17,8 @@
 		                    <tr>
 		                        <th><input type="checkbox" lay-ignore id="checkall" title="全选"></th>
 		                        <th>栏目名称</th>
-		                        <th>栏目编码</th>
-		                        <th>父编码</th>
-		                        <th>自定义路径名</th>
+		                        <th>编码</th>
+		                        <th>URL名称</th>
 		                        <th>模型</th>
 		                        <th>列表页模板</th>
 		                        <th>详情页模板</th>
@@ -49,7 +48,6 @@
 		                            {/if}
 		                        </td>
 		                        <td>[value->scode]</td>
-		                        <td>[value->pcode]</td>
 		                        <td>[value->filename]</td>
 		                        <td>
 		                        {foreach $allmodels(key2,value2)}	
@@ -135,9 +133,9 @@
 			                </div>
 			                
 			                <div class="layui-form-item">
-			                     <label class="layui-form-label">自定义路径名</label>
+			                     <label class="layui-form-label">URL名称</label>
 			                     <div class="layui-input-block">
-			                     	<input type="text" name="filename" placeholder="请输入自定义路径名，如:test" class="layui-input">
+			                     	<input type="text" name="filename" placeholder="请输入URL名称，如:test" class="layui-input">
 			                     </div>
 			                </div>
 			                
@@ -368,9 +366,9 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">自定义路径名</label>
+		                     <label class="layui-form-label">URL名称</label>
 		                     <div class="layui-input-block">
-		                     	<input type="text" name="filename" value="{$sort->filename}" placeholder="请输入自定义路径名，如:test" class="layui-input">
+		                     	<input type="text" name="filename" value="{$sort->filename}" placeholder="请输入URL名称，如:test" class="layui-input">
 		                     </div>
 		                </div>
 		                

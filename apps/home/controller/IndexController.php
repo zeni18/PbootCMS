@@ -94,7 +94,11 @@ class IndexController extends Controller
                     break;
                 default:
                     if (count($path) > 1) {
-                        $this->getContent($path[1]);
+                        if (! ! ($data = $this->model->getContent($path[1])) && ($data->scode == $scode || $data->sortfilename == $scode)) {
+                            $this->getContent($data);
+                        } else {
+                            $this->_404('您访问的内容不存在，请核对后重试！');
+                        }
                     } else {
                         if (! ! $sort = $this->model->getSort($scode)) {
                             if ($sort->type == 1) {
@@ -103,7 +107,7 @@ class IndexController extends Controller
                                 $this->getList($sort);
                             }
                         } else {
-                            $this->_404('您访问的栏目分类不存在，请核对后重试！');
+                            $this->_404('您访问的栏目不存在，请核对后重试！');
                         }
                     }
             }
@@ -143,32 +147,23 @@ class IndexController extends Controller
     }
 
     // 详情页
-    private function getContent($id)
+    private function getContent($data)
     {
-        if (! ! $id) {
-            // 读取数据
-            if (! $data = $this->model->getContent($id)) {
-                $this->_404('您访问的内容不存在，请核对后重试！');
-            }
-            
-            // 读取模板
-            if (! ! $sort = $this->model->getSort($data->scode)) {
-                if ($sort->contenttpl) {
-                    define('CMS_PAGE', true); // 使用cms分页处理模型
-                    $content = parent::parser($sort->contenttpl); // 框架标签解析
-                    $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-                    $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
-                    $content = $this->parser->parserSortLabel($content, $sort); // CMS分类信息标签解析
-                    $content = $this->parser->parserCurrentContentLabel($content, $sort, $data); // CMS内容标签解析
-                    $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
-                } else {
-                    $this->_404('请到后台设置分类栏目内容页模板！');
-                }
+        // 读取模板
+        if (! ! $sort = $this->model->getSort($data->scode)) {
+            if ($sort->contenttpl) {
+                define('CMS_PAGE', true); // 使用cms分页处理模型
+                $content = parent::parser($sort->contenttpl); // 框架标签解析
+                $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
+                $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
+                $content = $this->parser->parserSortLabel($content, $sort); // CMS分类信息标签解析
+                $content = $this->parser->parserCurrentContentLabel($content, $sort, $data); // CMS内容标签解析
+                $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
             } else {
-                $this->_404('您访问内容的分类已经不存在，请核对后再试！');
+                $this->_404('请到后台设置分类栏目内容页模板！');
             }
         } else {
-            $this->_404('您访问的地址有误，必须传递内容id参数！');
+            $this->_404('您访问内容的分类已经不存在，请核对后再试！');
         }
         $this->cache($content, true);
     }

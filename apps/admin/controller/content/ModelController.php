@@ -64,16 +64,16 @@ class ModelController extends Controller
                     $urlname = 'list';
             }
             
-            if ($urlname && ! preg_match('/^[\w\-]+$/', $urlname)) {
-                alert_back('URL名称只允许字母、数字、横线组成!');
+            if ($urlname && ! preg_match('/^[a-zA-Z\-]+$/', $urlname)) {
+                alert_back('模型URL名称只允许字母、数字、横线组成!');
             }
             
             if ($this->model->checkUrlname($urlname, $type)) {
-                alert_back('URL名称与其他模型冲突，请换一个名称！');
+                alert_back('模型URL名称与其他模型冲突，请换一个名称！');
             }
             
             if ($this->model->checkSortFilename($urlname)) {
-                alert_back('URL名称与栏目自定义名称冲突，请换一个名称！');
+                alert_back('模型URL名称与栏目URL名称冲突，请换一个名称！');
             }
             
             // 构建数据
@@ -163,16 +163,16 @@ class ModelController extends Controller
                     $urlname = 'list';
             }
             
-            if ($urlname && ! preg_match('/^[\w\-]+$/', $urlname)) {
-                alert_back('列表页URL名称只允许字母、数字、横线组成!');
+            if ($urlname && ! preg_match('/^[a-zA-Z\-]+$/', $urlname)) {
+                alert_back('模型URL名称只允许字母、数字、横线组成!');
             }
             
             if ($this->model->checkUrlname($urlname, $type, "id<>$id")) {
-                alert_back('URL名称与其他模型冲突，请换一个名称！');
+                alert_back('模型URL名称与其他模型冲突，请换一个名称！');
             }
             
             if ($this->model->checkSortFilename($urlname)) {
-                alert_back('URL名称与栏目自定义名称冲突，请换一个名称！');
+                alert_back('模型URL名称与栏目URL名称冲突，请换一个名称！');
             }
             
             // 构建数据
