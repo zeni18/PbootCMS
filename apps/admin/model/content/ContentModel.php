@@ -321,7 +321,7 @@ class ContentModel extends Model
         return parent::table('ay_content_ext')->delete($ids, 'contentid');
     }
 
-    // 检查自定义文件名称
+    // 检查自定义URL名称
     public function checkFilename($filename, $where = array())
     {
         return parent::table('ay_content')->field('id')

@@ -107,8 +107,8 @@ class ContentController extends Controller
                 alert_back('文章标题不能为空！');
             }
             
-            if ($filename && ! preg_match('/^[a-zA-Z\-]+$/', $filename)) {
-                alert_back('栏目URL名称称只允许字母、数字、横线组成!');
+            if ($filename && ! preg_match('/^[a-zA-Z0-9\-]+$/', $filename)) {
+                alert_back('内容URL名称称只允许字母、数字、横线组成!');
             }
             
             // 自动提起前一百个字符为描述
@@ -121,7 +121,7 @@ class ContentController extends Controller
                 resize_img(ROOT_PATH . $ico, '', $this->config('ico.max_width'), $this->config('ico.max_height'));
             }
             
-            // 检查自定义文件名称
+            // 检查自定义URL名称
             if ($filename) {
                 while ($this->model->checkFilename($filename)) {
                     $filename = $filename . '-' . mt_rand(1, 20);
@@ -443,8 +443,8 @@ class ContentController extends Controller
                 alert_back('文章标题不能为空！');
             }
             
-            if ($filename && ! preg_match('/^[a-zA-Z\-]+$/', $filename)) {
-                alert_back('栏目URL名称称只允许字母、数字、横线组成!');
+            if ($filename && ! preg_match('/^[a-zA-Z0-9\-]+$/', $filename)) {
+                alert_back('内容URL名称称只允许字母、数字、横线组成!');
             }
             
             // 自动提起前一百个字符为描述

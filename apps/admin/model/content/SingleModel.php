@@ -186,7 +186,7 @@ class SingleModel extends Model
         return parent::table('ay_content_ext')->where("contentid=$id")->delete();
     }
 
-    // 检查自定义文件名称
+    // 检查自定义URL名称
     public function checkFilename($where)
     {
         return parent::table('ay_content')->field('id')

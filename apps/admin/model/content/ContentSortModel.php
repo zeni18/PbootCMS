@@ -236,7 +236,7 @@ class ContentSortModel extends Model
         return $this->scodes;
     }
 
-    // 检查自定义文件名称
+    // 检查自定义URL名称
     public function checkFilename($filename, $where = array())
     {
         return parent::table('ay_content_sort')->field('id')

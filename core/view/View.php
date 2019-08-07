@@ -142,14 +142,14 @@ class View
     // 缓存页面， 开启缓存开关时有效
     public function cache($content)
     {
-        if (Config::get('tpl_html_cache') && ! $_SERVER['QUERY_STRING']) {
+        if (Config::get('tpl_html_cache') && ! query_string('p,s')) {
             $lg = cookie('lg');
             if (Config::get('open_wap') && (is_mobile() || Config::get('wap_domain') == get_http_host())) {
                 $wap = 'wap';
             } else {
                 $wap = '';
             }
-            $cacheFile = $this->cachePath . '/' . md5($_SERVER["REQUEST_URI"] . $lg . $wap) . '.html'; // 缓存文件
+            $cacheFile = $this->cachePath . '/' . md5(get_http_url() . $_SERVER["REQUEST_URI"] . $lg . $wap) . '.html'; // 缓存文件
             file_put_contents($cacheFile, $content) ?: error('缓存文件' . $cacheFile . '生成出错！请检查目录是否有可写权限！'); // 写入缓存文件
             return true;
         }

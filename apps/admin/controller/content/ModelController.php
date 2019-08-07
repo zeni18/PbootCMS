@@ -64,7 +64,7 @@ class ModelController extends Controller
                     $urlname = 'list';
             }
             
-            if ($urlname && ! preg_match('/^[a-zA-Z\-]+$/', $urlname)) {
+            if ($urlname && ! preg_match('/^[a-zA-Z0-9\-]+$/', $urlname)) {
                 alert_back('模型URL名称只允许字母、数字、横线组成!');
             }
             
@@ -163,7 +163,7 @@ class ModelController extends Controller
                     $urlname = 'list';
             }
             
-            if ($urlname && ! preg_match('/^[a-zA-Z\-]+$/', $urlname)) {
+            if ($urlname && ! preg_match('/^[a-zA-Z0-9\-]+$/', $urlname)) {
                 alert_back('模型URL名称只允许字母、数字、横线组成!');
             }
             

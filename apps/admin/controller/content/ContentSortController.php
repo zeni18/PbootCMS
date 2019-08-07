@@ -195,12 +195,12 @@ class ContentSortController extends Controller
                     alert_back('栏目类型不能为空！');
                 }
                 
-                if ($filename && ! preg_match('/^[\w\-]+$/', $filename)) {
-                    alert_back('自定义路径名只允许字母、数字、横线组成!');
+                if ($filename && ! preg_match('/^[a-zA-Z0-9\-]+$/', $filename)) {
+                    alert_back('URL名称只允许字母、数字、横线组成!');
                 }
                 
                 if ($filename && $this->model->checkUrlname($filename)) {
-                    alert_back('自定义路径名与模型URL名称冲突，请换一个名称！');
+                    alert_back('URL名称与模型URL名称冲突，请换一个名称！');
                 }
                 
                 // 缩放缩略图
@@ -213,7 +213,7 @@ class ContentSortController extends Controller
                     alert_back('该内容栏目编号已经存在，不能再使用！');
                 }
                 
-                // 检查自定义文件名称
+                // 检查自定义URL名称
                 if ($filename) {
                     while ($this->model->checkFilename($filename)) {
                         $filename = $filename . '_' . mt_rand(1, 20);
@@ -410,12 +410,12 @@ class ContentSortController extends Controller
                 alert_back('栏目类型不能为空！');
             }
             
-            if ($filename && ! preg_match('/^[\w\-]+$/', $filename)) {
-                alert_back('自定义路径名只允许字母、数字、横线组成!');
+            if ($filename && ! preg_match('/^[a-zA-Z0-9\-]+$/', $filename)) {
+                alert_back('URL名称只允许字母、数字、横线组成!');
             }
             
             if ($filename && $this->model->checkUrlname($filename)) {
-                alert_back('自定义路径名与模型URL名称冲突，请换一个名称！');
+                alert_back('URL名称与模型URL名称冲突，请换一个名称！');
             }
             
             // 缩放缩略图

@@ -969,7 +969,7 @@ class ParserController extends Controller
                                 if ($url_rule_type == 3) {
                                     $link = rtrim($path, '/') . '&' . $qs;
                                 } else {
-                                    $link = $path . '?' . $qs;
+                                    $link = $path . '/?' . $qs;
                                 }
                                 $one_html = str_replace($matches2[0][$j], $link, $one_html);
                                 break;
