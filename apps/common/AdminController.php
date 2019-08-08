@@ -79,8 +79,8 @@ class AdminController extends Controller
             alert_back('表单提交校验失败,请刷新后重试！');
         }
         
-        // 非上传接口提交后或页面首次加载时，生成页面验证码
-        if (($_POST || ! issetSession('formcheck')) && ! (C == 'Index' && F == 'upload') && ! (C == 'Index' && F == 'login')) {
+        // 首次加载时，生成页面验证码
+        if (! issetSession('formcheck')) {
             session('formcheck', get_uniqid());
         }
         $this->assign('formcheck', session('formcheck')); // 注入formcheck模板变量

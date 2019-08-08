@@ -36,31 +36,17 @@ class ParserController extends Controller
     {
         // 处理模板中不需要解析的标签
         $content = $this->savePreLabel($content);
-        
-        // 实现自动页面关键字及描述
-        if (C == 'List') {
-            // {pboot:pagetitle}在列表控制器中实现
-            $content = str_replace('{pboot:pagekeywords}', '{sort:keywords}', $content);
-            $content = str_replace('{pboot:pagedescription}', '{sort:description}', $content);
-        } elseif (C == 'Content') {
-            $content = str_replace('{pboot:pagetitle}', '{content:title}-{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
-            $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
-            $content = str_replace('{pboot:pagedescription}', '{content:description}', $content);
-        } elseif (C == 'About') {
-            $content = str_replace('{pboot:pagetitle}', '{content:title}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
-            $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
-            $content = str_replace('{pboot:pagedescription}', '{content:description}', $content);
-        } else {
-            $content = str_replace('{pboot:pagetitle}', '{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
-            $content = str_replace('{pboot:pagekeywords}', '{pboot:sitekeywords}', $content);
-            $content = str_replace('{pboot:pagedescription}', '{pboot:sitedescription}', $content);
-        }
         return $content;
     }
 
     // 解析全局后置公共标签
     public function parserAfter($content)
     {
+        // 默认页面信息替换
+        $content = str_replace('{pboot:pagetitle}', '{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+        $content = str_replace('{pboot:pagekeywords}', '{pboot:sitekeywords}', $content);
+        $content = str_replace('{pboot:pagedescription}', '{pboot:sitedescription}', $content);
+        
         $content = $this->parserSingleLabel($content); // 单标签解析
         $content = $this->parserSiteLabel($content); // 站点标签
         $content = $this->parserCompanyLabel($content); // 公司标签

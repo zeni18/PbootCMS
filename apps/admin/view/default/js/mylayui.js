@@ -58,7 +58,7 @@ layui.use(['element','upload','laydate','form'], function(){
       },
       error:function(xhr,status,error){
     	  layer.msg("登录请求发生错误!", {icon: 5});
-    	  $('#note').html('登录请求发生错误，请按照如下方式排查：<br>1、前台内页是否正常访问？否则检查pathinfo配置；<br>2、如果前台正常，请删除根目录下runtime目录重试;<br>3、如果还是不行，请检查目录写入权限是否正确。<br>4、如果还不行那就出钱请人部署吧！');
+    	  $('#note').html('登录请求发生错误，您可按照如下方式排查：<br>1、试着删除根目录下runtime目录，刷新页面重试;<br>2、检查系统会话文件存储目录是否具有写入权限；<br>3、检查服务器环境pathinfo及伪静态规则配置；<br>4、如果还不行那就到交流群出钱请人处理吧！');
       }
 	});
     return false;

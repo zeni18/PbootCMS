@@ -64,7 +64,7 @@ body {
 	left: 0;
 	bottom: 0;
 	width: 100%;
-	line-height: 30px;
+	line-height: 1.5;
 	padding: 20px;
 	text-align: center;
 	box-sizing: border-box;
@@ -74,7 +74,6 @@ body {
 	padding: 0 5px;
 }
 .user-login-footer a {
-	padding: 0 5px;
 	color: rgba(0,0,0,.5);
 }
 .user-login-footer a:hover {

@@ -454,7 +454,6 @@ function cut_img($src_image, $out_image = null, $new_width = null, $new_height =
 // 图片水印
 function watermark_img($src_image, $out_image = null, $position = null, $watermark_image = null, $watermark_text = '', $watermark_text_size = null, $watermark_text_color = null)
 {
-    cache_config(); // 避免直接调用时未加载水印配置问题
     if (! Config::get('watermark_open')) {
         return;
     }
