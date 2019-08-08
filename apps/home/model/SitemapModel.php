@@ -33,6 +33,7 @@ class SitemapModel extends Model
         );
         $result = parent::table('ay_content_sort a')->field($fields)
             ->where('a.status=1')
+            ->where("a.acode='" . get_lg() . "'")
             ->join($join)
             ->order('a.pcode,a.sorting,a.id')
             ->select();

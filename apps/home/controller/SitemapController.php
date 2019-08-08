@@ -25,8 +25,9 @@ class SitemapController extends Controller
     public function index()
     {
         header("Content-type:text/xml;charset=utf-8");
-        $str = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n" . '<urlset>';
-        $str .= $this->makeNode('', date('Y-m-d'), 1); // 根目录
+        $str = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $str .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:mobile="http://www.baidu.com/schemas/sitemap-mobile/1/">' . "\n";
+        $str .= $this->makeNode('', date('Y-m-d'), '1.00'); // 根目录
         
         $url_break_char = $this->config('url_break_char') ?: '_';
         
@@ -41,7 +42,7 @@ class SitemapController extends Controller
                 } else {
                     $link = Url::home('/home/Index/' . $value->urlname . $url_break_char . $value->scode);
                 }
-                $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
+                $str .= $this->makeNode($link, date('Y-m-d'), '0.80');
             } else {
                 $value->urlname = $value->urlname ?: 'list';
                 if ($value->filename) {
@@ -49,7 +50,7 @@ class SitemapController extends Controller
                 } else {
                     $link = Url::home('home/Index/' . $value->urlname . $url_break_char . $value->scode);
                 }
-                $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
+                $str .= $this->makeNode($link, date('Y-m-d'), '0.80');
                 $contents = $this->model->getSortContent($value->scode);
                 foreach ($contents as $value2) {
                     if ($value2->outlink) { // 外链
@@ -66,7 +67,7 @@ class SitemapController extends Controller
                             $link = Url::home('home/Index/' . $value2->urlname . $url_break_char . $value2->scode . '/' . $value2->id, true);
                         }
                     }
-                    $str .= $this->makeNode($link, date('Y-m-d'), 0.8);
+                    $str .= $this->makeNode($link, date('Y-m-d'), '0.60');
                 }
             }
         }
@@ -74,14 +75,15 @@ class SitemapController extends Controller
     }
 
     // 生成结点信息
-    private function makeNode($link, $date, $priority = 0.6)
+    private function makeNode($link, $date, $priority = 0.60)
     {
         $node = '
 <url>
+    <mobile:mobile type="pc,mobile"/>
     <loc>' . get_http_url() . $link . '</loc>
-    <lastmod>' . $date . '</lastmod>
-    <changefreq>daily</changefreq>
     <priority>' . $priority . '</priority>
+    <lastmod>' . $date . '</lastmod>
+    <changefreq>Always</changefreq>
 </url>';
         return $node;
     }
