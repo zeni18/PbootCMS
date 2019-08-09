@@ -104,6 +104,10 @@
 	            		<dd><a href="{url.'.$value2->url.'}"><i class="fa [value2->ico]" aria-hidden="true"></i>[value2->name]</a></dd>
 	            	{/if}
 				{/foreach}
+				
+				{if($value->mcode=='M101' && session('ucode')==10001)}
+					<dd><a href="{url./admin/Upgrade/index}"><i class="fa fa-cloud-upload" aria-hidden="true"></i>在线更新</a></dd>
+				{/if}
 		    {/if}
           </dl>
         </li>

@@ -90,6 +90,7 @@ function light_nav(){
         var aUrl = $(element).attr('href').toLowerCase();
         if (url==aUrl) {
             $(element).parent("dd").addClass("layui-this");
+            $(element).parents('.layui-nav-item').addClass('layui-nav-itemed');
             flag = true;
         }
 		if(flag) return false;
@@ -104,6 +105,7 @@ function light_nav(){
             aUrl = aUrl.replace('.html','');
             if (url.indexOf(aUrl)>-1) {
             	$(element).parent("dd").addClass("layui-this");
+            	$(element).parents('.layui-nav-item').addClass('layui-nav-itemed');
                 flag = true;
             }
             if(flag) return false;
@@ -116,6 +118,7 @@ function light_nav(){
             var aUrl = $(element).attr("href").toLowerCase();
             if (mcode && aUrl.indexOf('/mcode/'+mcode)>-1) {
             	$(element).parent("dd").addClass("layui-this");
+            	$(element).parents('.layui-nav-item').addClass('layui-nav-itemed');
                 flag = true;
             }
             if(flag) return false;
@@ -128,6 +131,7 @@ function light_nav(){
             var aUrl = $(element).attr("href").toLowerCase();
             if (controller!='index' && aUrl.indexOf('/'+controller+'/')>-1) {
             	$(element).parent("dd").addClass("layui-this");
+            	$(element).parents('.layui-nav-item').addClass('layui-nav-itemed');
                 flag = true;
             }
             if(flag) return false;
