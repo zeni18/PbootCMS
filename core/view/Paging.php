@@ -161,6 +161,7 @@ class Paging
                 $url_rule_type = Config::get('url_rule_type') ?: 3;
                 $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
                 $url_break_char = Config::get('url_break_char') ?: '_';
+                $url_rule_sort_suffix = Config::get('url_rule_sort_suffix') ? $url_rule_suffix : '/';
                 
                 if ($url_rule_type == 1 || $url_rule_type == 2) {
                     if (defined('CMS_PAGE_CUSTOM')) { // 去分页参数
@@ -170,9 +171,9 @@ class Paging
                     }
                     if ($prepath) {
                         if ($page == 1) {
-                            $path = $prepath . '/' . query_string('p,s');
+                            $path = $prepath . $url_rule_sort_suffix . query_string('p,s');
                         } else {
-                            $path = $prepath . $url_break_char . $page . '/' . query_string('p,s');
+                            $path = $prepath . $url_break_char . $page . $url_rule_sort_suffix . query_string('p,s');
                         }
                     } else {
                         $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;
@@ -200,9 +201,9 @@ class Paging
                         
                         // 首页链接处理
                         if ($page == 1) {
-                            $path = SITE_DIR . '/?' . $path . '/';
+                            $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
                         } else {
-                            $path = SITE_DIR . '/?' . $path . $url_break_char . $page . '/';
+                            $path = SITE_DIR . '/?' . $path . $url_break_char . $page . $url_rule_sort_suffix;
                         }
                         
                         // 附加参数

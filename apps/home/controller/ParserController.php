@@ -755,6 +755,7 @@ class ParserController extends Controller
                 $url_rule_type = $this->config('url_rule_type') ?: 3;
                 $url_rule_suffix = $this->config('url_rule_suffix') ?: '.html';
                 $url_break_char = $this->config('url_break_char') ?: '_';
+                $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? $url_rule_suffix : '/';
                 
                 // 附加后缀及参数
                 if ($url_rule_type == 1 || $url_rule_type == 2) {
@@ -775,7 +776,7 @@ class ParserController extends Controller
                     }
                     
                     // 拼接地址
-                    $path .= '/' . query_string('p,s,' . $field);
+                    $path .= $url_rule_sort_suffix . query_string('p,s,' . $field);
                 } elseif ($url_rule_type == 3) {
                     $output = array();
                     if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
@@ -801,7 +802,7 @@ class ParserController extends Controller
                             $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                         }
                         
-                        $path = SITE_DIR . '/?' . $path . '/';
+                        $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
                         
                         // 重组地址
                         if (! ! $qs = http_build_query($output)) {
@@ -838,6 +839,7 @@ class ParserController extends Controller
             $url_rule_type = $this->config('url_rule_type') ?: 3;
             $url_rule_suffix = $this->config('url_rule_suffix') ?: '.html';
             $url_break_char = $this->config('url_break_char') ?: '_';
+            $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? $url_rule_suffix : '/';
             
             // 附加后缀及参数
             if ($url_rule_type == 1 || $url_rule_type == 2) {
@@ -883,7 +885,7 @@ class ParserController extends Controller
                 unset($output['p']); // 去除保留参数
                 unset($output['s']); // 去除保留参数
             }
-            $path = isset($path) ? $path : SITE_DIR . '/';
+            $path = isset($path) ? $path . $url_rule_sort_suffix : SITE_DIR . '/';
         }
         
         // 执行匹配替换
@@ -955,7 +957,7 @@ class ParserController extends Controller
                                 if ($url_rule_type == 3) {
                                     $link = rtrim($path, '/') . '&' . $qs;
                                 } else {
-                                    $link = $path . '/?' . $qs;
+                                    $link = $path . '?' . $qs;
                                 }
                                 $one_html = str_replace($matches2[0][$j], $link, $one_html);
                                 break;
@@ -2990,21 +2992,22 @@ class ParserController extends Controller
     protected function parserLink($type, $urlname, $page, $scode, $sortfilename, $id, $contentfilename)
     {
         $url_break_char = $this->config('url_break_char') ?: '_';
+        $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
         
         if ($type == 1) {
             $urlname = $urlname ?: 'about';
             if ($sortfilename) {
-                $link = Url::home('home/Index/' . $sortfilename);
+                $link = Url::home('home/Index/' . $sortfilename, $url_rule_sort_suffix);
             } else {
-                $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode);
+                $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode, $url_rule_sort_suffix);
             }
         } else {
             $urlname = $urlname ?: 'list';
             if ($page == 'list') {
                 if ($sortfilename) {
-                    $link = Url::home('home/Index/' . $sortfilename);
+                    $link = Url::home('home/Index/' . $sortfilename, $url_rule_sort_suffix);
                 } else {
-                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode);
+                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode, $url_rule_sort_suffix);
                 }
             } elseif ($page == 'content') {
                 if ($sortfilename && $contentfilename) {
