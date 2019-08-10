@@ -119,8 +119,8 @@ class IndexController extends Controller
         }
         
         if (! ! $time = $this->checkLoginBlack()) {
-            $this->log('登入锁定!');
-            json(0, '您登陆失败次数太多已被锁定，请' . $time . '秒后再试！');
+            $this->log('登录锁定!');
+            json(0, '您登录失败次数太多已被锁定，请' . $time . '秒后再试！');
         }
         
         // 执行用户登录
@@ -162,12 +162,12 @@ class IndexController extends Controller
             session('area_map', $login->area_map); // 区域代码名称映射表
             session('area_tree', $login->area_tree); // 用户区域树
             
-            $this->log('登入成功!');
+            $this->log('登录成功!');
             json(1, url('admin/Index/home'));
         } else {
             $this->setLoginBlack();
-            $this->log('登入失败!');
-            session('checkcode', mt_rand(10000, 99999)); // 登陆失败，随机打乱原有验证码
+            $this->log('登录失败!');
+            session('checkcode', mt_rand(10000, 99999)); // 登录失败，随机打乱原有验证码
             json(0, '用户名或密码错误！');
         }
     }
@@ -295,7 +295,7 @@ class IndexController extends Controller
         return false;
     }
 
-    // 添加登陆黑名单
+    // 添加登录黑名单
     private function setLoginBlack()
     {
         // 读取黑名单

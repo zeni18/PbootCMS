@@ -32,7 +32,7 @@ class UpgradeController extends Controller
     public function __construct()
     {
         error_reporting(0);
-        $this->branch = $this->config('upgrade_branch') ?: '1.X';
+        $this->branch = $this->config('upgrade_branch') == '2.X' ? '2.X' : '1.X';
         $this->force = $this->config('upgrade_force') ?: 0;
         $this->revise = $this->config('revise_version') ?: 0;
     }
@@ -112,7 +112,7 @@ class UpgradeController extends Controller
                     }
                     
                     // 定义执行下载的类型
-                    $types = '.zip|.rar|.doc|.docx|.ppt|.pptx|.xls|.xlsx|.chm|';
+                    $types = '.zip|.rar|.doc|.docx|.ppt|.pptx|.xls|.xlsx|.chm|.ttf|.otf|';
                     $pathinfo = explode(".", basename($path));
                     $ext = end($pathinfo); // 获取扩展
                     if (preg_match('/\.' . $ext . '\|/i', $types)) {
@@ -258,7 +258,7 @@ class UpgradeController extends Controller
             'site' => get_http_url(),
             'sn_user' => $this->config('sn_user')
         );
-        $url = $this->server . '/index.php/upgrade/getlist?' . http_build_query($param);
+        $url = $this->server . '/index.php?p=/upgrade/getlist&' . http_build_query($param);
         if (! ! $rs = json_decode(get_url($url, '', '', true))) {
             if ($rs->code) {
                 if (is_array($rs->data)) {
@@ -278,7 +278,7 @@ class UpgradeController extends Controller
     // 获取文件
     private function getServerFile($source, $des)
     {
-        $url = $this->server . '/index.php/upgrade/getFile/branch/' . $this->branch;
+        $url = $this->server . '/index.php?p=/upgrade/getFile&branch=' . $this->branch;
         $data['path'] = $source;
         $file = basename($source);
         if (! ! $rs = json_decode(get_url($url, $data, '', true))) {

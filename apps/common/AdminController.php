@@ -87,15 +87,15 @@ class AdminController extends Controller
     {
         // 免登录可访问页面
         $public_path = array(
-            '/admin/Index/index', // 登陆页面
-            '/admin/Index/login' // 执行登陆
+            '/admin/Index/index', // 登录页面
+            '/admin/Index/login' // 执行登录
         );
         
         if (session('sid') && $this->checkSid()) { // 如果已经登录直接true
             return true;
         } elseif (in_array('/' . M . '/' . C . '/' . F, $public_path)) { // 免登录可访问页面
             return false;
-        } else { // 未登陆跳转到登陆页面
+        } else { // 未登录跳转到登录页面
             location(url('/admin/Index/index'));
         }
     }
@@ -115,11 +115,11 @@ class AdminController extends Controller
     // 访问权限检查
     private function checkLevel()
     {
-        // 免权限等级认证页面，即所有登陆用户都可以访问
+        // 免权限等级认证页面，即所有登录用户都可以访问
         $public_path = array(
-            '/admin/Index/index', // 登陆页
+            '/admin/Index/index', // 登录页
             '/admin/Index/home', // 主页
-            '/admin/Index/loginOut', // 退出登陆
+            '/admin/Index/loginOut', // 退出登录
             '/admin/Index/ucenter', // 用户中心
             '/admin/Index/area', // 区域选择
             '/admin/Index/clearCache', // 清理缓存

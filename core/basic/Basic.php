@@ -121,7 +121,7 @@ class Basic
                     if (! check_dir($save_path, true))
                         error('设置的会话目录创建失败！');
                     ini_set("session.save_handler", "files");
-                    $depth = 2;
+                    $depth = 1;
                     ini_set("session.save_path", $depth . ';' . $save_path);
                     if (! is_dir($save_path . '/0/0') || ! is_dir($save_path . '/v/v')) {
                         create_session_dir($save_path, $depth);
