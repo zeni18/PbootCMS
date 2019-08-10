@@ -169,74 +169,84 @@ class Paging
                     } else {
                         $prepath = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($this->getPreUrl(), '/'));
                     }
-                    if ($prepath) {
-                        if ($page == 1) {
+                    if ($prepath) { // 非首页分页
+                        if ($page == 1) { // 第一页处理
                             $path = $prepath . $url_rule_sort_suffix . query_string('p,s');
                         } else {
                             $path = $prepath . $url_break_char . $page . $url_rule_sort_suffix . query_string('p,s');
                         }
-                    } else {
+                    } else { // 首页分页
                         $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;
                     }
                 } else {
-                    if (isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) {
+                    if ($url_rule_type == 3 && isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) {
                         parse_str($qs, $output);
-                        $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
-                        unset($output[$path_qs]); // 去除路径参数
-                                                  
-                        // 去后缀扩展
-                        $temp_suffix = substr($url_rule_suffix, 1);
-                        if (! ! $pos = strripos($path_qs, '_' . $temp_suffix)) {
-                            $path = substr($path_qs, 0, $pos); // 去扩展
-                        } else {
-                            $path = $path_qs;
-                        }
+                        unset($output['page']);
                         
-                        // 去除原分页参数
-                        if (defined('CMS_PAGE_CUSTOM')) {
-                            $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
-                        } else {
-                            $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
+                        if ($output && ! current($output)) {
+                            $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
+                            unset($output[$path_qs]); // 去除路径参数
+                                                      
+                            // 去后缀扩展
+                            $temp_suffix = substr($url_rule_suffix, 1);
+                            if (! ! $pos = strripos($path_qs, '_' . $temp_suffix)) {
+                                $path = substr($path_qs, 0, $pos); // 去扩展
+                            } else {
+                                $path = $path_qs;
+                            }
+                            
+                            // 去除原分页参数
+                            if (defined('CMS_PAGE_CUSTOM')) {
+                                $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
+                            } else {
+                                $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
+                            }
+                            
+                            // 第一页链接处理
+                            if ($page == 1) {
+                                $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
+                            } else {
+                                $path = SITE_DIR . '/?' . $path . $url_break_char . $page . $url_rule_sort_suffix;
+                            }
+                            
+                            // 附加参数
+                            if (! ! $qs = http_build_query($output)) {
+                                $path = rtrim($path, '/') . '&' . $qs;
+                            }
                         }
-                        
-                        // 首页链接处理
-                        if ($page == 1) {
-                            $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
-                        } else {
-                            $path = SITE_DIR . '/?' . $path . $url_break_char . $page . $url_rule_sort_suffix;
-                        }
-                        
-                        // 附加参数
-                        if (! ! $qs = http_build_query($output)) {
-                            $path = rtrim($path, '/') . '&' . $qs;
-                        }
-                    } else {
-                        $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;
+                    }
+                    
+                    if (! $path) { // 转基本分页模式
+                        return $this->buildBasicPage($page);
                     }
                 }
                 return $path;
             } else {
-                // 对于路径保留变量给予去除
-                if (M == 'home' && Config::get('url_rule_type') == 2) {
-                    $unset = 'p,s';
-                } elseif (Config::get('app_url_type') == 2) {
-                    $unset = 'p,s';
-                } else {
-                    $unset = null;
-                }
-                
-                if ($page == 1) {
-                    return $this->getPreUrl() . query_string($unset);
-                } else {
-                    if (query_string($unset)) {
-                        return $this->getPreUrl() . query_string($unset) . '&page=' . $page;
-                    } else {
-                        return $this->getPreUrl() . '?page=' . $page;
-                    }
-                }
+                return $this->buildBasicPage($page);
             }
         } else {
             return 'javascript:;';
+        }
+    }
+
+    // 构建基本分页
+    private function buildBasicPage($page)
+    {
+        // 对于路径保留变量给予去除
+        if ((M == 'home' && Config::get('url_rule_type') == 2) || (M != 'home' && Config::get('app_url_type') == 2)) {
+            $unset = 'p,s';
+        } else {
+            $unset = null;
+        }
+        
+        if ($page == 1) {
+            return $this->getPreUrl() . query_string($unset);
+        } else {
+            if (! ! $qs = query_string($unset)) {
+                return $this->getPreUrl() . $qs . '&page=' . $page;
+            } else {
+                return $this->getPreUrl() . '?page=' . $page;
+            }
         }
     }
 

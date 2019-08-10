@@ -761,6 +761,12 @@ class ParserController extends Controller
                 if ($url_rule_type == 1 || $url_rule_type == 2) {
                     // 获取地址路径
                     $url = parse_url(URL);
+                    
+                    // 避免非根目录首页筛选问题
+                    if (trim($url['path'], '/') == trim(SITE_DIR, '/')) {
+                        $url_rule_sort_suffix = '/';
+                    }
+                    
                     $path = preg_replace('/\/page\/[0-9]+/', '', $url['path']); // 去除路径方式分页
                                                                                 
                     // 去后缀扩展
@@ -781,32 +787,40 @@ class ParserController extends Controller
                     $output = array();
                     if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
                         parse_str($qs, $output);
-                        $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
-                        unset($output[$path_qs]); // 去除路径参数
-                        $temp_suffix = substr($url_rule_suffix, 1);
-                        if (! ! $pos = strripos($path_qs, '_' . $temp_suffix)) {
-                            $path = substr($path_qs, 0, $pos); // 去扩展
-                        } else {
-                            $path = $path_qs;
-                        }
-                        
                         unset($output['page']); // 去除字符串方式分页，回到第一页
                         unset($output['p']); // 去除保留参数
                         unset($output['s']); // 去除保留参数
                         unset($output[$field]); // 不筛选该字段
-                                                
-                        // 去除原分页参数
-                        if (defined('CMS_PAGE_CUSTOM')) {
-                            $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
+                        
+                        if ($output && ! current($output)) {
+                            $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
+                            unset($output[$path_qs]); // 去除路径参数
+                            $temp_suffix = substr($url_rule_suffix, 1);
+                            if (! ! $pos = strripos($path_qs, '_' . $temp_suffix)) {
+                                $path = substr($path_qs, 0, $pos); // 去扩展
+                            } else {
+                                $path = $path_qs;
+                            }
+                            
+                            // 去除原分页参数
+                            if (defined('CMS_PAGE_CUSTOM')) {
+                                $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
+                            } else {
+                                $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
+                            }
+                            
+                            $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
                         } else {
-                            $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
+                            $path = '';
                         }
                         
-                        $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
-                        
-                        // 重组地址
-                        if (! ! $qs = http_build_query($output)) {
+                        $qs = http_build_query($output);
+                        if ($path && $qs) { // 重组地址
                             $path = rtrim($path, '/') . '&' . $qs;
+                        } elseif ($qs) {
+                            $path = SITE_DIR . '/?' . $qs;
+                        } else {
+                            $path = SITE_DIR . '/';
                         }
                     } else {
                         $path = SITE_DIR . '/';
@@ -845,6 +859,12 @@ class ParserController extends Controller
             if ($url_rule_type == 1 || $url_rule_type == 2) {
                 // 获取地址路径
                 $url = parse_url(URL);
+                
+                // 避免非根目录首页筛选问题
+                if (trim($url['path'], '/') == trim(SITE_DIR, '/')) {
+                    $url_rule_sort_suffix = '/';
+                }
+                
                 $path = preg_replace('/\/page\/[0-9]+/', '', $url['path']); // 去除路径方式分页，回到第一页
                                                                             
                 // 去后缀扩展
@@ -863,7 +883,10 @@ class ParserController extends Controller
             $output = array();
             if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
                 parse_str($qs, $output);
-                if ($url_rule_type == 3) {
+                unset($output['page']); // 去除字符串方式分页，回到第一页
+                unset($output['p']); // 去除保留参数
+                unset($output['s']); // 去除保留参数
+                if ($url_rule_type == 3 && $output && ! current($output)) {
                     $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
                     unset($output[$path_qs]); // 去除路径参数
                     $temp_suffix = substr($url_rule_suffix, 1);
@@ -880,10 +903,8 @@ class ParserController extends Controller
                         $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                     }
                     $path = SITE_DIR . '/?' . $path;
+                    $not_index = true;
                 }
-                unset($output['page']); // 去除字符串方式分页，回到第一页
-                unset($output['p']); // 去除保留参数
-                unset($output['s']); // 去除保留参数
             }
             $path = isset($path) ? $path . $url_rule_sort_suffix : SITE_DIR . '/';
         }
@@ -954,7 +975,7 @@ class ParserController extends Controller
                                 $qs = $output; // 需使用中间变量，避免多个链接相同问题
                                 $qs[$field] = $value;
                                 $qs = http_build_query($qs);
-                                if ($url_rule_type == 3) {
+                                if ($url_rule_type == 3 && $not_index) {
                                     $link = rtrim($path, '/') . '&' . $qs;
                                 } else {
                                     $link = $path . '?' . $qs;

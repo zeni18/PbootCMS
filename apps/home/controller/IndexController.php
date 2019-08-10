@@ -27,15 +27,18 @@ class IndexController extends Controller
     // 空拦截器, 实现文章路由转发
     public function _empty()
     {
+        // 地址类型
+        $url_rule_type = $this->config('url_rule_type') ?: 3;
+        
         if (P) { // 采用pathinfo模式及p参数模式
             $path = explode('/', P);
             if (! defined('URL_BIND')) {
                 array_shift($path); // 去除模块部分
             }
-        } elseif (isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) { // 采用简短传参模式
+        } elseif ($url_rule_type == 3 && isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) { // 采用简短传参模式
             parse_str($qs, $output);
             unset($output['page']); // 去除分页
-            if ($output) {
+            if ($output && ! current($output)) {
                 $path = key($output); // 第一个参数为路径信息，注意PHP数组会自动将key点符号转换下划线
                 $path = trim($path, '/'); // 去除两端斜杠
                 $url_rule_suffix = substr($this->config('url_rule_suffix'), 1);
@@ -62,7 +65,7 @@ class IndexController extends Controller
             }
             
             // 判断第一个参数是模型还是自定义分类
-            if (! ! $model = $this->model->checkModelUrlname($param[0])) {
+            if (! ! ($model = $this->model->checkModelUrlname($param[0])) || $param[0] == 'list' || $param[0] == 'about') {
                 $scode = $param[1];
                 if (isset($param[2])) {
                     $_GET['page'] = $param[2]; // 分页
