@@ -815,11 +815,12 @@ class ParserController extends Controller
                         }
                         
                         $qs = http_build_query($output);
+                        
                         if ($path && $qs) { // 重组地址
                             $path = rtrim($path, '/') . '&' . $qs;
                         } elseif ($qs) {
                             $path = SITE_DIR . '/?' . $qs;
-                        } else {
+                        } elseif (! $path) {
                             $path = SITE_DIR . '/';
                         }
                     } else {
