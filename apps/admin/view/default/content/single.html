@@ -67,12 +67,17 @@
 		                    </td>
 		                    <td>[value->visits]</td>
 	                        <td>
-	                        	{php}$value->urlname=$value->urlname?:'about';{/php}
+	                        	{php}
+	                        	 $value->urlname=$value->urlname?:'about';
+	                        	 $url_rule_sort_suffix = \core\basic\Config::get('url_rule_sort_suffix') ? true : false;
+	                        	{/php}
+	                        	
 	                           	{if($value->filename)}
-	                        	<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+	                        	<a href="{fun=homeurl('/home/Index/'.$value->filename,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 	                        	{else}
-	                        	<a href="{homeurl./home/Index/'.$value->urlname.[$url_break_char].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+	                        	<a href="{fun=homeurl('/home/Index/'.$value->urlname.[$url_break_char].$value->scode,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 	                        	{/if}
+	                        	
 	                            {if(check_level('mod'))}
 	                            	<a href="{url./admin/Single/mod/mcode/'.$value->mcode.'/id/'.$value->id.'}{$btnqs}" class="layui-btn layui-btn-xs" >修改</a>
 	                            	{if([$baidu_zz_token])}

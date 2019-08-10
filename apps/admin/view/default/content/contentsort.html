@@ -68,23 +68,18 @@
 		                        </td>
 		                        <td>
 		                        	{if($value->type==1)}
-			                        	{php}$value->urlname=$value->urlname?:'about';{/php}
-			                           	{if($value->filename)}
-			                        		<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
-			                        	{else}
-			                        		<a href="{homeurl./home/Index/'.$value->urlname.[$url_break_char].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
-			                        	{/if}
+			                           {php}$value->urlname=$value->urlname?:'about';{/php}
+			                        {else}
+			                       	   {php}$value->urlname=$value->urlname?:'list';{/php}
+			                        {/if}
+			                        {php} $url_rule_sort_suffix = \core\basic\Config::get('url_rule_sort_suffix') ? true : false;{/php}
+			                       
+		                           	{if($value->filename)}
+		                        		<a href="{fun=homeurl('/home/Index/'.$value->filename,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{else}
+		                        		<a href="{fun=homeurl('/home/Index/'.$value->urlname.[$url_break_char].$value->scode,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
 		                        	{/if}
-		                        	
-		                        	{if($value->type==2)}
-			                        	{php}$value->urlname=$value->urlname?:'list';{/php}
-			                           	{if($value->filename)}
-			                        		<a href="{homeurl./home/Index/'.$value->filename.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
-			                        	{else}
-			                        		<a href="{homeurl./home/Index/'.$value->urlname.[$url_break_char].$value->scode.'}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
-			                        	{/if}
-		                        	{/if}
-		                        	
+		                
 		                            {fun=get_btn_del($value->scode,'scode')}
 		                            {fun=get_btn_mod($value->scode,'scode')}
 		                        </td>
