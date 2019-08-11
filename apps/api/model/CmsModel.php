@@ -496,7 +496,7 @@ class CmsModel extends Model
     {
         $field = array(
             'a.table_name',
-            'a.from_name',
+            'a.form_name',
             'b.name',
             'b.required',
             'b.description'
