@@ -49,6 +49,9 @@ class IndexController extends Controller
                     $this->_404('您访问的地址有误，请核对后重试！');
                 }
                 $path = explode('/', $path);
+            } elseif (isset($output['keyword'])) { // 支持兼容模式普通搜索
+                $this->search();
+                exit();
             }
         }
         
@@ -160,7 +163,7 @@ class IndexController extends Controller
                 define('CMS_PAGE', true); // 使用cms分页处理模型
                 $content = parent::parser($sort->contenttpl); // 框架标签解析
                 $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-                $content = str_replace('{pboot:pagetitle}', '{content:title}-{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+                $content = str_replace('{pboot:pagetitle}', '{content:title}-{sort:name}-{pboot:sitesubtitle}', $content);
                 $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
                 $content = str_replace('{pboot:pagedescription}', '{content:description}', $content);
                 $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
@@ -188,7 +191,8 @@ class IndexController extends Controller
             define('CMS_PAGE', true); // 使用cms分页处理模型
             $content = parent::parser($sort->contenttpl); // 框架标签解析
             $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-            $content = str_replace('{pboot:pagetitle}', '{content:title}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+            $pagetitle = $sort->title ? "{sort:title}" : "{content:title}"; // 页面标题
+            $content = str_replace('{pboot:pagetitle}', $pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
             $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
             $content = str_replace('{pboot:pagedescription}', '{content:description}', $content);
             $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
