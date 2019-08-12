@@ -108,7 +108,7 @@ class ContentController extends Controller
             }
             
             if ($filename && ! preg_match('/^[a-zA-Z0-9\-]+$/', $filename)) {
-                alert_back('内容URL名称称只允许字母、数字、横线组成!');
+                alert_back('内容URL名称只允许字母、数字、横线组成!');
             }
             
             // 自动提起前一百个字符为描述
@@ -444,7 +444,7 @@ class ContentController extends Controller
             }
             
             if ($filename && ! preg_match('/^[a-zA-Z0-9\-]+$/', $filename)) {
-                alert_back('内容URL名称称只允许字母、数字、横线组成!');
+                alert_back('内容URL名称只允许字母、数字、横线组成!');
             }
             
             // 自动提起前一百个字符为描述
