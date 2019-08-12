@@ -402,6 +402,7 @@ class ParserModel extends Model
             'a.*',
             'b.name as sortname',
             'b.filename as sortfilename',
+            'b.outlink as sortoutlink',
             'c.name as subsortname',
             'c.filename as subfilename',
             'd.type',

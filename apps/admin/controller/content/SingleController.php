@@ -78,6 +78,7 @@ class SingleController extends Controller
         // 前端地址连接符判断
         if (get('baiduzz') || get('baiduxzh')) {
             $url_break_char = $this->config('url_break_char') ?: '_';
+            $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
         }
         
         // 站长推送
@@ -90,10 +91,13 @@ class SingleController extends Controller
             $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
             $data = $this->model->getSingle($id);
             $data->urlname = $data->urlname ?: 'about';
+            if ($data->outlink) {
+                alert_back('链接类型不允许推送！');
+            }
             if ($data->filename) {
-                $urls[] = $domain . homeurl('/home/Index/' . $data->filename);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->filename, $url_rule_sort_suffix);
             } else {
-                $urls[] = $domain . homeurl('/home/Index/' . $data->urlname . $url_break_char . $data->scode);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->urlname . $url_break_char . $data->scode, $url_rule_sort_suffix);
             }
             $result = post_baidu($api, $urls);
             if (isset($result->error)) {
@@ -119,11 +123,14 @@ class SingleController extends Controller
             }
             $api = "http://data.zz.baidu.com/urls?appid=$appid&token=$token&type=$type";
             $data = $this->model->getSingle($id);
+            if ($data->outlink) {
+                alert_back('链接类型不允许推送！');
+            }
             $data->urlname = $data->urlname ?: 'about';
             if ($data->filename) {
-                $urls[] = $domain . homeurl('/home/Index/' . $data->filename);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->filename, $url_rule_sort_suffix);
             } else {
-                $urls[] = $domain . homeurl('/home/Index/' . $data->urlname . $url_break_char . $data->scode);
+                $urls[] = $domain . homeurl('/home/Index/' . $data->urlname . $url_break_char . $data->scode, $url_rule_sort_suffix);
             }
             $result = post_baidu($api, $urls);
             

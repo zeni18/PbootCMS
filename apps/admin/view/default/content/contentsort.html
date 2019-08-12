@@ -67,17 +67,19 @@
 		                            {/if}
 		                        </td>
 		                        <td>
-		                        	{if($value->type==1)}
-			                           {php}$value->urlname=$value->urlname?:'about';{/php}
-			                        {else}
-			                       	   {php}$value->urlname=$value->urlname?:'list';{/php}
-			                        {/if}
-			                        {php} $url_rule_sort_suffix = \core\basic\Config::get('url_rule_sort_suffix') ? true : false;{/php}
-			                       
-		                           	{if($value->filename)}
-		                        		<a href="{fun=homeurl('/home/Index/'.$value->filename,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
-		                        	{else}
-		                        		<a href="{fun=homeurl('/home/Index/'.$value->urlname.[$url_break_char].$value->scode,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{if(!$value->outlink)}
+			                        	{if($value->type==1)}
+				                           {php}$value->urlname=$value->urlname?:'about';{/php}
+				                        {else}
+				                       	   {php}$value->urlname=$value->urlname?:'list';{/php}
+				                        {/if}
+				                        {php} $url_rule_sort_suffix = \core\basic\Config::get('url_rule_sort_suffix') ? true : false;{/php}
+				                       
+			                           	{if($value->filename)}
+			                        		<a href="{fun=homeurl('/home/Index/'.$value->filename,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        	{else}
+			                        		<a href="{fun=homeurl('/home/Index/'.$value->urlname.[$url_break_char].$value->scode,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+			                        	{/if}
 		                        	{/if}
 		                
 		                            {fun=get_btn_del($value->scode,'scode')}
@@ -121,21 +123,21 @@
 			                </div>
 			                
 			                <div class="layui-form-item">
-			                     <label class="layui-form-label">栏目名称</label>
+			                     <label class="layui-form-label">栏目名称 <span class="layui-text-red">*</span></label>
 			                     <div class="layui-input-block">
 			                     	<input type="text" name="name" required lay-verify="required" placeholder="请输入栏目名称" class="layui-input">
 			                     </div>
 			                </div>
 			                
 			                <div class="layui-form-item">
-			                     <label class="layui-form-label">URL名称</label>
+			                     <label class="layui-form-label">URL名称 </label>
 			                     <div class="layui-input-block">
 			                     	<input type="text" name="filename" placeholder="请输入URL名称，如:test" class="layui-input">
 			                     </div>
 			                </div>
 			                
 			                <div class="layui-form-item">
-			                     <label class="layui-form-label">内容模型</label>
+			                     <label class="layui-form-label">内容模型 <span class="layui-text-red">*</span></label>
 			                     <div class="layui-input-block">
 			                     	<select name="mcode" lay-filter="model" lay-verify="required" >
 				                     	<option value="">请选择内容模型</option>
@@ -354,21 +356,21 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">栏目名称</label>
+		                     <label class="layui-form-label">栏目名称  <span class="layui-text-red">*</span></label>
 		                     <div class="layui-input-block">
 		                     	<input type="text" name="name" required lay-verify="required" value="{$sort->name}" placeholder="请输入栏目名称" class="layui-input">
 		                     </div>
 		                </div>
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">URL名称</label>
+		                     <label class="layui-form-label">URL名称 </label>
 		                     <div class="layui-input-block">
 		                     	<input type="text" name="filename" value="{$sort->filename}" placeholder="请输入URL名称，如:test" class="layui-input">
 		                     </div>
 		                </div>
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">内容模型</label>
+		                     <label class="layui-form-label">内容模型  <span class="layui-text-red">*</span></label>
 		                     <div class="layui-input-block">
 		                     	<select name="mcode" lay-filter="model" lay-verify="required" >
 			                     	<option value="">请选择内容模型</option>

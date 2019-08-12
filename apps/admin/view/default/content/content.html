@@ -50,7 +50,7 @@
 		                    {foreach $contents(key,value)}
 		                    <tr>
 		                    	<td>
-		                    		<input type="checkbox" class="checkbox checkitem" lay-ignore name="list[]" value="[value->id]">
+		                    		<input type="checkbox" class="checkbox checkitem" lay-ignore name="list[]" {if($value->outlink)}disabled{/if} value="[value->id]">
 		                    		<input type="hidden" name="listall[]" value="[value->id]">
 		                    	</td>
 		                    	<td>[value->id]</td>
@@ -95,27 +95,29 @@
 			                    </td>
 			                    <td>[value->visits]</td>
 		                        <td>
-		                        	{php}
-			                        	$sortfilename = $value->sortfilename;
-			                        	$contentfilename = $value->filename;
-			                        	$id = $value->id;
-			                        	$urlname = $value->urlname?:'list';
-			                        	$scode = $value->scode;
-			                        	$url_break_char= get_var('url_break_char');
-			                        	
-			                        	if ($sortfilename && $contentfilename) {
-						                    $link = homeurl('home/Index/' . $sortfilename . '/' . $contentfilename, true);
-						                } elseif ($sortfilename) {
-						                    $link = homeurl('home/Index/' . $sortfilename . '/' . $id, true);
-						                } elseif ($contentfilename) {
-						                    $link = homeurl('home/Index/' . $urlname . $url_break_char . $scode . '/' . $contentfilename, true);
-						                } else {
-						                    $link = homeurl('home/Index/' . $urlname . $url_break_char . $scode . '/' . $id, true);
-						                }
-		                        	{/php}
-
-		                        	<input type="hidden" name="urls[[value->id]]" value="{php}echo $link{/php}">
-		                        	<a href="{php}echo $link{/php}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                         	{if(!$value->outlink)}
+			                        	{php}
+				                        	$sortfilename = $value->sortfilename;
+				                        	$contentfilename = $value->filename;
+				                        	$id = $value->id;
+				                        	$urlname = $value->urlname?:'list';
+				                        	$scode = $value->scode;
+				                        	$url_break_char= get_var('url_break_char');
+				                        	
+				                        	if ($sortfilename && $contentfilename) {
+							                    $link = homeurl('home/Index/' . $sortfilename . '/' . $contentfilename, true);
+							                } elseif ($sortfilename) {
+							                    $link = homeurl('home/Index/' . $sortfilename . '/' . $id, true);
+							                } elseif ($contentfilename) {
+							                    $link = homeurl('home/Index/' . $urlname . $url_break_char . $scode . '/' . $contentfilename, true);
+							                } else {
+							                    $link = homeurl('home/Index/' . $urlname . $url_break_char . $scode . '/' . $id, true);
+							                }
+			                        	{/php}
+	
+			                        	<input type="hidden" name="urls[[value->id]]" value="{php}echo $link{/php}">
+			                        	<a href="{php}echo $link{/php}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{/if}
 		                            {fun=get_btn_del($value->id)}
 		                            {if(check_level('mod'))}
 		                            	<a href="{url./admin/Content/mod/mcode/'.get('mcode').'/id/'.$value->id.'}{$btnqs}" class="layui-btn layui-btn-xs" >修改</a>

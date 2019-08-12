@@ -67,23 +67,25 @@
 		                    </td>
 		                    <td>[value->visits]</td>
 	                        <td>
-	                        	{php}
-	                        	 $value->urlname=$value->urlname?:'about';
-	                        	 $url_rule_sort_suffix = \core\basic\Config::get('url_rule_sort_suffix') ? true : false;
-	                        	{/php}
-	                        	
-	                           	{if($value->filename)}
-	                        	<a href="{fun=homeurl('/home/Index/'.$value->filename,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
-	                        	{else}
-	                        	<a href="{fun=homeurl('/home/Index/'.$value->urlname.[$url_break_char].$value->scode,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+	                        	{if(!$value->outlink)}
+		                        	{php}
+		                        	 $value->urlname=$value->urlname?:'about';
+		                        	 $url_rule_sort_suffix = \core\basic\Config::get('url_rule_sort_suffix') ? true : false;
+		                        	{/php}
+		                        	
+		                           	{if($value->filename)}
+		                        	<a href="{fun=homeurl('/home/Index/'.$value->filename,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{else}
+		                        	<a href="{fun=homeurl('/home/Index/'.$value->urlname.[$url_break_char].$value->scode,$url_rule_sort_suffix)}" class="layui-btn layui-btn-xs layui-btn-primary"  target="_blank">查看</a>
+		                        	{/if}
 	                        	{/if}
 	                        	
 	                            {if(check_level('mod'))}
 	                            	<a href="{url./admin/Single/mod/mcode/'.$value->mcode.'/id/'.$value->id.'}{$btnqs}" class="layui-btn layui-btn-xs" >修改</a>
-	                            	{if([$baidu_zz_token])}
+	                            	{if([$baidu_zz_token] && !$value->outlink)}
 	                            		<a href="{url./admin/'.C.'/mod/baiduzz/'.$value->id.'}" class="layui-btn layui-btn-xs layui-btn-primary" >百度推送</a>
 	                            	{/if}
-	                            	{if([$baidu_xzh_appid])}
+	                            	{if([$baidu_xzh_appid] && !$value->outlink)}
 	                            		<a href="{url./admin/'.C.'/mod/baiduxzh/'.$value->id.'}" class="layui-btn layui-btn-xs layui-btn-primary" >熊掌号推送</a>
 	                            	{/if}
 	                            {/if}
@@ -341,14 +343,7 @@
 			                     	<input type="text" name="subtitle" value="{$content->subtitle}" placeholder="请输入副标题" class="layui-input">
 			                     </div>
 			                 </div>
-			                 
-			                  <div class="layui-form-item">
-			                     <label class="layui-form-label">跳转外链接</label>
-			                     <div class="layui-input-block">
-			                     	<input type="text" name="outlink" value="{$content->outlink}" placeholder="请输入跳转外链接" class="layui-input">
-			                     </div>
-			                 </div>
-			                 
+
 			                 <div class="layui-form-item">
 			                     <label class="layui-form-label">时间</label>
 			                     <div class="layui-input-inline">

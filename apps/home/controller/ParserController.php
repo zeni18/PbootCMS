@@ -2777,11 +2777,15 @@ class ParserController extends Controller
         
         switch ($label) {
             case 'link':
-                if ($data->outlink) {
-                    $content = str_replace($search, $data->outlink, $content);
-                } else {
-                    if ($data->type == 1) {
+                if ($data->type == 1) {
+                    if ($data->sortoutlink) {
+                        $content = str_replace($search, $data->sortoutlink, $content);
+                    } else {
                         $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'about', $data->scode, $data->sortfilename, '', ''), $content);
+                    }
+                } else {
+                    if ($data->outlink) {
+                        $content = str_replace($search, $data->outlink, $content);
                     } else {
                         $content = str_replace($search, $this->parserLink($data->type, $data->urlname, 'content', $data->scode, $data->sortfilename, $data->id, $data->filename), $content);
                     }
