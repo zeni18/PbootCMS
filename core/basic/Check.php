@@ -34,6 +34,16 @@ class Check
         if (! extension_loaded('gd')) {
             error('您的服务器环境不支持gd扩展,将无法使用验证码！');
         }
+        
+        // 检查mbstring扩展
+        if (! extension_loaded('mbstring')) {
+            error('您的服务器环境不支持mbstring扩展，请先安装并启用！');
+        }
+        
+        // 检查curl扩展
+        if (! extension_loaded('curl')) {
+            error('您的服务器环境不支持curl扩展，请先安装并启用！');
+        }
     }
 
     // 检查PHP版本
