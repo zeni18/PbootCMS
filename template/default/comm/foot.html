@@ -44,7 +44,9 @@
             <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={pboot:companyqq}&site=qq&menu=yes" class="text-light d-block pt-3 pb-3"><i class="fa fa-qq" aria-hidden="true"></i> 在线咨询</a>
         </div>
         <div class="col-4 p-0 text-center">
-            <a href="{pboot:siteindex}/about/1.html" class="text-light d-block pt-3 pb-3"><i class="fa fa-location-arrow" aria-hidden="true"></i> 关于我们</a>
+			{pboot:sort scode=1}
+            <a href="[sort:link]" class="text-light d-block pt-3 pb-3"><i class="fa fa-location-arrow" aria-hidden="true"></i> [sort:name]</a>
+			{/pboot:sort}
         </div>
     </div>
 </div>

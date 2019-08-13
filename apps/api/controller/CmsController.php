@@ -393,7 +393,7 @@ class CmsController extends Controller
                     $mail_body .= '<br>来自网站' . get_http_url() . '（' . date('Y-m-d H:i:s') . '）';
                     sendmail($this->config(), $this->config('message_send_to'), $mail_subject, $mail_body);
                 }
-                json(1, '留意提交成功！');
+                json(1, '留言提交成功！');
             } else {
                 $this->log('API提交留言数据失败！');
                 json(0, '留言提交失败！');
