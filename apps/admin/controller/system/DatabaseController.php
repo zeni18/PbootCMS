@@ -99,7 +99,7 @@ class DatabaseController extends Controller
                 }
                 break;
             case 'bfsqlite':
-                if (copy(DOC_PATH . $this->dbauth['dbname'], DOC_PATH . STATIC_DIR . '/backup/sql/' . date('YmdHis') . '_' . basename($this->dbauth['dbname']))) {
+                if (copy(DOC_PATH . $this->dbauth['dbname'], DOC_PATH . STATIC_DIR . '/backup/sql/' . get_uniqid() . '_' . date('YmdHis') . '.db')) {
                     $this->log('备份数据库成功！');
                     success('备份数据库成功！', - 1);
                 } else {
@@ -122,7 +122,7 @@ class DatabaseController extends Controller
             $field_num = $this->model->getFieldNum($table); // 字段数量
             $all_data = $this->model->getAll($table); // 读取全部数据
             $sql .= $this->dataSql($table, $fields, $field_num, $all_data); // 生成语句
-            $filename = $backdir . "/" . $backdir . "_" . $table . '.sql'; // 写入文件
+            $filename = $backdir . "/" . get_uniqid() . "_" . $backdir . "_" . $table . '.sql'; // 写入文件
             $result = $this->writeFile($filename, $sql);
         }
         return $result;
@@ -147,7 +147,7 @@ class DatabaseController extends Controller
             $sql .= '-- --------------------------------------------------------' . PHP_EOL . PHP_EOL;
         }
         // 写入文件
-        $filename = date('YmdHis') . '_' . $this->dbauth['dbname'] . '_' . get_uniqid() . '.sql';
+        $filename = get_uniqid() . '_' . date('YmdHis') . '_' . $this->dbauth['dbname'] . '.sql';
         return $this->writeFile($filename, $sql);
     }
 
