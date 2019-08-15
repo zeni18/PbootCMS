@@ -22,7 +22,7 @@ class Check
         
         // 判断自动转换状态
         if (function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()) {
-            error('您的服务器环境PHP.ini中magic_quotes_gpc配置为On状态，会导致数据存储异常，请先设置为Off状态，或者切换更高版本PHP。');
+            error('您的服务器环境PHP.ini中magic_quotes_gpc配置为On状态，会导致数据存储异常，请设置为Off状态或切换为更高版本PHP。');
         }
         
         // 判断目录列表函数

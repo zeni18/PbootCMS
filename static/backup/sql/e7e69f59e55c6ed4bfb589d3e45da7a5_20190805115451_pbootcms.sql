@@ -1486,15 +1486,14 @@ CREATE TABLE `ay_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ay_user_ucode` (`ucode`),
   KEY `ay_user_username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `ay_user`
 --
 
 INSERT INTO `ay_user` (`id`,`ucode`,`username`,`realname`,`password`,`status`,`login_count`,`last_login_ip`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES
-('1','10001','admin','超级管理员','14e1b600b1fd579f47433b88e8d85291','1','0','2130706433','admin','admin','2017-05-08 18:50:30','2018-07-17 15:47:27'),
-('2','10002','hnxsh','星梦','d6df5a91f11d9b9513c5215e43ef9e8c','1','0','2130706433','admin','admin','2018-04-09 13:34:52','2018-04-30 15:12:01');
+('1','10001','admin','超级管理员','14e1b600b1fd579f47433b88e8d85291','1','0','2130706433','admin','admin','2017-05-08 18:50:30','2018-07-17 15:47:27');
 
 -- --------------------------------------------------------
 
@@ -1510,15 +1509,14 @@ CREATE TABLE `ay_user_role` (
   PRIMARY KEY (`id`),
   KEY `ay_user_role_ucode` (`ucode`),
   KEY `ay_user_role_rcode` (`rcode`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `ay_user_role`
 --
 
 INSERT INTO `ay_user_role` (`id`,`ucode`,`rcode`) VALUES
-('1','10001','R101'),
-('2','10002','R101');
+('1','10001','R101');
 
 -- --------------------------------------------------------
 
