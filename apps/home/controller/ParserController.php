@@ -2956,8 +2956,8 @@ class ParserController extends Controller
             case 'content':
                 // 内链处理
                 if (! ! $tags = $this->model->getTags()) {
-                    // 将A链接保护起来
-                    $rega = "/<a .*?>.*?<\/a>/i";
+                    // 将A链接保护起来,alt、titel保护起来
+                    $rega = "/(<a .*?>.*?<\/a>)|(alt=.*?>)|(title=.*?>)/i";
                     preg_match_all($rega, $data->content, $matches1);
                     foreach ($matches1[0] as $key => $value) {
                         $data->content = str_replace($value, '#rega:' . $key . '#', $data->content);
@@ -2977,7 +2977,7 @@ class ParserController extends Controller
                         $data->content = preg_replace('/' . $value->name . '/', '<a href="' . $value->link . '">' . $value->name . '</a>', $data->content, $this->config('content_tags_replace_num') ?: 3);
                     }
                     
-                    // 还原A链接
+                    // 还原保护的内容
                     $pattern = '/\#rega:([0-9]+)\#/';
                     if (preg_match_all($pattern, $data->content, $matches2)) {
                         $count = count($matches2[0]);
