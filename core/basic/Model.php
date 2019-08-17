@@ -260,7 +260,6 @@ class Model
                 if (is_int($key)) {
                     $table_string .= '`' . $value . '`,';
                 } else {
-                    $this->checkKey($key);
                     $table_string .= '`' . $key . '` AS ' . $value . ',';
                 }
             }
@@ -290,7 +289,6 @@ class Model
                 if (is_int($key)) {
                     $table_string .= '`' . $prefix . $value . '`,';
                 } else {
-                    $this->checkKey($key);
                     $table_string .= '`' . $prefix . $key . '` AS ' . $value . ',';
                 }
             }
@@ -352,7 +350,6 @@ class Model
                 if (is_int($key)) {
                     $field_string .= $value . ',';
                 } else {
-                    $this->checkKey($key);
                     $field_string .= $key . ' AS ' . $value . ',';
                 }
             }
@@ -410,7 +407,6 @@ class Model
                     $flag = true;
                 }
                 if (! is_int($key)) {
-                    $this->checkKey($key);
                     if ($fuzzy) {
                         $where_string .= $key . " like '%" . $value . "%' ";
                     } else {
@@ -480,7 +476,6 @@ class Model
     {
         if (! $field)
             return $this;
-        $this->checkKey($field);
         if (is_array($range)) {
             if (count($range) == 1) { // 单只有一个值时使用直接使用等于，提高读取性能
                 $in_string = "$field='$range[0]'";
@@ -515,7 +510,6 @@ class Model
     {
         if (! $field)
             return $this;
-        $this->checkKey($field);
         if (is_array($range)) {
             $in_string = implode_quot(',', $range);
         } else {
@@ -567,7 +561,6 @@ class Model
                 $field = explode(',', $field);
             }
             foreach ($field as $value) {
-                $this->checkKey($value);
                 if (isset($sqlStr)) {
                     $sqlStr .= " OR $value LIKE '$keyword'";
                 } else {
@@ -575,7 +568,6 @@ class Model
                 }
             }
         } else {
-            $this->checkKey($field);
             $sqlStr = "$field LIKE '$keyword'";
         }
         if (isset($this->sql['where']) && $this->sql['where']) {
@@ -620,7 +612,6 @@ class Model
                 $field = explode(',', $field);
             }
             foreach ($field as $value) {
-                $this->checkKey($value);
                 if (isset($sqlStr)) {
                     $sqlStr .= " AND $value NOT LIKE '$keyword'";
                 } else {
@@ -628,7 +619,6 @@ class Model
                 }
             }
         } else {
-            $this->checkKey($field);
             $sqlStr = "$field NOT LIKE '$keyword'";
         }
         if (isset($this->sql['where']) && $this->sql['where']) {
@@ -656,7 +646,6 @@ class Model
                 if (is_int($key)) {
                     $order_string .= $value . ',';
                 } else {
-                    $this->checkKey($key);
                     $order_string .= $key . ' ' . $value . ',';
                 }
             }
@@ -750,7 +739,6 @@ class Model
                     $flag = true;
                 }
                 if (! is_int($key)) {
-                    $this->checkKey($key);
                     $having_string .= $key . "='" . $value . "' ";
                 } else {
                     $having_string .= $value;
@@ -885,7 +873,6 @@ class Model
     final public function relation($field, array $array)
     {
         if ($array) {
-            $this->checkKey($field);
             foreach ($array as $value) {
                 $data[] = array(
                     $field,
@@ -1021,8 +1008,6 @@ class Model
             $fields = implode(',', $fields);
         }
         
-        $this->checkKey($key);
-        
         // 如果传递字段不含指定键则添加
         if ($key && ! preg_match('/(.*,|^)(' . $key . ')(,.*|$)/', $fields)) {
             $this->sql['field'] = $key . ',' . $fields;
@@ -1062,7 +1047,6 @@ class Model
      */
     final public function value($field)
     {
-        $this->checkKey($field);
         $this->sql['field'] = $field;
         $this->limit(1);
         $sql = $this->buildSql($this->selectSql);
@@ -1083,7 +1067,6 @@ class Model
      */
     final public function max($field)
     {
-        $this->checkKey($field);
         $this->sql['field'] = "MAX(`$field`)";
         $sql = $this->buildSql($this->selectSql);
         $result = $this->getDb()->one($sql, 2);
@@ -1099,7 +1082,6 @@ class Model
      */
     final public function min($field)
     {
-        $this->checkKey($field);
         $this->sql['field'] = "MIN(`$field`)";
         $sql = $this->buildSql($this->selectSql);
         $result = $this->getDb()->one($sql, 2);
@@ -1115,7 +1097,6 @@ class Model
      */
     final public function avg($field)
     {
-        $this->checkKey($field);
         $this->sql['field'] = "AVG(`$field`)";
         $sql = $this->buildSql($this->selectSql);
         $result = $this->getDb()->one($sql, 2);
@@ -1131,7 +1112,6 @@ class Model
      */
     final public function sum($field)
     {
-        $this->checkKey($field);
         $this->sql['field'] = "SUM(`$field`)";
         $sql = $this->buildSql($this->selectSql);
         $result = $this->getDb()->one($sql, 2);
@@ -1185,8 +1165,8 @@ class Model
                 $keys = '';
                 $values = '';
                 foreach ($data as $key => $value) {
+                    $this->checkKey($key);
                     if (! is_numeric($key)) {
-                        $this->checkKey($key);
                         $keys .= "`" . $key . "`,";
                         $values .= "'" . $value . "',";
                     }

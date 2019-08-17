@@ -163,7 +163,7 @@ class IndexController extends Controller
                 define('CMS_PAGE', true); // 使用cms分页处理模型
                 $content = parent::parser($sort->contenttpl); // 框架标签解析
                 $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-                $content = str_replace('{pboot:pagetitle}', '{content:title}-{sort:name}-{pboot:sitesubtitle}', $content);
+                $content = str_replace('{pboot:pagetitle}', '{content:title}-{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
                 $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
                 $content = str_replace('{pboot:pagedescription}', '{content:description}', $content);
                 $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
