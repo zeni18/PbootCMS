@@ -31,6 +31,12 @@ class IndexController extends Controller
         $url_rule_type = $this->config('url_rule_type') ?: 3;
         
         if (P) { // 采用pathinfo模式及p参数模式
+                 
+            // 禁止伪静态时带index.php访问
+            if ($url_rule_type == 2 && stripos(URL, $_SERVER['SCRIPT_NAME']) !== false) {
+                $this->_404('您访问的内容不存在，请核对后重试！');
+            }
+            
             $path = explode('/', P);
             if (! defined('URL_BIND')) {
                 array_shift($path); // 去除模块部分

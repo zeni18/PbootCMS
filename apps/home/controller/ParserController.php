@@ -2727,6 +2727,13 @@ class ParserController extends Controller
                     $content = str_replace($search, 0, $content);
                 }
                 break;
+            case 'ispics':
+                if ($data->pics) {
+                    $content = str_replace($search, 1, $content);
+                } else {
+                    $content = str_replace($search, 0, $content);
+                }
+                break;
             case 'enclosure':
                 if ($data->enclosure) {
                     if (! preg_match('/^http/', $data->enclosure)) {
@@ -2828,6 +2835,13 @@ class ParserController extends Controller
                 break;
             case 'isico':
                 if ($data->ico) {
+                    $content = str_replace($search, 1, $content);
+                } else {
+                    $content = str_replace($search, 0, $content);
+                }
+                break;
+            case 'ispics':
+                if ($data->pics) {
                     $content = str_replace($search, 1, $content);
                 } else {
                     $content = str_replace($search, 0, $content);
