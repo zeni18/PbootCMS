@@ -74,7 +74,7 @@ class IndexController extends Controller
             }
             
             // 判断第一个参数是模型还是自定义分类
-            if (! ! ($model = $this->model->checkModelUrlname($param[0])) || preg_match('/(list_[0-9]+)|(about_[0-9]+)/', $path[0])) {
+            if (! ! ($model = $this->model->checkModelUrlname($param[0])) || preg_match('/^(list_[0-9]+)|(^about_[0-9]+)/', $path[0])) {
                 $scode = $param[1];
                 if (isset($param[2])) {
                     $_GET['page'] = $param[2]; // 分页

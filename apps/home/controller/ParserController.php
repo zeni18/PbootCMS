@@ -70,6 +70,7 @@ class ParserController extends Controller
         $content = $this->parserLoopLabel($content); // LOOP语句(需置后)
         $content = $this->parserIfLabel($content); // IF语句(需置最后)
         $content = $this->restorePreLabel($content); // 还原不需要解析的内容
+        $content = $this->parserReplaceKeyword($content); // 页面关键词替换
         return $content;
     }
 
@@ -3024,6 +3025,17 @@ class ParserController extends Controller
                 } elseif (strpos($label, 'ext_') === 0) {
                     $content = str_replace($search, '', $content);
                 }
+        }
+        return $content;
+    }
+
+    // 替换页面内容关键词
+    protected function parserReplaceKeyword($content)
+    {
+        $keys = $this->config('content_keyword_replace');
+        $keys_arr = explode(',', strip_tags($keys));
+        foreach ($keys_arr as $key => $value) {
+            $content = str_replace($value, str_repeat('*', mb_strlen($value)), $content);
         }
         return $content;
     }

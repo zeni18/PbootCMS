@@ -133,8 +133,10 @@ class ConfigController extends Controller
     // 修改数据库配置
     private function modDbConfig($key)
     {
+        $value = post($key);
+        
         // 如果开启伪静态时自动拷贝文件
-        if ($key == 'url_rule_type' && post($key) == 2) {
+        if ($key == 'url_rule_type' && $value == 2) {
             $soft = get_server_soft();
             if ($soft == 'iis') {
                 if (! file_exists(ROOT_PATH . '/web.config')) {
@@ -147,13 +149,19 @@ class ConfigController extends Controller
             }
         }
         
+        // 关键词过滤处理
+        if ($key == 'content_keyword_replace' && $value) {
+            $value = str_replace("\r\n", ",", $value); // 替换回车
+            $value = str_replace("，", ",", $value); // 替换中文逗号分割符
+        }
+        
         if ($this->model->checkConfig("name='$key'")) {
-            $this->model->modValue($key, post($key));
+            $this->model->modValue($key, $value);
         } elseif ($key != 'submit' && $key != 'formcheck') {
             // 自动新增配置项
             $data = array(
                 'name' => $key,
-                'value' => post($key),
+                'value' => $value,
                 'type' => 2,
                 'sorting' => 255,
                 'description' => ''

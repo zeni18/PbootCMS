@@ -81,6 +81,15 @@
 		                     <div class="layui-form-mid layui-word-aux">次</div>
 		                </div>
 		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">关键词过滤</label>
+		                     <div class="layui-input-inline">
+		                     	<textarea name="content_keyword_replace" placeholder="请输入需要过滤的关键词，多个之间逗号隔开" class="layui-textarea">{$configs.content_keyword_replace.value}</textarea>
+		                     	<div class="layui-form-mid layui-word-aux">注：多个关键词之间用逗号隔开！</div>
+		                     </div>
+		                     
+		                </div>
+		                
 		                {if(![$configs.sn_user.value])}
 		                
 		                <div class="layui-form-item">
