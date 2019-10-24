@@ -2717,12 +2717,14 @@ class ParserController extends Controller
                     } else {
                         $content = str_replace($search, $this->adjustLabelData($params, $data->ico), $content);
                     }
+                } elseif (preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content, $srcs) && isset($srcs[1])) {
+                    $content = str_replace($search, $this->adjustLabelData($params, $srcs[1]), $content);
                 } else {
                     $content = str_replace($search, $this->adjustLabelData($params, STATIC_DIR . '/images/nopic.png'), $content);
                 }
                 break;
             case 'isico':
-                if ($data->ico) {
+                if ($data->ico || preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content)) {
                     $content = str_replace($search, 1, $content);
                 } else {
                     $content = str_replace($search, 0, $content);
@@ -2830,12 +2832,14 @@ class ParserController extends Controller
                     } else {
                         $content = str_replace($search, $this->adjustLabelData($params, $data->ico), $content);
                     }
+                } elseif (preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content, $srcs) && isset($srcs[1])) {
+                    $content = str_replace($search, $this->adjustLabelData($params, $srcs[1]), $content);
                 } else {
                     $content = str_replace($search, $this->adjustLabelData($params, STATIC_DIR . '/images/nopic.png'), $content);
                 }
                 break;
             case 'isico':
-                if ($data->ico) {
+                if ($data->ico || preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content)) {
                     $content = str_replace($search, 1, $content);
                 } else {
                     $content = str_replace($search, 0, $content);
