@@ -235,6 +235,10 @@ class IndexController extends Controller
     {
         if ($_POST) {
             
+            if ($this->config('message_status') === '0') {
+                error('系统已经关闭留言功能，请到后台开启再试！');
+            }
+            
             if (time() - session('lastsub') < 10) {
                 alert_back('您提交太频繁了，请稍后再试！');
             }
@@ -263,6 +267,7 @@ class IndexController extends Controller
                 if (is_array($field_data)) { // 如果是多选等情况时转换
                     $field_data = implode(',', $field_data);
                 }
+                $field_data = str_replace('pboot:if', '', $field_data);
                 if ($value->required && ! $field_data) {
                     alert_back($value->description . '不能为空！');
                 } else {
@@ -308,6 +313,10 @@ class IndexController extends Controller
     {
         if ($_POST) {
             
+            if ($this->config('form_status') === '0') {
+                error('系统已经关闭表单功能，请到后台开启再试！');
+            }
+            
             if (time() - session('lastsub') < 10) {
                 alert_back('您提交太频繁了，请稍后再试！');
             }
@@ -343,6 +352,7 @@ class IndexController extends Controller
                 if (is_array($field_data)) { // 如果是多选等情况时转换
                     $field_data = implode(',', $field_data);
                 }
+                $field_data = str_replace('pboot:if', '', $field_data);
                 if ($value->required && ! $field_data) {
                     alert_back($value->description . '不能为空！');
                 } else {

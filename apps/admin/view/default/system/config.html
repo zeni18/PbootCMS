@@ -386,10 +386,34 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
+		                     <label class="layui-form-label">留言功能</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="message_status" value="1" {if([$configs.message_status.value]=='1'||[$configs.message_status.value]=='')} checked="checked" {/if} title="启用">
+								<input type="radio" name="message_status" value="0" {if([$configs.message_status.value]=='0')} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">表单功能</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="form_status" value="1" {if([$configs.form_status.value]=='1'||[$configs.form_status.value]=='')} checked="checked" {/if} title="启用">
+								<input type="radio" name="form_status" value="0" {if([$configs.form_status.value]=='0')} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
 		                     <label class="layui-form-label">留言验证码</label>
 		                     <div class="layui-input-block">
 		                     	<input type="radio" name="message_check_code" value="1" {if([$configs.message_check_code.value]==1)} checked="checked" {/if} title="启用">
 								<input type="radio" name="message_check_code" value="0" {if([$configs.message_check_code.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+
+		                <div class="layui-form-item">
+		                     <label class="layui-form-label">表单验证码</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="form_check_code" value="1" {if([$configs.form_check_code.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="form_check_code" value="0" {if([$configs.form_check_code.value]==0)} checked="checked" {/if} title="禁用">
 		                     </div>
 		                </div>
 		                
@@ -398,14 +422,6 @@
 		                     <div class="layui-input-block">
 		                     	<input type="radio" name="message_verify" value="1" {if([$configs.message_verify.value]=='1'||[$configs.message_verify.value]=='')} checked="checked" {/if} title="启用">
 								<input type="radio" name="message_verify" value="0" {if([$configs.message_verify.value]=='0')} checked="checked" {/if} title="禁用">
-		                     </div>
-		                </div>
-		                
-		                <div class="layui-form-item">
-		                     <label class="layui-form-label">表单验证码</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="form_check_code" value="1" {if([$configs.form_check_code.value]==1)} checked="checked" {/if} title="启用">
-								<input type="radio" name="form_check_code" value="0" {if([$configs.form_check_code.value]==0)} checked="checked" {/if} title="禁用">
 		                     </div>
 		                </div>
 		                
