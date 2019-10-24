@@ -94,6 +94,11 @@ if (Config::get('debug')) {
     error_reporting(E_ERROR);
 }
 
+// 定义版本常量
+define('CORE_VERSION', Config::get('core_version'));
+define('APP_VERSION', Config::get('app_version'));
+define('RELEASE_TIME', Config::get('release_time'));
+
 // 环境检查
 Check::checkApp(); // 检查APP配置
 Check::checkBasicDir(); // 检查基础目录
