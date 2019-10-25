@@ -165,7 +165,7 @@ class LinkController extends Controller
             $sorting = post('sorting');
             
             if (! $gid) {
-                alert_back('分组不能为空！');
+                $gid = $this->model->getMaxGid() + 1;
             }
             
             if (! $name) {

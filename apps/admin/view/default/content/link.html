@@ -52,10 +52,10 @@
                      <label class="layui-form-label">分组</label>
                      <div class="layui-input-block">
                      	<select name="gid">	
-	                		<option value="" >新增分组</option>
                      		{foreach $gids(key,value)}
 	                			<option value="[value]" >分组[value]</option>
 	                		{/foreach}
+	                		<option value="" >自动新增分组</option>
 	                	</select>
                      </div>
                 </div>
@@ -116,10 +116,11 @@
 	  		 	<div class="layui-form-item">
                      <label class="layui-form-label">分组</label>
                      <div class="layui-input-block">
-                     	<select name="gid" lay-verify="required">	
+                     	<select name="gid">	
 	                		{foreach $gids(key,value)}
 	                			<option value="[value]" {if([$link->gid]==$value)}selected{/if}>分组[value]</option>
 	                		{/foreach}
+	                		<option value="" >自动新增分组</option>
 	                	</select>
                      </div>
                 </div>

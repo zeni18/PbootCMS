@@ -155,7 +155,7 @@ class SlideController extends Controller
             $sorting = post('sorting', 'int');
             
             if (! $gid) {
-                alert_back('分组不能为空！');
+                $gid = $this->model->getMaxGid() + 1;
             }
             
             if (! $pic) {

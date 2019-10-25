@@ -2724,7 +2724,7 @@ class ParserController extends Controller
                 }
                 break;
             case 'isico':
-                if ($data->ico || preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content)) {
+                if ($data->ico) {
                     $content = str_replace($search, 1, $content);
                 } else {
                     $content = str_replace($search, 0, $content);
@@ -2839,7 +2839,7 @@ class ParserController extends Controller
                 }
                 break;
             case 'isico':
-                if ($data->ico || preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content)) {
+                if ($data->ico) {
                     $content = str_replace($search, 1, $content);
                 } else {
                     $content = str_replace($search, 0, $content);
