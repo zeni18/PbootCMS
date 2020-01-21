@@ -13,6 +13,7 @@ PbootCMS V2.0.4 build 2020-01-21
 6、新增operate参数对标签进行加减乘除等运算，如：[list:i operate=+100]；
 7、新增站点关闭功能；
 8、新增站点访问IP黑白名单功能；
+9、升级layui到最新版本。
 
 PbootCMS V2.0.3 build 2019-10-25
 1、修复一处PHP7环境下的安全漏洞；
