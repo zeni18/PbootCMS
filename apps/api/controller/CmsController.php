@@ -322,7 +322,7 @@ class CmsController extends Controller
         }
         
         // 输出数据
-        if (get('page') <= PAGECOUNT) {
+        if (request('page') <= PAGECOUNT) {
             json(1, $data);
         } else {
             return json(0, '已经到底了！');
@@ -339,7 +339,7 @@ class CmsController extends Controller
         // 获取栏目数
         $data = $this->model->getMessage($acode, $num);
         
-        if (get('page') <= PAGECOUNT) {
+        if (request('page') <= PAGECOUNT) {
             json(1, $data);
         } else {
             return json(0, '已经到底了！');
@@ -375,7 +375,7 @@ class CmsController extends Controller
             
             // 设置其他字段
             if ($data) {
-                $data['acode'] = get('acode', 'var') ?: $this->lg;
+                $data['acode'] = request('acode', 'var') ?: $this->lg;
                 $data['user_ip'] = ip2long(get_user_ip());
                 $data['user_os'] = get_user_os();
                 $data['user_bs'] = get_user_bs();
@@ -421,7 +421,7 @@ class CmsController extends Controller
         // 获取表数据
         $data = $this->model->getForm($table, $num);
         
-        if (get('page') <= PAGECOUNT) {
+        if (request('page') <= PAGECOUNT) {
             json(1, $data);
         } else {
             return json(0, '已经到底了！');
@@ -433,7 +433,7 @@ class CmsController extends Controller
     {
         if ($_POST) {
             
-            if (! $fcode = get('fcode', 'var')) {
+            if (! $fcode = request('fcode', 'var')) {
                 json(0, '传递的表单编码fcode有误！');
             }
             

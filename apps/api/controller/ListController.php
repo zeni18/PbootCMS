@@ -75,7 +75,7 @@ class ListController extends Controller
         }
         
         // 输出数据
-        if (get('page') <= PAGECOUNT) {
+        if (request('page') <= PAGECOUNT) {
             json(1, $data);
         } else {
             return json(0, '已经到底了！');
