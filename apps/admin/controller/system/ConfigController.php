@@ -149,8 +149,13 @@ class ConfigController extends Controller
             }
         }
         
-        // 关键词过滤处理
-        if ($key == 'content_keyword_replace' && $value) {
+        // 数据分割处理
+        $hander = array(
+            'content_keyword_replace',
+            'ip_deny',
+            'ip_allow'
+        );
+        if (in_array($key, $hander) && $value) {
             $value = str_replace("\r\n", ",", $value); // 替换回车
             $value = str_replace("，", ",", $value); // 替换中文逗号分割符
         }

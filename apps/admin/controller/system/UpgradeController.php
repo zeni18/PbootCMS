@@ -50,6 +50,8 @@ class UpgradeController extends Controller
         $this->assign('branch', $this->branch);
         $this->assign('force', $this->force);
         $this->assign('revise', $this->revise);
+        $this->assign('snuser', $this->config('sn_user') ?: 0);
+        $this->assign('site', get_http_url());
         $this->display('system/upgrade.html');
     }
 
@@ -256,7 +258,7 @@ class UpgradeController extends Controller
             'branch' => $this->branch,
             'force' => $this->force,
             'site' => get_http_url(),
-            'sn_user' => $this->config('sn_user')
+            'snuser' => $this->config('sn_user')
         );
         $url = $this->server . '/index.php?p=/upgrade/getlist&' . http_build_query($param);
         if (! ! $rs = json_decode(get_url($url, '', '', true))) {

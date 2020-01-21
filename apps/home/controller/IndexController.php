@@ -101,6 +101,7 @@ class IndexController extends Controller
                     $this->addForm();
                     break;
                 case 'sitemap':
+                case 'Sitemap':
                     $sitemap = new SitemapController();
                     $sitemap->index();
                     break;
@@ -222,8 +223,8 @@ class IndexController extends Controller
         
         $searchtpl = $content = parent::parser($searchtpl); // 框架标签解析
         $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-        $content = $this->parser->parserPositionLabel($content, 0, '搜索', url('/home/Index/search')); // CMS当前位置标签解析
-        $content = $this->parser->parserSpecialPageSortLabel($content, - 1, '搜索结果', url('/home/Index/search')); // 解析分类标签
+        $content = $this->parser->parserPositionLabel($content, 0, '搜索', homeurl('/home/Index/search', $this->config('url_rule_sort_suffix'))); // CMS当前位置标签解析
+        $content = $this->parser->parserSpecialPageSortLabel($content, - 1, '搜索结果', homeurl('/home/Index/search', $this->config('url_rule_sort_suffix'))); // 解析分类标签
         $content = $this->parser->parserSearchLabel($content); // 搜索结果标签
         $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
         echo $content; // 搜索页面不缓存
@@ -245,7 +246,7 @@ class IndexController extends Controller
             
             // 验证码验证
             $checkcode = strtolower(post('checkcode', 'var'));
-            if ($this->config('message_check_code')) {
+            if ($this->config('message_check_code') !== '0') {
                 if (! $checkcode) {
                     alert_back('验证码不能为空！');
                 }
@@ -276,7 +277,7 @@ class IndexController extends Controller
                 }
             }
             
-            $status = $this->config('message_verify') == '0' ? 1 : 0;
+            $status = $this->config('message_verify') === '0' ? 1 : 0;
             
             // 设置额外数据
             if ($data) {
@@ -331,7 +332,7 @@ class IndexController extends Controller
             
             // 验证码验证
             $checkcode = strtolower(post('checkcode', 'var'));
-            if ($this->config('form_check_code')) {
+            if ($this->config('form_check_code') !== '0') {
                 if (! $checkcode) {
                     alert_back('验证码不能为空！');
                 }

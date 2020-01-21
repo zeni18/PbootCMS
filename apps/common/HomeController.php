@@ -19,6 +19,36 @@ class HomeController extends Controller
         // 自动缓存基础信息
         cache_config();
         
+        // 站点关闭检测
+        if (! ! $close_site = Config::get('close_site')) {
+            $close_site_note = Config::get('close_site_note');
+            error($close_site_note ?: '本站维护中，请稍后再访问，带来不便，敬请谅解！');
+        }
+        
+        // IP访问黑白名单检测
+        $user_ip = get_user_ip(); // 获取用户IP
+        if (filter_var($user_ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            // ip黑名单
+            $ip_deny = Config::get('ip_deny', true);
+            foreach ($ip_deny as $key => $value) {
+                if (network_match($user_ip, $value)) {
+                    error('本站启用了黑名单功能，您的IP(' . $user_ip . ')不允许访问！');
+                }
+            }
+            // ip白名单
+            $ip_allow = Config::get('ip_allow', true);
+            foreach ($ip_allow as $key => $value) {
+                if (network_match($user_ip, $value)) {
+                    $allow = true;
+                }
+            }
+            
+            // 如果设置了白名单，IP不在白名单内，则阻止访问
+            if ($ip_allow && ! isset($allow)) {
+                error('本站启用了白名单功能，您的IP(' . $user_ip . ')不在允许范围！');
+            }
+        }
+        
         // 语言绑定域名检测， 如果匹配到多语言绑定则自动设置当前语言
         $lgs = Config::get('lgs');
         if (count($lgs) > 1) {

@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 
-                {if([$config.message_check_code])}
+                {pboot:if({pboot:msgcodestatus})}
                 <div class="form-group">
                     <label for="checkcode">验证码</label>
                     <div class="row">
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                 </div>
-                {/if}
+                {/pboot:if}
                 
                 <div class="form-group">
                    <button type="submit" class="btn btn-info mb-2">提交留言</button>

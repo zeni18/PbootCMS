@@ -34,25 +34,16 @@ class IndexController extends Controller
     // 主页面
     public function home()
     {
-        // 自动修改数据库名称
+        // 手动修改数据名称
         if (get('action') == 'moddb') {
-            $file = CONF_PATH . '/database.php';
-            $sname = $this->config('database.dbname');
-            $dname = '/data/' . get_uniqid() . '.db';
-            $sconfig = file_get_contents($file);
-            $dconfig = str_replace($sname, $dname, $sconfig);
-            if (file_put_contents($file, $dconfig)) {
-                if (! copy(ROOT_PATH . $sname, ROOT_PATH . $dname)) {
-                    file_put_contents($file, $sconfig);
-                    alert_back('修改失败！');
-                } else {
-                    session('deldb', $sname);
-                    alert_back('修改成功！');
-                }
+            if ($this->modDB()) {
+                alert_back('修改成功！');
+            } else {
+                alert_back('修改失败！');
             }
         }
         
-        // 删除修改后老数据库（上一步无法直接删除）
+        // 删除修改后老数据库（上一步无法直接修改删除）
         if (issetSession('deldb')) {
             @unlink(ROOT_PATH . session('deldb'));
             unset($_SESSION['deldb']);
@@ -62,9 +53,16 @@ class IndexController extends Controller
         // 如果是sqlite数据库，并且路径为默认的，则标记为不安全
         if (get_db_type() == 'sqlite') {
             if (strpos($this->config('database.dbname'), 'pbootcms') !== false) {
-                $dbsecurity = false;
+                if (get_user_ip() != '127.0.0.1' && $this->modDB()) { // 非本地测试时尝试自动修改数据库名称
+                    $dbsecurity = true;
+                } else {
+                    $dbsecurity = false;
+                }
             }
+        } elseif (file_exists(ROOT_PATH . '/data/pbootcms.db')) {
+            rename(ROOT_PATH . '/data/pbootcms.db', ROOT_PATH . '/data/' . get_uniqid() . '.db');
         }
+        
         $this->assign('dbsecurity', $dbsecurity);
         
         if (! session('pwsecurity')) {
@@ -74,6 +72,8 @@ class IndexController extends Controller
         $this->assign('server', get_server_info());
         $this->assign('branch', $this->config('upgrade_branch') ?: '1.X');
         $this->assign('revise', $this->config('revise_version') ?: '0');
+        $this->assign('snuser', $this->config('sn_user') ?: '0');
+        $this->assign('site', get_http_url());
         
         $this->assign('user_info', $this->model->getUserInfo(session('ucode')));
         
@@ -325,5 +325,24 @@ class IndexController extends Controller
         // 写入黑名单
         check_file($ip_black, true);
         return file_put_contents($ip_black, "<?php\nreturn " . var_export($data, true) . ";");
+    }
+
+    // 修改数据库名称
+    private function modDB()
+    {
+        $file = CONF_PATH . '/database.php';
+        $sname = $this->config('database.dbname');
+        $dname = '/data/' . get_uniqid() . '.db';
+        $sconfig = file_get_contents($file);
+        $dconfig = str_replace($sname, $dname, $sconfig);
+        if (file_put_contents($file, $dconfig)) {
+            if (! copy(ROOT_PATH . $sname, ROOT_PATH . $dname)) {
+                file_put_contents($file, $sconfig); // 回滚配置
+            } else {
+                session('deldb', $sname);
+                return true;
+            }
+        }
+        return false;
     }
 }

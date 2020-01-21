@@ -140,7 +140,7 @@ function get_user_ip()
         $cip = '127.0.0.1';
     }
     if (! preg_match('/^[0-9\.]+$/', $cip)) { // 非标准的IP
-        $cip = 'unknow';
+        $cip = '0.0.0.0';
     }
     return htmlspecialchars($cip);
 }
@@ -919,6 +919,23 @@ function query_string($unset = null)
         }
     }
     return $qs ? '?' . $qs : '';
-}  
+}
+
+// 判断是否在子网
+function network_match($ip, $network)
+{
+    if (strpos($network, '/') > 0) {
+        $network = explode('/', $network);
+        $move = 32 - $network[1];
+        if ($network[1] == 0) {
+            return true;
+        }
+        return ((ip2long($ip) >> $move) === (ip2long($network[0]) >> $move)) ? true : false;
+    } elseif ($network == $ip) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 

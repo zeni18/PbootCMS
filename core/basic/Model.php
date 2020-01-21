@@ -133,7 +133,7 @@ class Model
                 }
             }
         }
-        
+
         $this->exeSql[] = $sql;
         if ($clear) {
             $this->pk = 'id';
@@ -143,7 +143,7 @@ class Model
             $this->createTimeField = 'create_time';
             $this->sql = array();
         }
-        
+
         if ($this->showSql && $clear) {
             exit($sql);
         } else {
@@ -172,7 +172,7 @@ class Model
     /**
      * 内容输出
      *
-     * @param mixed $data            
+     * @param mixed $data
      * @return mixed
      */
     final protected function outData($result)
@@ -232,7 +232,7 @@ class Model
     /**
      * 连贯操作：是否自动插入时间
      *
-     * @param string $flag            
+     * @param string $flag
      * @return \core\basic\Model
      */
     final public function autoTime($flag = true)
@@ -371,7 +371,7 @@ class Model
      *            调用本方法时与前面条件使用AND连接，$where参数数组内部的条件默认使用AND连接
      * @return \core\basic\Model
      */
-    
+
     /**
      * 连贯操作：设置查询条件
      *
@@ -852,7 +852,7 @@ class Model
     /**
      * 连贯操作：待插入或更新数据数组，分解insert、update函数，实现 table($table)->data($data)->insert();
      *
-     * @param array $data            
+     * @param array $data
      * @return \core\basic\Model
      */
     final public function data($data)
@@ -887,7 +887,7 @@ class Model
     /**
      * 连贯操作：用于从一个表复制信息到另一个表 ，实现INSERT INTO SELECT的功能
      *
-     * @param string $subSql            
+     * @param string $subSql
      */
     final public function from($subSql)
     {
@@ -913,10 +913,10 @@ class Model
             $type($this);
             return $this->select();
         }
-        
+
         if (! isset($this->sql['field']) || ! $this->sql['field'])
             $this->sql['field'] = '*';
-        
+
         // 如果调用了分页函数且分页，则执行分页处理
         if (isset($this->sql['paging']) && $this->sql['paging']) {
             if ($this->sql['group']) { // 解决使用分组时count(*)分页不准问题
@@ -984,7 +984,7 @@ class Model
             $this->sql['field'] = '*';
         $this->limit(1); // 强制查询一条
         $sql = $this->buildSql($this->selectSql); // 构建语句
-        
+
         if ($type === false) {
             return $sql;
         }
@@ -1007,14 +1007,14 @@ class Model
         if (is_array($fields)) {
             $fields = implode(',', $fields);
         }
-        
+
         // 如果传递字段不含指定键则添加
         if ($key && ! preg_match('/(.*,|^)(' . $key . ')(,.*|$)/', $fields)) {
             $this->sql['field'] = $key . ',' . $fields;
         } else {
             $this->sql['field'] = $fields;
         }
-        
+
         $sql = $this->buildSql($this->selectSql);
         $result = $this->getDb()->all($sql, 1);
         $data = array();
@@ -1136,7 +1136,7 @@ class Model
     }
 
     // ******************************数据插入*******************************************************
-    
+
     /**
      * 数据插入模型
      *
@@ -1158,7 +1158,7 @@ class Model
             return $this->insert($this->sql['data']);
         }
         if (is_array($data)) {
-            
+
             if (! $data)
                 return;
             if (count($data) == count($data, 1)) { // 单条数据
@@ -1249,6 +1249,7 @@ class Model
         } else {
             return;
         }
+        $sql = str_replace('pboot:if', '', $sql); // 过滤插入cms条件语句
         return $this->getDb()->amd($sql);
     }
 
@@ -1315,6 +1316,7 @@ class Model
         }
         $this->sql['value'] = $update_string;
         $sql = $this->buildSql($this->updateSql);
+        $sql = str_replace('pboot:if', '', $sql); // 过滤插入cms条件语句
         return $this->getDb()->amd($sql);
     }
 
