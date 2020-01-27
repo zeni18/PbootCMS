@@ -27,11 +27,11 @@ class ListController extends Controller
         $acode = request('acode', 'var') ?: get_default_lg();
         $scode = request('scode', 'var') ?: '';
         $num = request('num', 'int') ?: $this->config('pagesize');
-        $order = request('order');
-        if (! preg_match('/^[\w\-,\s]+$/', $order)) {
+        $rorder = request('order');
+        if (! preg_match('/^[\w\-,\s]+$/', $rorder)) {
             $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
         } else {
-            switch ($order) {
+            switch ($rorder) {
                 case 'id':
                     $order = 'a.id DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC';
                     break;
@@ -53,7 +53,7 @@ class ListController extends Controller
                 case 'visits':
                 case 'likes':
                 case 'oppose':
-                    $order .= ' DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                    $order = $rorder . ' DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                     break;
                 case 'random': // 随机取数
                     $db_type = get_db_type();
@@ -64,13 +64,13 @@ class ListController extends Controller
                     }
                     break;
                 default:
-                    if ($order) {
-                        $orders = explode(',', $order);
+                    if ($rorder) {
+                        $orders = explode(',', $rorder);
                         foreach ($orders as $k => $v) {
                             if (strpos('ext_', $v) === 0) {
-                                $orders[$k] = 'e.' . $order;
+                                $orders[$k] = 'e.' . $v;
                             } else {
-                                $orders[$k] = 'a.' . $order;
+                                $orders[$k] = 'a.' . $v;
                             }
                         }
                         $order = implode(',', $orders);
