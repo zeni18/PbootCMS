@@ -33,13 +33,13 @@ class ListController extends Controller
         } else {
             switch ($order) {
                 case 'id':
-                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.id DESC,a.date DESC,a.sorting ASC';
+                    $order = 'a.id DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC';
                     break;
                 case 'date':
-                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.date DESC,a.sorting ASC,a.id DESC';
+                    $order = 'a.date DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.id DESC';
                     break;
                 case 'sorting':
-                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                    $order = 'a.sorting ASC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.date DESC,a.id DESC';
                     break;
                 case 'istop':
                     $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
@@ -48,15 +48,34 @@ class ListController extends Controller
                     $order = 'a.isrecommend DESC,a.istop DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                     break;
                 case 'isheadline':
-                    $order = 'a.isheadline DESC,a.istop DESC,a.isrecommend DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                    $order = 'a.isrecommend DESC,a.istop DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                     break;
                 case 'visits':
                 case 'likes':
                 case 'oppose':
-                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,' . $order . ' DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                    $order .= ' DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                    break;
+                case 'random': // 随机取数
+                    $db_type = get_db_type();
+                    if ($db_type == 'mysql') {
+                        $order = "RAND()";
+                    } elseif ($db_type == 'sqlite') {
+                        $order = "RANDOM()";
+                    }
                     break;
                 default:
-                    $order = $order . ',a.sorting ASC,a.date DESC,a.id DESC';
+                    if ($order) {
+                        $orders = explode(',', $order);
+                        foreach ($orders as $k => $v) {
+                            if (strpos('ext_', $v) === 0) {
+                                $orders[$k] = 'e.' . $order;
+                            } else {
+                                $orders[$k] = 'a.' . $order;
+                            }
+                        }
+                        $order = implode(',', $orders);
+                        $order .= ',a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                    }
             }
         }
         

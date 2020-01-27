@@ -346,7 +346,7 @@ if (! function_exists('array_column')) {
  * @param string $jump_url跳转地址            
  * @param number $time时间            
  */
-function parse_info_tpl($info_tpl, $string, $jump_url, $time)
+function parse_info_tpl($info_tpl, $string, $jump_url = null, $time = 0)
 {
     if (file_exists($info_tpl)) {
         $tpl_content = file_get_contents($info_tpl);

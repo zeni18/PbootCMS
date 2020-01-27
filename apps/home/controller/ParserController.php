@@ -28,7 +28,7 @@ class ParserController extends Controller
 
     public function _empty()
     {
-        error('您访问的地址有误，请核对后重试！');
+        _404('您访问的地址有误，请核对后重试！');
     }
 
     // 解析全局前置公共标签
@@ -46,7 +46,7 @@ class ParserController extends Controller
         $content = str_replace('{pboot:pagetitle}', '{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
         $content = str_replace('{pboot:pagekeywords}', '{pboot:sitekeywords}', $content);
         $content = str_replace('{pboot:pagedescription}', '{pboot:sitedescription}', $content);
-
+        
         $content = $this->parserSingleLabel($content); // 单标签解析
         $content = $this->parserSiteLabel($content); // 站点标签
         $content = $this->parserCompanyLabel($content); // 公司标签
@@ -253,13 +253,13 @@ class ParserController extends Controller
             $data = $this->model->getSortsTree();
             $count = count($matches[0]);
             for ($i = 0; $i < $count; $i ++) {
-
+                
                 // 无数据时直接替换整体标签为空
                 if (! $data['tree']) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $parent = 0;
@@ -274,7 +274,7 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 if ($parent) { // 非顶级栏目起始
                     if (isset($data['tree'][$parent]['son'])) {
                         $out_data = $data['tree'][$parent]['son'];
@@ -284,19 +284,19 @@ class ParserController extends Controller
                 } else { // 顶级栏目起始
                     $out_data = $data['top'];
                 }
-
+                
                 // 读取指定数量
                 if ($num) {
                     $out_data = array_slice($out_data, 0, $num);
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($out_data as $value) { // 按查询的数据条数循环
@@ -360,14 +360,14 @@ class ParserController extends Controller
                     $key ++;
                     $out_html .= $one_html;
                 }
-
+                
                 // 无限极嵌套解析
                 if (preg_match($pattern3, $out_html, $matches3)) {
                     $out_html = str_replace('pboot:' . $matches3[1] . 'nav', 'pboot:nav', $out_html);
                     $out_html = str_replace('[' . $matches3[1] . 'nav:', '[nav:', $out_html);
                     $out_html = $this->parserNavLabel($out_html);
                 }
-
+                
                 // 执行内容替换
                 $content = str_replace($matches[0][$i], $out_html, $content);
             }
@@ -384,12 +384,12 @@ class ParserController extends Controller
             $data = $this->model->getPosition($scode);
             for ($i = 0; $i < $count; $i ++) {
                 $params = $this->parserParam($matches[1][$i], false); // 保留对html标签的支持
-
+                
                 $separator = '';
                 $separatoricon = '';
                 $indextext = '';
                 $indexicon = '';
-
+                
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -407,20 +407,20 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 已经设置图标，则图标优先，如果没有，则判断是否已经设置文字
                 if ($separatoricon) {
                     $separator = ' <i class="' . $separatoricon . '"></i> ';
                 } elseif (! $separator) {
                     $separator = ' >> ';
                 }
-
+                
                 if ($indexicon) {
                     $indextext = '<i class="' . $indexicon . '"></i>';
                 } elseif (! $indextext) {
                     $indextext = '首页';
                 }
-
+                
                 $out_html = '<a href="' . SITE_DIR . '/">' . $indextext . '</a>';
                 if ($page && $scode == 0) {
                     $out_html .= $separator . '<a href="' . $link . '">' . $page . '</a>';
@@ -622,12 +622,12 @@ class ParserController extends Controller
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $scode = - 1;
-
+                
                 // 跳过未指定scode的列表
                 if (! array_key_exists('scode', $params)) {
                     continue;
                 }
-
+                
                 // 分离分类编码
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -636,27 +636,27 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 if (! $scode) {
                     $scode = - 1;
                 }
-
+                
                 // 读取一个或多个栏目数据
                 $data = $this->model->getMultSort(escape_string($scode));
-
+                
                 // 无数据直接跳过
                 if (! $data) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -730,7 +730,7 @@ class ParserController extends Controller
                 $field = '';
                 $class = '';
                 $active = '';
-
+                
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -748,41 +748,41 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 跳过不带field的标签
                 if (! $field) {
                     continue;
                 }
-
+                
                 $url_rule_type = $this->config('url_rule_type') ?: 3;
                 $url_rule_suffix = $this->config('url_rule_suffix') ?: '.html';
                 $url_break_char = $this->config('url_break_char') ?: '_';
                 $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? $url_rule_suffix : '/';
-
+                
                 // 附加后缀及参数
                 if ($url_rule_type == 1 || $url_rule_type == 2) {
                     // 获取地址路径
                     $url = parse_url(URL);
-
+                    
                     // 避免非根目录首页筛选问题
                     if (trim($url['path'], '/') == trim(SITE_DIR, '/')) {
                         $url_rule_sort_suffix = '/';
                     }
-
+                    
                     $path = preg_replace('/\/page\/[0-9]+/', '', $url['path']); // 去除路径方式分页
-
+                                                                                
                     // 去后缀扩展
                     if (! ! $pos = strripos($path, $url_rule_suffix)) {
                         $path = substr($path, 0, $pos);
                     }
-
+                    
                     // 去路径分页，回到首页
                     if (defined('CMS_PAGE_CUSTOM')) {
                         $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', '$1', rtrim($path, '/'));
                     } else {
                         $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($path, '/'));
                     }
-
+                    
                     // 拼接地址
                     $path .= $url_rule_sort_suffix . query_string('p,s,' . $field);
                 } elseif ($url_rule_type == 3) {
@@ -793,7 +793,7 @@ class ParserController extends Controller
                         unset($output['p']); // 去除保留参数
                         unset($output['s']); // 去除保留参数
                         unset($output[$field]); // 不筛选该字段
-
+                        
                         if ($output && ! current($output)) {
                             $path_qs = key($output); // 第一个参数为路径信息，注意PHP数组会自动将点转换下划线
                             unset($output[$path_qs]); // 去除路径参数
@@ -803,21 +803,21 @@ class ParserController extends Controller
                             } else {
                                 $path = $path_qs;
                             }
-
+                            
                             // 去除原分页参数
                             if (defined('CMS_PAGE_CUSTOM')) {
                                 $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
                             } else {
                                 $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                             }
-
+                            
                             $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
                         } else {
                             $path = '';
                         }
-
+                        
                         $qs = http_build_query($output);
-
+                        
                         if ($path && $qs) { // 重组地址
                             $path = rtrim($path, '/') . '&' . $qs;
                         } elseif ($qs) {
@@ -829,14 +829,14 @@ class ParserController extends Controller
                         $path = SITE_DIR . '/';
                     }
                 }
-
+                
                 // 如果有对本字段进行筛选，则不高亮
                 if (get($field, 'vars')) {
                     $out_html = '<a href="' . $path . '" class="' . $class . '">' . $text . '</a>';
                 } else {
                     $out_html = '<a href="' . $path . '" class="' . $active . '">' . $text . '</a>';
                 }
-
+                
                 // 执行内容替换
                 $content = str_replace($matches[0][$i], $out_html, $content);
             }
@@ -849,32 +849,32 @@ class ParserController extends Controller
     {
         $pattern = '/\{pboot:select(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:select\}/';
         $pattern2 = '/\[select:([\w]+)(\s+[^]]+)?\]/';
-
+        
         // 参数处理
         if (preg_match($pattern, $content)) {
-
+            
             $url_rule_type = $this->config('url_rule_type') ?: 3;
             $url_rule_suffix = $this->config('url_rule_suffix') ?: '.html';
             $url_break_char = $this->config('url_break_char') ?: '_';
             $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? $url_rule_suffix : '/';
-
+            
             // 附加后缀及参数
             if ($url_rule_type == 1 || $url_rule_type == 2) {
                 // 获取地址路径
                 $url = parse_url(URL);
-
+                
                 // 避免非根目录首页筛选问题
                 if (trim($url['path'], '/') == trim(SITE_DIR, '/')) {
                     $url_rule_sort_suffix = '/';
                 }
-
+                
                 $path = preg_replace('/\/page\/[0-9]+/', '', $url['path']); // 去除路径方式分页，回到第一页
-
+                                                                            
                 // 去后缀扩展
                 if (! ! $pos = strripos($path, $url_rule_suffix)) {
                     $path = substr($path, 0, $pos);
                 }
-
+                
                 // 去路径分页，回到首页
                 if (defined('CMS_PAGE_CUSTOM')) {
                     $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', '$1', rtrim($path, '/'));
@@ -882,7 +882,7 @@ class ParserController extends Controller
                     $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', '$1$2', rtrim($path, '/'));
                 }
             }
-
+            
             $output = array();
             if (isset($_SERVER["QUERY_STRING"]) && ! ! $qs = $_SERVER["QUERY_STRING"]) {
                 parse_str($qs, $output);
@@ -898,7 +898,7 @@ class ParserController extends Controller
                     } else {
                         $path = $path_qs;
                     }
-
+                    
                     // 去除原分页参数
                     if (defined('CMS_PAGE_CUSTOM')) {
                         $path = preg_replace('/(.*)' . $url_break_char . '[0-9]+$/', "$1", rtrim($path, '/'));
@@ -911,16 +911,16 @@ class ParserController extends Controller
             }
             $path = isset($path) ? $path . $url_rule_sort_suffix : SITE_DIR . '/';
         }
-
+        
         // 执行匹配替换
         if (preg_match_all($pattern, $content, $matches)) {
             $count = count($matches[0]);
             for ($i = 0; $i < $count; $i ++) {
-
+                
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $field = '';
-
+                
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -929,32 +929,32 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 跳过不带field的标签
                 if (! $field) {
                     continue;
                 }
-
+                
                 // 读取数据
                 if (! ! $data = $this->model->getSelect(escape_string($field))) {
                     $data = explode(',', $data);
                 } else {
                     $data = array();
                 }
-
+                
                 // 无数据直接替换为空并跳过
                 if (! $data) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -1004,7 +1004,7 @@ class ParserController extends Controller
         if (preg_match_all($pattern, $content, $matches)) {
             $count = count($matches[0]);
             for ($i = 0; $i < $count; $i ++) {
-
+                
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $num = $this->config('pagesize'); // 未设置条数时使用默认15
@@ -1018,7 +1018,8 @@ class ParserController extends Controller
                 $isrecommend = ''; // 是否推荐
                 $isheadline = ''; // 是否头条
                 $start = 1; // 起始条数，默认第一条开始
-
+                $lfield = ''; // 查询字段限制
+                              
                 // 判断当前栏目和指定栏目
                 if ($cscode && ! array_key_exists('scode', $params)) { // 解析当前
                     $scode = $cscode;
@@ -1029,11 +1030,11 @@ class ParserController extends Controller
                 } else {
                     continue;
                 }
-
+                
                 if ($scode == '*') {
                     $scode = '';
                 }
-
+                
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -1043,13 +1044,13 @@ class ParserController extends Controller
                         case 'order':
                             switch ($value) {
                                 case 'id':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.id DESC,a.date DESC,a.sorting ASC';
+                                    $order = 'a.id DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC';
                                     break;
                                 case 'date':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.date DESC,a.sorting ASC,a.id DESC';
+                                    $order = 'a.date DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.id DESC';
                                     break;
                                 case 'sorting':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    $order = 'a.sorting ASC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.date DESC,a.id DESC';
                                     break;
                                 case 'istop':
                                     $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
@@ -1058,12 +1059,12 @@ class ParserController extends Controller
                                     $order = 'a.isrecommend DESC,a.istop DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                                     break;
                                 case 'isheadline':
-                                    $order = 'a.isheadline DESC,a.istop DESC,a.isrecommend DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    $order = 'a.isrecommend DESC,a.istop DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                                     break;
                                 case 'visits':
                                 case 'likes':
                                 case 'oppose':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,' . $value . ' DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    $order = $value . ' DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                                     break;
                                 case 'random': // 随机取数
                                     $db_type = get_db_type();
@@ -1071,12 +1072,21 @@ class ParserController extends Controller
                                         $order = "RAND()";
                                     } elseif ($db_type == 'sqlite') {
                                         $order = "RANDOM()";
-                                    } else {
-                                        $order = 'a.sorting ASC,a.date DESC,a.id DESC';
                                     }
                                     break;
                                 default:
-                                    $order = $value . ',a.sorting ASC,a.date DESC,a.id DESC';
+                                    if ($value) {
+                                        $orders = explode(',', $value);
+                                        foreach ($orders as $k => $v) {
+                                            if (strpos('ext_', $v) === 0) {
+                                                $orders[$k] = 'e.' . $value;
+                                            } else {
+                                                $orders[$k] = 'a.' . $value;
+                                            }
+                                        }
+                                        $value = implode(',', $orders);
+                                        $order = $value . ',a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    }
                             }
                             break;
                         case 'filter':
@@ -1109,9 +1119,12 @@ class ParserController extends Controller
                         case 'start':
                             $start = $value;
                             break;
+                        case 'lfield':
+                            $lfield = $value;
+                            break;
                     }
                 }
-
+                
                 // filter数据筛选
                 $where1 = array();
                 if ($filter) {
@@ -1132,7 +1145,7 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // tags数据参数筛选
                 $where2 = array();
                 if ($tags) {
@@ -1147,10 +1160,10 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // 重置存储条件
                 $where3 = array();
-
+                
                 // 只对有分页的列表有效
                 if ($page) {
                     // tags数据传值筛选
@@ -1161,7 +1174,7 @@ class ParserController extends Controller
                             $where2[] = "a.tags='" . $get_tags . "'";
                         }
                     }
-
+                    
                     // 扩展字段数据筛选
                     foreach ($_GET as $key => $value) {
                         if (preg_match('/^ext_[\w\-]+$/', $key)) { // 其他字段不加入
@@ -1169,7 +1182,7 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // 判断多图调节参数
                 if ($ispics !== '') {
                     if ($ispics) {
@@ -1178,7 +1191,7 @@ class ParserController extends Controller
                         $where3[] = "a.pics=''";
                     }
                 }
-
+                
                 // 判断缩略图调节参数
                 if ($isico !== '') {
                     if ($isico) {
@@ -1187,7 +1200,7 @@ class ParserController extends Controller
                         $where3[] = "a.ico=''";
                     }
                 }
-
+                
                 // 判断置顶调节参数
                 if ($istop !== '') {
                     if ($istop) {
@@ -1196,7 +1209,7 @@ class ParserController extends Controller
                         $where3[] = "a.istop=0";
                     }
                 }
-
+                
                 // 判断推荐调节参数
                 if ($isrecommend !== '') {
                     if ($isrecommend) {
@@ -1205,7 +1218,7 @@ class ParserController extends Controller
                         $where3[] = "a.isrecommend=0";
                     }
                 }
-
+                
                 // 判断头条调节参数
                 if ($isheadline !== '') {
                     if ($isheadline) {
@@ -1214,36 +1227,36 @@ class ParserController extends Controller
                         $where3[] = "a.isheadline=0";
                     }
                 }
-
+                
                 // 起始数校验
                 if (! is_numeric($start) || $start < 1) {
                     $start = 1;
                 }
-
+                
                 if ($page) {
                     if (isset($paging)) {
-                        error('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
+                        _404('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
                     } else {
                         $paging = true;
-                        $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start);
+                        $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);
                     }
                 } else {
-                    $data = $this->model->getList($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start);
+                    $data = $this->model->getList($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);
                 }
-
+                
                 // 无数据直接替换
                 if (! $data) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -1292,7 +1305,7 @@ class ParserController extends Controller
                 $params = $this->parserParam($matches[1][$i]);
                 $id = - 1;
                 $scode = - 1;
-
+                
                 // 跳过未指定id和scode的列表
                 if (array_key_exists('id', $params)) {
                     $id = $params['id'];
@@ -1303,20 +1316,20 @@ class ParserController extends Controller
                 } else {
                     continue;
                 }
-
+                
                 // 读取数据
                 if (! $data) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = $matches[2][$i];
                 for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
                     $params = $this->parserParam($matches2[2][$j]);
@@ -1340,12 +1353,12 @@ class ParserController extends Controller
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $id = - 1;
-
+                
                 // 跳过未指定id的列表
                 if (! array_key_exists('id', $params)) {
                     continue;
                 }
-
+                
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -1357,27 +1370,27 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 读取内容多图
                 if (! ! $pics = $this->model->getContentPics(escape_string($id))) {
                     $pics = explode(',', $pics);
                 } else {
                     $pics = array();
                 }
-
+                
                 // 无图直接替换为空并跳过
                 if (! $pics) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($pics as $value) { // 按查询图片条数循环
@@ -1428,17 +1441,17 @@ class ParserController extends Controller
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $id = - 1;
-
+                
                 // 跳过未指定id的调用
                 if (! array_key_exists('id', $params)) {
                     continue;
                 }
-
+                
                 // 跳过未指定field的调用
                 if (! array_key_exists('field', $params)) {
                     continue;
                 }
-
+                
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -1450,27 +1463,27 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 读取内容多图
                 if (! ! $checkboxs = $this->model->getContentCheckbox(escape_string($id), escape_string($field))) {
                     $data = explode(',', $checkboxs);
                 } else {
                     $data = array();
                 }
-
+                
                 // 无内容直接替换为空并跳过
                 if (! $data) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按条数循环
@@ -1510,7 +1523,7 @@ class ParserController extends Controller
                 $params = $this->parserParam($matches[1][$i]);
                 $id = ''; // 调取指定内容的tags
                 $scode = ''; // 调取指定分类的tags
-
+                             
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -1525,12 +1538,12 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 获取数据
                 $data = array();
                 if ($id) { // 获取单个内容的tags
                     if (strpos($scode, ',') !== false) {
-                        error('模板中指定id输出tags时不允许scode指定多个栏目！');
+                        _404('模板中指定id输出tags时不允许scode指定多个栏目！');
                     }
                     if (! ! $rs = $this->model->getContentTags(escape_string($id))) {
                         if ($rs->tags) {
@@ -1563,20 +1576,20 @@ class ParserController extends Controller
                 } else {
                     continue; // 未指定任何时不解析
                 }
-
+                
                 // 无内容直接替换为空并跳过
                 if (! $data) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按条数循环
@@ -1631,12 +1644,12 @@ class ParserController extends Controller
                 $gid = 1;
                 $num = 5;
                 $start = 1;
-
+                
                 // 跳过未指定gid的标签
                 if (! array_key_exists('gid', $params)) {
                     continue;
                 }
-
+                
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -1651,25 +1664,25 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 起始数校验
                 if (! is_numeric($start) || $start < 1) {
                     $start = 1;
                 }
-
+                
                 // 读取数据
                 if (! $data = $this->model->getSlides(escape_string($gid), escape_string($num), $start)) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -1722,12 +1735,12 @@ class ParserController extends Controller
                 $gid = 1;
                 $num = 10;
                 $start = 1;
-
+                
                 // 跳过未指定gid的标签
                 if (! array_key_exists('gid', $params)) {
                     continue;
                 }
-
+                
                 foreach ($params as $key => $value) {
                     switch ($key) {
                         case 'gid':
@@ -1741,25 +1754,25 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 起始数校验
                 if (! is_numeric($start) || $start < 1) {
                     $start = 1;
                 }
-
+                
                 // 读取数据
                 if (! $data = $this->model->getLinks(escape_string($gid), escape_string($num), $start)) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -1813,7 +1826,7 @@ class ParserController extends Controller
                 $page = true;
                 $start = 1;
                 $lg = '';
-
+                
                 foreach ($params as $key => $value) {
                     switch ($key) {
                         case 'num':
@@ -1830,25 +1843,25 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 起始数校验
                 if (! is_numeric($start) || $start < 1) {
                     $start = 1;
                 }
-
+                
                 // 读取数据
                 if (! $data = $this->model->getMessage(escape_string($num), $page, $start, $lg)) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -1906,12 +1919,12 @@ class ParserController extends Controller
                 $fcode = - 1;
                 $page = true;
                 $start = 1;
-
+                
                 // 跳过未指定fcode的标签
                 if (! array_key_exists('fcode', $params)) {
                     continue;
                 }
-
+                
                 foreach ($params as $key => $value) {
                     switch ($key) {
                         case 'num':
@@ -1928,31 +1941,31 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 // 起始数校验
                 if (! is_numeric($start) || $start < 1) {
                     $start = 1;
                 }
-
+                
                 // 获取表名称
                 if (! $table = $this->model->getFormTable(escape_string($fcode))) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 读取数据
                 if (! $data = $this->model->getForm($table, escape_string($num), $page, $start)) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -2051,9 +2064,9 @@ class ParserController extends Controller
             if (! preg_match('/^[\w,\s]+$/', $scode)) {
                 $scode = '';
             }
-
+            
             for ($i = 0; $i < $count; $i ++) {
-
+                
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $num = $this->config('pagesize'); // 未设置条数时使用默认15
@@ -2067,7 +2080,8 @@ class ParserController extends Controller
                 $isrecommend = ''; // 是否推荐
                 $isheadline = ''; // 是否头条
                 $page = true; // 搜索默认分页
-
+                $lfield = ''; // 查询字段限制
+                
                 foreach ($params as $key => $value) {
                     switch ($key) {
                         case 'field':
@@ -2082,13 +2096,13 @@ class ParserController extends Controller
                         case 'order':
                             switch ($value) {
                                 case 'id':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.id DESC,a.date DESC,a.sorting ASC';
+                                    $order = 'a.id DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC';
                                     break;
                                 case 'date':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.date DESC,a.sorting ASC,a.id DESC';
+                                    $order = 'a.date DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.id DESC';
                                     break;
                                 case 'sorting':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    $order = 'a.sorting ASC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.date DESC,a.id DESC';
                                     break;
                                 case 'istop':
                                     $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
@@ -2097,12 +2111,12 @@ class ParserController extends Controller
                                     $order = 'a.isrecommend DESC,a.istop DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                                     break;
                                 case 'isheadline':
-                                    $order = 'a.isheadline DESC,a.istop DESC,a.isrecommend DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    $order = 'a.isrecommend DESC,a.istop DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                                     break;
                                 case 'visits':
                                 case 'likes':
                                 case 'oppose':
-                                    $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,' . $value . ' DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    $order = $value . ' DESC,a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
                                     break;
                                 case 'random': // 随机取数
                                     $db_type = get_db_type();
@@ -2110,12 +2124,21 @@ class ParserController extends Controller
                                         $order = "RAND()";
                                     } elseif ($db_type == 'sqlite') {
                                         $order = "RANDOM()";
-                                    } else {
-                                        $order = 'a.sorting ASC,a.date DESC,a.id DESC';
                                     }
                                     break;
                                 default:
-                                    $order = $value . ',a.sorting ASC,a.date DESC,a.id DESC';
+                                    if ($value) {
+                                        $orders = explode(',', $value);
+                                        foreach ($orders as $k => $v) {
+                                            if (strpos('ext_', $v) === 0) {
+                                                $orders[$k] = 'e.' . $value;
+                                            } else {
+                                                $orders[$k] = 'a.' . $value;
+                                            }
+                                        }
+                                        $value = implode(',', $orders);
+                                        $order = $value . ',a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC';
+                                    }
                             }
                             break;
                         case 'filter':
@@ -2147,13 +2170,16 @@ class ParserController extends Controller
                         case 'start':
                             $start = $value;
                             break;
+                        case 'lfield':
+                            $lfield = $value;
+                            break;
                     }
                 }
-
+                
                 if ($scode == '*') {
                     $scode = '';
                 }
-
+                
                 // filter数据筛选
                 $where1 = array();
                 if ($filter) {
@@ -2174,7 +2200,7 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // tags数据筛选
                 $where2 = array();
                 if ($tags) {
@@ -2189,10 +2215,10 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // 存储搜索条件，条件为“并列”关系，由于为模糊匹配，条件为空时意味着“任意”
                 $where3 = array();
-
+                
                 // 采取keyword方式
                 if ($keyword) {
                     if (strpos($field, '|')) { // 匹配多字段的关键字搜索
@@ -2226,14 +2252,14 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // 数据接收
                 if ($_POST) {
                     $receive = $_POST;
                 } else {
                     $receive = $_GET;
                 }
-
+                
                 foreach ($receive as $key => $value) {
                     if (! ! $value = request($key, 'vars')) {
                         if ($key == 'title') {
@@ -2244,7 +2270,7 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // 去除特殊键值
                 unset($where3['keyword']);
                 unset($where3['field']);
@@ -2258,13 +2284,13 @@ class ParserController extends Controller
                 unset($where3['searchtpl']);
                 unset($where3['p']);
                 unset($where3['s']);
-
+                
                 // 无任何条件不显示内容
                 if (! $where3) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 判断多图调节参数
                 if ($ispics !== '') {
                     if ($ispics) {
@@ -2273,7 +2299,7 @@ class ParserController extends Controller
                         $where3[] = "a.pics=''";
                     }
                 }
-
+                
                 // 判断缩略图调节参数
                 if ($isico !== '') {
                     if ($isico) {
@@ -2282,7 +2308,7 @@ class ParserController extends Controller
                         $where3[] = "a.ico=''";
                     }
                 }
-
+                
                 // 判断置顶调节参数
                 if ($istop !== '') {
                     if ($istop) {
@@ -2291,7 +2317,7 @@ class ParserController extends Controller
                         $where3[] = "a.istop=0";
                     }
                 }
-
+                
                 // 判断推荐调节参数
                 if ($isrecommend !== '') {
                     if ($isrecommend) {
@@ -2300,7 +2326,7 @@ class ParserController extends Controller
                         $where3[] = "a.isrecommend=0";
                     }
                 }
-
+                
                 // 判断头条调节参数
                 if ($isheadline !== '') {
                     if ($isheadline) {
@@ -2309,37 +2335,37 @@ class ParserController extends Controller
                         $where3[] = "a.isheadline=0";
                     }
                 }
-
+                
                 // 起始数校验
                 if (! is_numeric($start) || $start < 1) {
                     $start = 1;
                 }
-
+                
                 // 读取数据
                 if ($page) {
                     if (isset($paging)) {
-                        error('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
+                        _404('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
                     } else {
                         $paging = true;
-                        $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start);
+                        $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);
                     }
                 } else {
-                    $data = $this->model->getList($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start);
+                    $data = $this->model->getList($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);
                 }
-
+                
                 // 无数据直接替换
                 if (! $data) {
                     $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
-
+                
                 // 匹配到内部标签
                 if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
                     $count2 = count($matches2[0]); // 循环内的内容标签数量
                 } else {
                     $count2 = 0;
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 foreach ($data as $value) { // 按查询数据条数循环
@@ -2415,7 +2441,7 @@ class ParserController extends Controller
                 $params = $this->parserParam($matches[1][$i]);
                 $start = 1;
                 $end = $this->config('pagesize');
-
+                
                 foreach ($params as $key => $value) {
                     switch ($key) {
                         case 'start':
@@ -2426,7 +2452,7 @@ class ParserController extends Controller
                             break;
                     }
                 }
-
+                
                 $out_html = '';
                 $key = 1;
                 for ($n = $start; $n <= $end; $n ++) {
@@ -2453,20 +2479,20 @@ class ParserController extends Controller
                 $flag = '';
                 $out_html = '';
                 $danger = false;
-
+                
                 $white_fun = array(
                     'date',
                     'in_array',
                     'explode',
                     'implode'
                 );
-
+                
                 // 还原可能包含的保留内容，避免判断失效
                 $matches[1][$i] = $this->restorePreLabel($matches[1][$i]);
-
+                
                 // 解码条件字符串
                 $matches[1][$i] = decode_string($matches[1][$i]);
-
+                
                 // 带有函数的条件语句进行安全校验
                 if (preg_match_all('/([\w]+)([\\\s]+)?\(/i', $matches[1][$i], $matches2)) {
                     foreach ($matches2[1] as $value) {
@@ -2476,17 +2502,17 @@ class ParserController extends Controller
                         }
                     }
                 }
-
+                
                 // 过滤特殊字符串
                 if (preg_match('/(\$_GET\[)|(\$_POST\[)|(\$_REQUEST\[)|(\$_COOKIE\[)|(\$_SESSION\[)|(file_put_contents)|(fwrite)|(phpinfo)|(base64_decode)|(`)|(shell_exec)|(eval)|(system)|(exec)|(passthru)/i', $matches[1][$i])) {
                     $danger = true;
                 }
-
+                
                 // 如果有危险函数，则不解析该IF
                 if ($danger) {
                     continue;
                 }
-
+                
                 eval('if(' . $matches[1][$i] . '){$flag="if";}else{$flag="else";}');
                 if (preg_match('/([\s\S]*)?\{else\}([\s\S]*)?/', $matches[2][$i], $matches2)) { // 判断是否存在else
                     switch ($flag) {
@@ -2504,14 +2530,14 @@ class ParserController extends Controller
                 } elseif ($flag == 'if') {
                     $out_html = $matches[2][$i];
                 }
-
+                
                 // 无限极嵌套解析
                 if (preg_match($pattern2, $out_html, $matches3)) {
                     $out_html = str_replace('pboot:' . $matches3[1] . 'if', 'pboot:if', $out_html);
                     $out_html = str_replace('{' . $matches3[1] . 'else}', '{else}', $out_html);
                     $out_html = $this->parserIfLabel($out_html);
                 }
-
+                
                 // 执行替换
                 $content = str_replace($matches[0][$i], $out_html, $content);
             }
@@ -2524,7 +2550,7 @@ class ParserController extends Controller
     {
         if (! $params || ! $data)
             return $data;
-
+        
         // 图片缩放功能
         if (isset($params['maxwidth']) || isset($params['maxheight'])) {
             $maxwidth = isset($params['maxwidth']) ? $params['maxwidth'] : null;
@@ -2539,7 +2565,7 @@ class ParserController extends Controller
                 $data = str_replace(ROOT_PATH, '', $max_out_file);
             }
         }
-
+        
         // 图片固定大小
         if (isset($params['width']) || isset($params['height'])) {
             $width = isset($params['width']) ? $params['width'] : null;
@@ -2554,7 +2580,7 @@ class ParserController extends Controller
                 $data = str_replace(ROOT_PATH, '', $out_file);
             }
         }
-
+        
         foreach ($params as $key => $value) {
             switch ($key) {
                 case 'style': // 时间样式
@@ -2685,7 +2711,7 @@ class ParserController extends Controller
             $string = strip_tags($string);
         }
         $param = array();
-        if (preg_match_all('/([\w]+)[\s]?=[\s]?([\'\"]([^\']+)?[\'\"]|([^\s]+))/', $string, $matches)) {
+        if (preg_match_all('/([\w]+)[\s]?=[\s]?([\'\"]([^\'\"]+)?[\'\"]|([^\s]+))/i', $string, $matches)) {
             foreach ($matches[1] as $key => $value) {
                 if ($matches[3][$key]) {
                     $param[$value] = $matches[3][$key];
@@ -2816,7 +2842,7 @@ class ParserController extends Controller
             $content = preg_replace('/(<\/body>)/i', $visits . "\n$1", $content);
             $this->var['addvisits'] = true;
         }
-
+        
         switch ($label) {
             case 'link':
                 if ($data->type == 1) {
@@ -3013,7 +3039,7 @@ class ParserController extends Controller
                     foreach ($matches1[0] as $key => $value) {
                         $data->content = str_replace($value, '#rega:' . $key . '#', $data->content);
                     }
-
+                    
                     // 去除包含关系的短tags,实现长关键字优先
                     foreach ($tags as $key => $value) {
                         foreach ($tags as $key2 => $value2) {
@@ -3022,12 +3048,12 @@ class ParserController extends Controller
                             }
                         }
                     }
-
+                    
                     // 执行内链替换
                     foreach ($tags as $value) {
                         $data->content = preg_replace('/' . $value->name . '/', '<a href="' . $value->link . '">' . $value->name . '</a>', $data->content, $this->config('content_tags_replace_num') ?: 3);
                     }
-
+                    
                     // 还原保护的内容
                     $pattern = '/\#rega:([0-9]+)\#/';
                     if (preg_match_all($pattern, $data->content, $matches2)) {
@@ -3081,7 +3107,7 @@ class ParserController extends Controller
     {
         $url_break_char = $this->config('url_break_char') ?: '_';
         $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
-
+        
         if ($type == 1) {
             $urlname = $urlname ?: 'about';
             if ($sortfilename) {

@@ -34,7 +34,7 @@ class IndexController extends Controller
                  
             // 禁止伪静态时带index.php访问
             if ($url_rule_type == 2 && stripos(URL, $_SERVER['SCRIPT_NAME']) !== false) {
-                $this->_404('您访问的内容不存在，请核对后重试！');
+                _404('您访问的内容不存在，请核对后重试！');
             }
             
             $path = explode('/', P);
@@ -52,7 +52,7 @@ class IndexController extends Controller
                     $path = substr($path, 0, $pos); // 去扩展
                 }
                 if (! preg_match('/^[\w\-\.\/]+$/', $path)) {
-                    $this->_404('您访问的地址有误，请核对后重试！');
+                    _404('您访问的地址有误，请核对后重试！');
                 }
                 $path = explode('/', $path);
             } elseif (isset($output['keyword'])) { // 支持兼容模式普通搜索
@@ -110,7 +110,7 @@ class IndexController extends Controller
                         if (! ! ($data = $this->model->getContent($path[1])) && ($data->scode == $scode || $data->sortfilename == $scode)) {
                             $this->getContent($data);
                         } else {
-                            $this->_404('您访问的内容不存在，请核对后重试！');
+                            _404('您访问的内容不存在，请核对后重试！');
                         }
                     } else {
                         if (! ! $sort = $this->model->getSort($scode)) {
@@ -120,7 +120,7 @@ class IndexController extends Controller
                                 $this->getList($sort);
                             }
                         } else {
-                            $this->_404('您访问的栏目不存在，请核对后重试！');
+                            _404('您访问的栏目不存在，请核对后重试！');
                         }
                     }
             }
@@ -156,7 +156,7 @@ class IndexController extends Controller
             $content = $this->parser->parserListLabel($content, $sort->scode); // CMS分类列表标签解析
             $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
         } else {
-            $this->_404('请到后台设置分类栏目列表页模板！');
+            _404('请到后台设置分类栏目列表页模板！');
         }
         $this->cache($content, true);
     }
@@ -178,10 +178,10 @@ class IndexController extends Controller
                 $content = $this->parser->parserCurrentContentLabel($content, $sort, $data); // CMS内容标签解析
                 $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
             } else {
-                $this->_404('请到后台设置分类栏目内容页模板！');
+                _404('请到后台设置分类栏目内容页模板！');
             }
         } else {
-            $this->_404('您访问内容的分类已经不存在，请核对后再试！');
+            _404('您访问内容的分类已经不存在，请核对后再试！');
         }
         $this->cache($content, true);
     }
@@ -191,7 +191,7 @@ class IndexController extends Controller
     {
         // 读取数据
         if (! $data = $this->model->getAbout($sort->scode)) {
-            $this->_404('您访问的内容不存在，请核对后重试！');
+            _404('您访问的内容不存在，请核对后重试！');
         }
         
         if ($sort->contenttpl) {
@@ -207,7 +207,7 @@ class IndexController extends Controller
             $content = $this->parser->parserCurrentContentLabel($content, $sort, $data); // CMS内容标签解析
             $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
         } else {
-            $this->_404('请到后台设置分类栏目内容页模板！');
+            _404('请到后台设置分类栏目内容页模板！');
         }
         
         $this->cache($content, true);
@@ -237,7 +237,7 @@ class IndexController extends Controller
         if ($_POST) {
             
             if ($this->config('message_status') === '0') {
-                error('系统已经关闭留言功能，请到后台开启再试！');
+                _404('系统已经关闭留言功能，请到后台开启再试！');
             }
             
             if (time() - session('lastsub') < 10) {
@@ -315,7 +315,7 @@ class IndexController extends Controller
         if ($_POST) {
             
             if ($this->config('form_status') === '0') {
-                error('系统已经关闭表单功能，请到后台开启再试！');
+                _404('系统已经关闭表单功能，请到后台开启再试！');
             }
             
             if (time() - session('lastsub') < 10) {
@@ -383,20 +383,6 @@ class IndexController extends Controller
             }
         } else {
             alert_back('提交失败，请使用POST方式提交！');
-        }
-    }
-
-    // 返回404页面
-    private function _404($string)
-    {
-        header('HTTP/1.1 404 Not Found');
-        header('status: 404 Not Found');
-        $file_404 = ROOT_PATH . '/404.html';
-        if (file_exists($file_404)) {
-            require $file_404;
-            exit();
-        } else {
-            error($string);
         }
     }
 }
