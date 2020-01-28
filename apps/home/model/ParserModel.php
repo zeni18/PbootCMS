@@ -259,7 +259,7 @@ class ParserModel extends Model
             $fields = explode(',', $lfield);
             $fields = array_unique($fields); // 去重
             foreach ($fields as $key => $value) {
-                if (strpos('ext_', $value) === 0) {
+                if (strpos($value, 'ext_') === 0) {
                     $fields[$key] = 'e.' . $value;
                 } elseif ($value == 'sortname') {
                     $fields[$key] = 'b.name as sortname';
@@ -356,7 +356,7 @@ class ParserModel extends Model
             $fields = explode(',', $lfield);
             $fields = array_unique($fields); // 去重
             foreach ($fields as $key => $value) {
-                if (strpos('ext_', $value) === 0) {
+                if (strpos($value, 'ext_') === 0) {
                     $fields[$key] = 'e.' . $value;
                 } elseif ($value == 'sortname') {
                     $fields[$key] = 'b.name as sortname';

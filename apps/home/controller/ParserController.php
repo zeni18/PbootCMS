@@ -1078,7 +1078,7 @@ class ParserController extends Controller
                                     if ($value) {
                                         $orders = explode(',', $value);
                                         foreach ($orders as $k => $v) {
-                                            if (strpos('ext_', $v) === 0) {
+                                            if (strpos($v, 'ext_') === 0) {
                                                 $orders[$k] = 'e.' . $v;
                                             } else {
                                                 $orders[$k] = 'a.' . $v;
@@ -2130,7 +2130,7 @@ class ParserController extends Controller
                                     if ($value) {
                                         $orders = explode(',', $value);
                                         foreach ($orders as $k => $v) {
-                                            if (strpos('ext_', $v) === 0) {
+                                            if (strpos($v, 'ext_') === 0) {
                                                 $orders[$k] = 'e.' . $v;
                                             } else {
                                                 $orders[$k] = 'a.' . $v;

@@ -67,7 +67,7 @@ class ListController extends Controller
                     if ($rorder) {
                         $orders = explode(',', $rorder);
                         foreach ($orders as $k => $v) {
-                            if (strpos('ext_', $v) === 0) {
+                            if (strpos($v, 'ext_') === 0) {
                                 $orders[$k] = 'e.' . $v;
                             } else {
                                 $orders[$k] = 'a.' . $v;
