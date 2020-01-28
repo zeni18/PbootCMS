@@ -159,6 +159,14 @@ class UpgradeController extends Controller
                             check_dir(dirname($back_path), true);
                             copy($des_path, $back_path);
                         }
+                        
+                        // 如果后台入口文件修改过名字，则自动适配
+                        if (stripos($path, 'admin.php') !== false && stripos($_SERVER['SCRIPT_FILENAME'], 'admin.php') === false) {
+                            if (file_exists($_SERVER['SCRIPT_FILENAME'])) {
+                                $des_path = $_SERVER['SCRIPT_FILENAME'];
+                            }
+                        }
+                        
                         $files[] = array(
                             'sfile' => $path,
                             'dfile' => $des_path
