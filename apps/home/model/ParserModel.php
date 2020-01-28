@@ -254,6 +254,7 @@ class ParserModel extends Model
     // 列表内容,带分页，不区分语言，兼容跨语言
     public function getLists($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null)
     {
+        $ext_table = false;
         if ($lfield) {
             $lfield .= ',id,outlink,type,scode,sortfilename,filename,urlname'; // 附加必须字段
             $fields = explode(',', $lfield);
@@ -311,7 +312,7 @@ class ParserModel extends Model
         );
         
         // 加载扩展字段表
-        if (isset($ext_table) && $ext_table) {
+        if ($ext_table) {
             $join[] = array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
@@ -357,6 +358,7 @@ class ParserModel extends Model
     // 列表内容，不带分页，不区分语言，兼容跨语言
     public function getList($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null)
     {
+        $ext_table = false;
         if ($lfield) {
             $lfield .= ',id,outlink,type,scode,sortfilename,filename,urlname'; // 附加必须字段
             $fields = explode(',', $lfield);
@@ -414,7 +416,7 @@ class ParserModel extends Model
         );
         
         // 加载扩展字段表
-        if (isset($ext_table) && $ext_table) {
+        if ($ext_table) {
             $join[] = array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
