@@ -260,6 +260,7 @@ class ParserModel extends Model
             $fields = array_unique($fields); // 去重
             foreach ($fields as $key => $value) {
                 if (strpos($value, 'ext_') === 0) {
+                    $ext_table = true;
                     $fields[$key] = 'e.' . $value;
                 } elseif ($value == 'sortname') {
                     $fields[$key] = 'b.name as sortname';
@@ -278,6 +279,7 @@ class ParserModel extends Model
                 }
             }
         } else {
+            $ext_table = true;
             $fields = array(
                 'a.*',
                 'b.name as sortname',
@@ -305,13 +307,17 @@ class ParserModel extends Model
                 'ay_model d',
                 'b.mcode=d.mcode',
                 'LEFT'
-            ),
-            array(
+            )
+        );
+        
+        // 加载扩展字段表
+        if (isset($ext_table) && $ext_table) {
+            $join[] = array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
                 'LEFT'
-            )
-        );
+            );
+        }
         
         $scode_arr = array();
         if ($scode) {
@@ -357,6 +363,7 @@ class ParserModel extends Model
             $fields = array_unique($fields); // 去重
             foreach ($fields as $key => $value) {
                 if (strpos($value, 'ext_') === 0) {
+                    $ext_table = true;
                     $fields[$key] = 'e.' . $value;
                 } elseif ($value == 'sortname') {
                     $fields[$key] = 'b.name as sortname';
@@ -375,6 +382,7 @@ class ParserModel extends Model
                 }
             }
         } else {
+            $ext_table = true;
             $fields = array(
                 'a.*',
                 'b.name as sortname',
@@ -402,13 +410,17 @@ class ParserModel extends Model
                 'ay_model d',
                 'b.mcode=d.mcode',
                 'LEFT'
-            ),
-            array(
+            )
+        );
+        
+        // 加载扩展字段表
+        if (isset($ext_table) && $ext_table) {
+            $join[] = array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
                 'LEFT'
-            )
-        );
+            );
+        }
         
         $scode_arr = array();
         if ($scode) {
