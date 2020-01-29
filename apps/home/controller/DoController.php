@@ -30,7 +30,7 @@ class DoController extends Controller
             if (isset($lgs[$lg])) {
                 cookie('lg', $lg);
             }
-            location(SITE_DIR . '/');
+            location(SITE_INDEX_DIR . '/');
         }
     }
 

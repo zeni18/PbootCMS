@@ -38,6 +38,9 @@ if (count($script_path) > 2) { // 根目录下"/index.php"长度为2
     define('SITE_DIR', '');
 }
 
+// 定义入口文件地址
+define('SITE_INDEX_DIR', dirname($_SERVER['SCRIPT_NAME']));
+
 // 定义网站部署根路径
 define('ROOT_PATH', $file_path);
 

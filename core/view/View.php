@@ -95,7 +95,7 @@ class View
             $tpl_file = ROOT_PATH . $file;
         } elseif (! ! $pos = strpos($file, '@')) { // 跨模块调用
             $path = APP_PATH . '/' . substr($file, 0, $pos) . '/view/' . $theme;
-            define('APP_THEME_DIR', $path);
+            define('APP_THEME_DIR', str_replace(DOC_PATH, '', $path));
             if (! is_dir($path)) { // 检查主题是否存在
                 error('模板主题目录不存在！主题路径：' . $path);
             } else {

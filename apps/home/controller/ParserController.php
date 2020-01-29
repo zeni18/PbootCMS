@@ -136,6 +136,9 @@ class ParserController extends Controller
                     case 'path':
                         $content = str_replace($matches[0][$i], SITE_DIR, $content);
                         break;
+                    case 'enter':
+                        $content = str_replace($matches[0][$i], SITE_INDEX_DIR, $content);
+                        break;
                     case 'logo':
                         if (isset($data->logo) && $data->logo) {
                             if (! preg_match('/^http/', $data->logo)) {
@@ -421,7 +424,7 @@ class ParserController extends Controller
                     $indextext = '首页';
                 }
                 
-                $out_html = '<a href="' . SITE_DIR . '/">' . $indextext . '</a>';
+                $out_html = '<a href="' . SITE_INDEX_DIR . '/">' . $indextext . '</a>';
                 if ($page && $scode == 0) {
                     $out_html .= $separator . '<a href="' . $link . '">' . $page . '</a>';
                 } else {
@@ -811,7 +814,7 @@ class ParserController extends Controller
                                 $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                             }
                             
-                            $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
+                            $path = SITE_INDEX_DIR . '/?' . $path . $url_rule_sort_suffix;
                         } else {
                             $path = '';
                         }
@@ -821,12 +824,12 @@ class ParserController extends Controller
                         if ($path && $qs) { // 重组地址
                             $path = rtrim($path, '/') . '&' . $qs;
                         } elseif ($qs) {
-                            $path = SITE_DIR . '/?' . $qs;
+                            $path = SITE_INDEX_DIR . '/?' . $qs;
                         } elseif (! $path) {
-                            $path = SITE_DIR . '/';
+                            $path = SITE_INDEX_DIR . '/';
                         }
                     } else {
-                        $path = SITE_DIR . '/';
+                        $path = SITE_INDEX_DIR . '/';
                     }
                 }
                 
@@ -905,11 +908,11 @@ class ParserController extends Controller
                     } else {
                         $path = preg_replace('/(.*)(' . $url_break_char . '[0-9]+)' . $url_break_char . '[0-9]+$/', "$1$2", rtrim($path, '/'));
                     }
-                    $path = SITE_DIR . '/?' . $path;
+                    $path = SITE_INDEX_DIR . '/?' . $path;
                     $not_index = true;
                 }
             }
-            $path = isset($path) ? $path . $url_rule_sort_suffix : SITE_DIR . '/';
+            $path = isset($path) ? $path . $url_rule_sort_suffix : SITE_INDEX_DIR . '/';
         }
         
         // 执行匹配替换

@@ -20,13 +20,13 @@ class Url
         if (strpos($path, 'http') === 0 || ! $path) {
             return $path;
         }
-
+        
         $path = trim_slash($path); // 去除两端斜线
-
+        
         if (! isset(self::$urls[$path])) {
-
+            
             $path_arr = explode('/', $path); // 地址数组
-
+            
             if ($suffix && Config::get('app_url_type') == 2 && strrpos(strtolower($_SERVER["SCRIPT_NAME"]), 'index.php') !== false) {
                 $url_ext = Config::get('url_rule_suffix'); // 伪静态文件形式
             } elseif (Config::get('app_url_type') == 1 || Config::get('app_url_type') == 2) {
@@ -34,28 +34,28 @@ class Url
             } else {
                 $url_ext = '';
             }
-
+            
             // 路由处理
             if (! ! $routes = Config::get('url_route')) {
                 foreach ($routes as $key => $value) {
                     // 去除两端斜线
                     $value = trim_slash($value);
                     $key = trim_slash($key);
-
+                    
                     // 替换原来正则为替换内容
                     if (preg_match_all('/\(.*?\)/', $key, $source)) {
                         foreach ($source[0] as $kk => $vk) {
                             $key = str_replace($vk, '$' . ($kk + 1), $key);
                         }
                     }
-
+                    
                     // 替换原来替换内容为正则
                     if (preg_match_all('/\$([0-9]+)/', $value, $destination)) {
                         foreach ($destination[1] as $kv => $vv) {
                             $value = str_replace($destination[0][$kv], $source[0][$vv - 1], $value);
                         }
                     }
-
+                    
                     // 执行匹配替换
                     if (preg_match('{' . $value . '$}i', $path)) {
                         $path = preg_replace('{' . $value . '$}i', $key, $path);
@@ -64,7 +64,7 @@ class Url
                     }
                 }
             }
-
+            
             // 域名绑定处理匹配
             $cut_str = '';
             if (! ! $domains = Config::get('app_domain_bind')) {
@@ -82,17 +82,17 @@ class Url
                     }
                 }
             }
-
+            
             // 入口文件绑定匹配
             if (defined('URL_BIND') && $path_arr[0] == M) {
                 $cut_str = trim_slash(URL_BIND);
             }
-
+            
             // 执行URL简化
             if ($cut_str) {
                 $path = substr($path, strlen($cut_str) + 1);
             }
-
+            
             // 保存处理过的地址
             if ($path) {
                 self::$urls[$path] = $host . url_index_path() . '/' . $path . $url_ext;
@@ -111,31 +111,31 @@ class Url
             $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
             $suffix = $suffix ? $url_rule_suffix : '/';
             $path = ltrim($path, '/');
-
+            
             // 去除默认模块及控制器部分
             $path = str_replace('home/Index/', '', $path);
-
-            switch ($url_rule_type) {
-                case '1': // 普通模式
-                    $link = SITE_DIR . '/index.php' . '/' . $path . $suffix;
-                    break;
-                case '2': // 伪静态模式
-                    $link = SITE_DIR . '/' . $path . $suffix;
-                    break;
-                case '3': // 兼容模式
-                    $link = SITE_DIR . '/?' . $path . $suffix;
-                    break;
-                default:
-                    error('地址模式设置错误,请登录后台重新设置！');
-            }
-
+            
             if (! $path) {
                 if ($url_rule_type == 1) {
-                    $link = SITE_DIR . '/index.php';
+                    $link = SITE_INDEX_DIR . '/index.php';
                 } elseif ($url_rule_type == 2) {
-                    $link = SITE_DIR;
+                    $link = SITE_INDEX_DIR;
                 } else {
-                    $link = SITE_DIR . '/?';
+                    $link = SITE_INDEX_DIR . '/?';
+                }
+            } else {
+                switch ($url_rule_type) {
+                    case '1': // 普通模式
+                        $link = SITE_INDEX_DIR . '/index.php' . '/' . $path . $suffix;
+                        break;
+                    case '2': // 伪静态模式
+                        $link = SITE_INDEX_DIR . '/' . $path . $suffix;
+                        break;
+                    case '3': // 兼容模式
+                        $link = SITE_INDEX_DIR . '/?' . $path . $suffix;
+                        break;
+                    default:
+                        error('地址模式设置错误,请登录后台重新设置！');
                 }
             }
             self::$urls[$path] = $link;
