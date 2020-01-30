@@ -58,7 +58,9 @@
 			     	<a href="{url./admin/Message/clear}"  onclick='return confirm("您确定要清空么？")' class="layui-btn layui-btn-sm">清空记录</a>
 			    {/if}
 			    
+			    {if([$messages])}
 			    <a href="{url./admin/Message/index/export/1}" class="layui-btn layui-btn-sm">导出记录</a>
+			    {/if}
 			    
 	            <div class="page">{$pagebar}</div>
 	  	   </div>
