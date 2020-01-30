@@ -110,6 +110,13 @@
 	  	   			</tbody>
 	            </table>
 	            {/foreach}
+	            
+	            {if(session('ucode')==10001 && [$formdata])}
+			     	<a href="{url./admin/Form/clear/fcode/'.[$form->fcode].'}"  onclick='return confirm("您确定要清空么？")' class="layui-btn layui-btn-sm">清空记录</a>
+			    {/if}
+			    
+			    <a href="{url./admin/Form/index/fcode/'.[$form->fcode].'/action/showdata/export/1}" class="layui-btn layui-btn-sm">导出记录</a>
+			     
 	            <div class="page">{$pagebar}</div>
 	  	   </div>
 	  	 </div>

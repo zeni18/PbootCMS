@@ -14,12 +14,12 @@ class MessageModel extends Model
 {
 
     // 获取列表
-    public function getList()
+    public function getList($page = true)
     {
         return parent::table('ay_message')->where("acode='" . session('acode') . "'")
             ->order('id DESC')
             ->decode(false)
-            ->page()
+            ->page($page)
             ->select();
     }
 
@@ -63,5 +63,11 @@ class MessageModel extends Model
             ->where("acode='" . session('acode') . "'")
             ->find();
         return $rs->count ?: 0;
+    }
+
+    // 删除全部
+    public function clearMessage()
+    {
+        return parent::table('ay_message')->delete();
     }
 }

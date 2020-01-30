@@ -53,6 +53,13 @@
 	  	   			</tbody>
 	            </table>
 	            {/foreach}
+	            
+	            {if(session('ucode')==10001 && [$messages])}
+			     	<a href="{url./admin/Message/clear}"  onclick='return confirm("您确定要清空么？")' class="layui-btn layui-btn-sm">清空记录</a>
+			    {/if}
+			    
+			    <a href="{url./admin/Message/index/export/1}" class="layui-btn layui-btn-sm">导出记录</a>
+			    
 	            <div class="page">{$pagebar}</div>
 	  	   </div>
 	  	 </div>

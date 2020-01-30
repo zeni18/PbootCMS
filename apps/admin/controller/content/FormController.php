@@ -30,7 +30,15 @@ class FormController extends Controller
                 $this->assign('showdata', true);
                 $this->assign('fields', $this->model->getFormFieldByCode($fcode)); // 获取字段
                 $table = $this->model->getFormTableByCode($fcode);
-                $this->assign('formdata', $this->model->getFormData($table));
+                if (get('export')) {
+                    $this->assign('formdata', $this->model->getFormData($table, false));
+                    header('Content-Type:application/vnd.ms-excel');
+                    header('Cache-Control: max-age=0');
+                    header("Content-Disposition:filename=" . $form->form_name . "-" . date("YmdHis") . ".xls");
+                    $this->display('content/exform.html');
+                } else {
+                    $this->assign('formdata', $this->model->getFormData($table, true));
+                }
             }
             if (get('action') == 'showfield') {
                 $this->assign('showfield', true);
@@ -328,6 +336,22 @@ class FormController extends Controller
                 $this->assign('field', $result);
             }
             $this->display('content/form.html');
+        }
+    }
+
+    // 清空
+    public function clear()
+    {
+        // 获取表单
+        if (! $fcode = get('fcode', 'var')) {
+            error('传递的参数值fcode错误！', - 1);
+        }
+        $table = $this->model->getFormTableByCode($fcode);
+        
+        if ($this->model->clearFormData($table)) {
+            alert_location('清空成功！', - 1);
+        } else {
+            alert_location('清空失败！', - 1);
         }
     }
 }

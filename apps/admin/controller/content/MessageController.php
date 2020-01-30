@@ -26,8 +26,17 @@ class MessageController extends Controller
     {
         $this->assign('list', true);
         $this->assign('fields', $this->model->getFormFieldByCode(1)); // 获取字段
-        $this->assign('messages', $this->model->getList());
-        $this->display('content/message.html');
+        
+        if (get('export')) {
+            $this->assign('messages', $this->model->getList(false));
+            header("Content-Type:application/vnd.ms-excel");
+            header('Cache-Control: max-age=0');
+            header("Content-Disposition:filename=留言记录-" . date("YmdHis") . ".xls");
+            $this->display('content/exmessage.html');
+        } else {
+            $this->assign('messages', $this->model->getList(true));
+            $this->display('content/message.html');
+        }
     }
 
     // 删除
@@ -95,6 +104,16 @@ class MessageController extends Controller
             $this->assign('message', $result);
             
             $this->display('content/message.html');
+        }
+    }
+
+    // 清空
+    public function clear()
+    {
+        if ($this->model->clearMessage()) {
+            alert_location('清空成功！', url('/admin/Message/index'));
+        } else {
+            alert_location('清空失败！', url('/admin/Message/index'));
         }
     }
 }

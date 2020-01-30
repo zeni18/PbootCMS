@@ -162,9 +162,9 @@ class FormModel extends Model
     }
 
     // 获取表单数据
-    public function getFormData($table)
+    public function getFormData($table, $page = true)
     {
-        return parent::table($table)->page()
+        return parent::table($table)->page($page)
             ->order('id DESC')
             ->select();
     }
@@ -173,6 +173,12 @@ class FormModel extends Model
     public function delFormData($table, $id)
     {
         return parent::table($table)->where("id=$id")->delete();
+    }
+
+    // 清空自定义表单数据
+    public function clearFormData($table)
+    {
+        return parent::table($table)->delete();
     }
 
     // 增加表单数据查看到菜单

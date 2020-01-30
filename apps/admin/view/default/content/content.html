@@ -131,26 +131,31 @@
 			        
 			        <div class="layui-input-inline">
 				     	 <select name="scode">
-	                        	<option value="">请选择目标栏目</option>
+	                        	<option value="">请选择移动/复制到栏目</option>
 	                             {$search_select}
 	                     </select>
                     </div>
-                    {if(check_level('mod'))}
-                    <button type="submit" name="submit" value="copy" class="layui-btn">复制</button>
-                    <button type="submit" name="submit" value="move" class="layui-btn">移动</button>
-                    {/if}
-                    {if(check_level('del'))}
-			     	<button type="submit" name="submit" onclick="return setDelAction();" class="layui-btn">批量删除</button>
-			     	{/if}
-			     	{if(check_level('mod'))}
-			     	<button type="submit" name="submit" value="sorting" class="layui-btn">保存排序</button>
-			     	{if([$baidu_zz_token])}
-			     		<button type="submit" name="submit" value="baiduzz" class="layui-btn">百度推送</button>
-			     	{/if}
-			     	{if([$baidu_xzh_appid])}
-			     		<button type="submit" name="submit" value="baiduxzh" class="layui-btn">熊掌号推送</button>
-			     	{/if}
-			     	 {/if}
+                    
+                    <div class="layui-btn-group">
+	                    {if(check_level('mod'))}
+	                    	<button type="submit" name="submit" value="copy" class="layui-btn layui-btn-sm">复制</button>
+	                    	<button type="submit" name="submit" value="move" class="layui-btn layui-btn-sm">移动</button>
+	                    {/if}
+	                    
+	                    {if(check_level('del'))}
+				     		<button type="submit" name="submit" onclick="return setDelAction();" class="layui-btn layui-btn-sm">批量删除</button>
+				     	{/if}
+				     	
+				     	{if(check_level('mod'))}
+				     		<button type="submit" name="submit" value="sorting" class="layui-btn layui-btn-sm">保存排序</button>
+					     	{if([$baidu_zz_token])}
+					     		<button type="submit" name="submit" value="baiduzz" class="layui-btn layui-btn-sm">百度推送</button>
+					     	{/if}
+					     	{if([$baidu_xzh_appid])}
+					     		<button type="submit" name="submit" value="baiduxzh" class="layui-btn layui-btn-sm">熊掌号推送</button>
+					     	{/if}
+				     	 {/if}
+			     	 </div>
 			     	<script>
 			     		function setDelAction(){
 			     			document.contentForm.action = "{url./admin/Content/del}"; 
