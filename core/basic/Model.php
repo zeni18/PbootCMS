@@ -57,7 +57,7 @@ class Model
     private $selectSql = "SELECT %distinct% %field% FROM %table% %join% %where% %group% %having% %order% %union% %limit%";
 
     // 计数语句
-    private $countSql = "SELECT %distinct% COUNT(*) AS sum FROM %table% %join% %where% %group% %having% %union%";
+    private $countSql = "SELECT COUNT(*) AS sum FROM %table% %join% %where% %group% %having% %union%";
 
     private $countSql2 = "SELECT %distinct% %field% FROM %table% %join% %where% %group% %having% %union%";
 
@@ -919,7 +919,7 @@ class Model
         
         // 如果调用了分页函数且分页，则执行分页处理
         if (isset($this->sql['paging']) && $this->sql['paging']) {
-            if ($this->sql['group']) { // 解决使用分组时count(*)分页不准问题
+            if ($this->sql['group'] || $this->sql['distinct']) { // 解决使用分组时count(*)分页不准问题
                 if (get_db_type() == 'mysql') {
                     $this->limit(Paging::getInstance()->quikLimit()); // 分页
                     $this->sql['field'] = 'SQL_CALC_FOUND_ROWS ' . $this->sql['field']; // 添加查询总记录
