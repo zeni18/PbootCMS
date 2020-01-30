@@ -2549,7 +2549,7 @@ class ParserController extends Controller
     }
 
     // 调整标签数据
-    protected function adjustLabelData($params, $data)
+    protected function adjustLabelData($params, $data, $label = null)
     {
         if (! $params || ! $data)
             return $data;
@@ -2699,6 +2699,11 @@ class ParserController extends Controller
                         }
                     }
                     break;
+                case 'mark':
+                    if ($label && $reqdata = request($label, 'vars') ?: request('keyword', 'vars')) {
+                        $data = str_replace($reqdata, '<span style="color:red">' . $reqdata . '</span>', $data);
+                    }
+                    break;
             }
         }
         return $data;
@@ -2759,14 +2764,14 @@ class ParserController extends Controller
                 break;
             case 'sortname':
                 if ($data->sortname) {
-                    $content = str_replace($search, $this->adjustLabelData($params, $data->sortname), $content);
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->sortname, $label), $content);
                 } else {
                     $content = str_replace($search, '', $content);
                 }
                 break;
             case 'subsortname':
                 if ($data->subsortname) {
-                    $content = str_replace($search, $this->adjustLabelData($params, $data->subsortname), $content);
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->subsortname, $label), $content);
                 } else {
                     $content = str_replace($search, '', $content);
                 }
@@ -2822,13 +2827,13 @@ class ParserController extends Controller
                 $content = str_replace($search, Url::get('home/Do/oppose/id/' . $data->id), $content);
                 break;
             case 'content':
-                $this->pre[] = $this->adjustLabelData($params, $data->content); // 保存内容避免解析
+                $this->pre[] = $this->adjustLabelData($params, $data->content, $label); // 保存内容避免解析
                 end($this->pre); // 指向最后一个元素
                 $content = str_replace($search, '#pre:' . key($this->pre) . '#', $content); // 占位替换
                 break;
             default:
                 if (isset($data->$label)) {
-                    $content = str_replace($search, $this->adjustLabelData($params, $data->$label), $content);
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->$label, $label), $content);
                 } elseif (strpos($label, 'ext_') === 0) {
                     $content = str_replace($search, '', $content);
                 }
