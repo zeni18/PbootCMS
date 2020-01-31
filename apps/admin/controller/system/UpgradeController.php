@@ -97,42 +97,38 @@ class UpgradeController extends Controller
     // 执行下载
     public function down()
     {
-        if ($_POST) {
-            if (! ! $list = post('list')) {
-                if (! is_array($list)) { // 单个文件转换为数组
-                    $list = array(
-                        $list
-                    );
+        if (! ! $list = get('list')) {
+            if (! is_array($list)) { // 单个文件转换为数组
+                $list = array(
+                    $list
+                );
+            }
+            $len = count($list) ?: 0;
+            foreach ($list as $value) {
+                // 本地存储路径
+                $path = RUN_PATH . '/upgrade' . $value;
+                // 自动创建目录
+                if (! check_dir(dirname($path), true)) {
+                    json(0, '目录写入权限不足，无法下载升级文件！' . dirname($path));
                 }
-                $len = count($list) ?: 0;
-                foreach ($list as $value) {
-                    // 本地存储路径
-                    $path = RUN_PATH . '/upgrade' . $value;
-                    // 自动创建目录
-                    if (! check_dir(dirname($path), true)) {
-                        json(0, '目录写入权限不足，无法下载升级文件！' . dirname($path));
-                    }
-                    
-                    // 定义执行下载的类型
-                    $types = '.zip|.rar|.doc|.docx|.ppt|.pptx|.xls|.xlsx|.chm|';
-                    $pathinfo = explode(".", basename($path));
-                    $ext = end($pathinfo); // 获取扩展
-                    if (preg_match('/\.' . $ext . '\|/i', $types)) {
-                        $result = $this->getServerDown('/release/' . $this->branch . $value, $path);
-                    } else {
-                        $result = $this->getServerFile($value, $path);
-                    }
-                }
-                if ($len == 1) {
-                    json(1, "更新文件 " . basename($value) . " 下载成功!");
+                
+                // 定义执行下载的类型
+                $types = '.zip|.rar|.doc|.docx|.ppt|.pptx|.xls|.xlsx|.chm|.ttf|.otf|';
+                $pathinfo = explode(".", basename($path));
+                $ext = end($pathinfo); // 获取扩展
+                if (preg_match('/\.' . $ext . '\|/i', $types)) {
+                    $result = $this->getServerDown('/release/' . $this->branch . $value, $path);
                 } else {
-                    json(1, "更新文件" . basename($value) . "等文件全部下载成功!");
+                    $result = $this->getServerFile($value, $path);
                 }
+            }
+            if ($len == 1) {
+                json(1, "更新文件 " . basename($value) . " 下载成功!");
             } else {
-                json(0, '请选择要下载的文件！');
+                json(1, "更新文件" . basename($value) . "等文件全部下载成功!");
             }
         } else {
-            json(0, '请使用POST提交请求！');
+            json(0, '请选择要下载的文件！');
         }
     }
 

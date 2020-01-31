@@ -177,7 +177,7 @@ function down(){
 	$(checked).each(function(index,element){
 		 setTimeout(function () { //延迟执行、避免文件太多卡死问题
 			 $.ajax({
-		    	  type: 'POST',
+		    	  type: 'GET',
 		    	  url: url,
 		    	  dataType: 'json',
 		    	  async:true,
