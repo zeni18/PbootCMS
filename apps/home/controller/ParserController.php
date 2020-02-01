@@ -2701,7 +2701,7 @@ class ParserController extends Controller
                     break;
                 case 'mark':
                     if ($label && $reqdata = request($label, 'vars') ?: request('keyword', 'vars')) {
-                        $data = str_replace($reqdata, '<span style="color:red">' . $reqdata . '</span>', $data);
+                        $data = preg_replace('/(' . $reqdata . ')/i', '<span style="color:red">$1</span>', $data);
                     }
                     break;
             }
