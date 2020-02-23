@@ -149,6 +149,23 @@ class ConfigController extends Controller
             }
         }
         
+        // 模板目录修改
+        if (($key == 'tpl_html_dir') && $value) {
+            $value = basename($value);
+            $htmldir = $this->config('tpl_html_dir');
+            $tpl_path = ROOT_PATH . current($this->config('tpl_dir')) . '/' . model('admin.content.ContentSort')->getTheme();
+            
+            if (! $htmldir) {
+                create_dir($tpl_path . '/' . $value); // 原来没有目录时只创建目录
+            } else {
+                if ($value != $htmldir) {
+                    if (! rename($tpl_path . '/' . $htmldir, $tpl_path . '/' . $value)) {
+                        return; // 修改失败
+                    }
+                }
+            }
+        }
+        
         // 数据分割处理
         $hander = array(
             'content_keyword_replace',

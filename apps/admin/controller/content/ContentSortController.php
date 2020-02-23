@@ -46,7 +46,8 @@ class ContentSortController extends Controller
         $this->assign('sort_select', $sort_select);
         
         // 模板文件
-        $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme()));
+        $htmldir = $this->config('tpl_html_dir') ? '/' . $this->config('tpl_html_dir') : '';
+        $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme() . $htmldir));
         
         // 前端地址连接符判断
         $url_break_char = $this->config('url_break_char') ?: '_';
@@ -270,7 +271,8 @@ class ContentSortController extends Controller
             $this->assign('sort_select', $sort_select);
             
             // 模板文件
-            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme()));
+            $htmldir = $this->config('tpl_html_dir') ? '/' . $this->config('tpl_html_dir') : '';
+            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme() . $htmldir));
             
             // 内容模型
             $models = model('admin.content.Model');
@@ -477,7 +479,8 @@ class ContentSortController extends Controller
             $this->assign('sort_select', $sort_select);
             
             // 模板文件
-            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme()));
+            $htmldir = $this->config('tpl_html_dir') ? '/' . $this->config('tpl_html_dir') : '';
+            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme() . $htmldir));
             
             // 内容模型
             $models = model('admin.content.Model');

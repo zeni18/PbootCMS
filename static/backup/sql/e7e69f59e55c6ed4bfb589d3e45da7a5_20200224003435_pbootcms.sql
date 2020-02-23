@@ -86,7 +86,7 @@ CREATE TABLE `ay_config` (
   `description` varchar(30) NOT NULL COMMENT '描述文本',
   PRIMARY KEY (`id`),
   KEY `ay_config_name` (`name`) 
-) ENGINE=MyISAM AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `ay_config`
@@ -129,7 +129,12 @@ INSERT INTO `ay_config` (`id`,`name`,`value`,`type`,`sorting`,`description`) VAL
 ('34','form_check_code','0','2','255','表单验证码'),
 ('35','lock_count','5','2','255','登陆锁定阈值'),
 ('36','lock_time','900','2','255','登录锁定时间'),
-('37','url_rule_type','3','2','255','路径类型');
+('37','url_rule_type','3','2','255','路径类型'),
+('38','message_status','1','2','255','留言开关'),
+('39','form_status','1','2','255','表单开关'),
+('40','tpl_html_dir','html','2','255','模板HTML目录'),
+('41','ip_deny','','2','255','IP黑名单'),
+('42','ip_allow','','2','255','IP白名单');
 
 -- --------------------------------------------------------
 

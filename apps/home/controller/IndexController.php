@@ -18,10 +18,13 @@ class IndexController extends Controller
 
     protected $model;
 
+    protected $htmldir;
+
     public function __construct()
     {
         $this->parser = new ParserController();
         $this->model = new ParserModel();
+        $this->htmldir = $this->config('tpl_html_dir') ? $this->config('tpl_html_dir') . '/' : '';
     }
 
     // 空拦截器, 实现文章路由转发
@@ -132,7 +135,7 @@ class IndexController extends Controller
     // 首页
     private function getIndex()
     {
-        $content = parent::parser('index.html'); // 框架标签解析
+        $content = parent::parser($this->htmldir . 'index.html'); // 框架标签解析
         $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
         $content = $this->parser->parserPositionLabel($content, - 1, '首页', SITE_INDEX_DIR . '/'); // CMS当前位置标签解析
         $content = $this->parser->parserSpecialPageSortLabel($content, 0, '', SITE_INDEX_DIR . '/'); // 解析分类标签
@@ -145,7 +148,7 @@ class IndexController extends Controller
     {
         if ($sort->listtpl) {
             define('CMS_PAGE', true); // 使用cms分页处理模型
-            $content = parent::parser($sort->listtpl); // 框架标签解析
+            $content = parent::parser($this->htmldir . $sort->listtpl); // 框架标签解析
             $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
             $pagetitle = $sort->title ? "{sort:title}" : "{sort:name}"; // 页面标题
             $content = str_replace('{pboot:pagetitle}', $pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
@@ -168,7 +171,7 @@ class IndexController extends Controller
         if (! ! $sort = $this->model->getSort($data->scode)) {
             if ($sort->contenttpl) {
                 define('CMS_PAGE', true); // 使用cms分页处理模型
-                $content = parent::parser($sort->contenttpl); // 框架标签解析
+                $content = parent::parser($this->htmldir . $sort->contenttpl); // 框架标签解析
                 $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
                 $content = str_replace('{pboot:pagetitle}', '{content:title}-{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
                 $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
@@ -196,7 +199,7 @@ class IndexController extends Controller
         
         if ($sort->contenttpl) {
             define('CMS_PAGE', true); // 使用cms分页处理模型
-            $content = parent::parser($sort->contenttpl); // 框架标签解析
+            $content = parent::parser($this->htmldir . $sort->contenttpl); // 框架标签解析
             $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
             $pagetitle = $sort->title ? "{sort:title}" : "{content:title}"; // 页面标题
             $content = str_replace('{pboot:pagetitle}', $pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
@@ -221,7 +224,7 @@ class IndexController extends Controller
             $searchtpl = 'search.html';
         }
         
-        $searchtpl = $content = parent::parser($searchtpl); // 框架标签解析
+        $searchtpl = $content = parent::parser($this->htmldir . $searchtpl); // 框架标签解析
         $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
         $content = $this->parser->parserPositionLabel($content, 0, '搜索', homeurl('/home/Index/search', $this->config('url_rule_sort_suffix'))); // CMS当前位置标签解析
         $content = $this->parser->parserSpecialPageSortLabel($content, - 1, '搜索结果', homeurl('/home/Index/search', $this->config('url_rule_sort_suffix'))); // 解析分类标签
