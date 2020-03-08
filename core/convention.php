@@ -11,7 +11,7 @@ return array(
     'sn' => '281BE285D7',
     
     // 内核版本
-    'core_version' => '1.7.3',
+    'core_version' => '1.7.5',
     
     // 配置模块
     'public_app' => 'home,admin,api',
@@ -113,6 +113,12 @@ return array(
         'dbname' => 'pboot' // 数据库名称,如果Sqlite直接填写路径,如：/data/pboot.db
                                 
     // 'slave' => array( 'host' => '127.0.0.1','user' => 'root','passwd' => 'root','port' => '3306','dbname' => 'pboot')
+    ),
+    
+    // 第二参数作为值的控制器,缩短地址
+    'second_rvar' => array(
+        'Form', // 第二参数传递fcode
+        'Tag' // 第二参数传递tag
     )
 );
  

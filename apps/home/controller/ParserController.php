@@ -11,6 +11,7 @@ namespace app\home\controller;
 use core\basic\Controller;
 use app\home\model\ParserModel;
 use core\basic\Url;
+use app\home\model\DoModel;
 
 class ParserController extends Controller
 {
@@ -1298,8 +1299,20 @@ class ParserController extends Controller
                     continue;
                 }
                 $params = $this->parserParam($matches[2][$i]);
-                $content = $this->parserContent($matches[1][$i], $matches[0][$i], $content, $data, $params, $sort, true);
+                $content = $this->parserContent($matches[1][$i], $matches[0][$i], $content, $data, $params, $sort);
             }
+        }
+        
+        // 新增计数代码,非缓存方式，直接计数
+        if ($this->config('tpl_html_cache')) {
+            if (! isset($this->var['addvisits'])) {
+                $visits = "<script src='" . Url::get('home/Do/visits/id/' . $data->id) . "' async='async'></script>";
+                $content = preg_replace('/(<\/body>)/i', $visits . "\n$1", $content);
+                $this->var['addvisits'] = true;
+            }
+        } else {
+            $do = new DoModel();
+            $do->addVisits($data->id);
         }
         return $content;
     }
@@ -2876,15 +2889,8 @@ class ParserController extends Controller
     }
 
     // 解析内容详情标签
-    protected function parserContent($label, $search, $content, $data, $params, $sort, $count = false)
+    protected function parserContent($label, $search, $content, $data, $params, $sort)
     {
-        // 新增计数代码
-        if (! isset($this->var['addvisits']) && $count) {
-            $visits = "<script src='" . Url::get('home/Do/visits/id/' . $data->id) . "' async='async'></script>";
-            $content = preg_replace('/(<\/body>)/i', $visits . "\n$1", $content);
-            $this->var['addvisits'] = true;
-        }
-        
         switch ($label) {
             case 'link':
                 if ($data->type == 1) {
