@@ -898,6 +898,7 @@ function query_string($unset = null)
         parse_str($qs, $output);
         unset($output['page']);
         $unset = strpos($unset, ',') ? explode(',', $unset) : $unset;
+        
         if (is_array($unset)) {
             foreach ($unset as $value) {
                 if (isset($output[$value])) {

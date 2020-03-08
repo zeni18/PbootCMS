@@ -1629,7 +1629,11 @@ class ParserController extends Controller
                             case 'link':
                                 $url_rule_type = $this->config('url_rule_type') ?: 3;
                                 if ($target == 'tag') {
-                                    $link = Url::home('tag/' . urlencode($value['tags']));
+                                    if ($url_rule_type == 3) {
+                                        $link = Url::home('tag=' . urlencode($value['tags']), '');
+                                    } else {
+                                        $link = Url::home('tag/' . urlencode($value['tags']));
+                                    }
                                 } else {
                                     $link = $this->parserLink($value['sort']->type, $value['sort']->urlname, 'list', $value['sort']->scode, $value['sort']->filename, '', '');
                                     if ($url_rule_type == 3) {
@@ -3141,27 +3145,27 @@ class ParserController extends Controller
         if ($type == 1) {
             $urlname = $urlname ?: 'about';
             if ($sortfilename) {
-                $link = Url::home('home/Index/' . $sortfilename, $url_rule_sort_suffix);
+                $link = Url::home($sortfilename, $url_rule_sort_suffix);
             } else {
-                $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode, $url_rule_sort_suffix);
+                $link = Url::home($urlname . $url_break_char . $scode, $url_rule_sort_suffix);
             }
         } else {
             $urlname = $urlname ?: 'list';
             if ($page == 'list') {
                 if ($sortfilename) {
-                    $link = Url::home('home/Index/' . $sortfilename, $url_rule_sort_suffix);
+                    $link = Url::home($sortfilename, $url_rule_sort_suffix);
                 } else {
-                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode, $url_rule_sort_suffix);
+                    $link = Url::home($urlname . $url_break_char . $scode, $url_rule_sort_suffix);
                 }
             } elseif ($page == 'content') {
                 if ($sortfilename && $contentfilename) {
-                    $link = Url::home('home/Index/' . $sortfilename . '/' . $contentfilename, true);
+                    $link = Url::home($sortfilename . '/' . $contentfilename, true);
                 } elseif ($sortfilename) {
-                    $link = Url::home('home/Index/' . $sortfilename . '/' . $id, true);
+                    $link = Url::home($sortfilename . '/' . $id, true);
                 } elseif ($contentfilename) {
-                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode . '/' . $contentfilename, true);
+                    $link = Url::home($urlname . $url_break_char . $scode . '/' . $contentfilename, true);
                 } else {
-                    $link = Url::home('home/Index/' . $urlname . $url_break_char . $scode . '/' . $id, true);
+                    $link = Url::home($urlname . $url_break_char . $scode . '/' . $id, true);
                 }
             } else {
                 $link = 'javascript:;';

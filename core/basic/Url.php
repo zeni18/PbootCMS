@@ -109,7 +109,11 @@ class Url
         if (! isset(self::$urls[$path])) {
             $url_rule_type = Config::get('url_rule_type') ?: 3;
             $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
-            $suffix = $suffix ? $url_rule_suffix : '/';
+            if ($suffix === true) {
+                $suffix = $url_rule_suffix;
+            } elseif ($suffix === false) {
+                $suffix = '/';
+            }
             $path = ltrim($path, '/');
             
             // 去除默认模块及控制器部分

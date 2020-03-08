@@ -103,7 +103,6 @@ class IndexController extends Controller
                     $sitemap->index();
                     break;
                 case 'tag':
-                    $_GET['tag'] = $path[1];
                     $tag = new TagController();
                     $tag->index();
                     break;
