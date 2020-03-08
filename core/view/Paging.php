@@ -69,7 +69,7 @@ class Paging
         
         // 设置分页大小
         if (! isset($this->pageSize)) {
-            $this->pageSize = Config::get('pagesize') ?: 15;
+            $this->pageSize = get('pagesize') ?: Config::get('pagesize') ?: 15;
         }
         
         // 分页数字条数量

@@ -11,6 +11,7 @@ PbootCMS V2.0.6 build 2020-03-08
 4、新增tags列表支持指定参数target=tag跳转到tag.html模板，参考默认模板；
 5、新增home下ExtLabelController控制器文件扩展个人标签，升级不覆盖；
 6、优化调整前台代码结构；
+7、新增后台内容列表每页显示数量选择；
 
 PbootCMS V2.0.5 build 2020-01-31
 1、优化前台404.html，并支持内容内{info}自适应提示文字；

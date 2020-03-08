@@ -26,6 +26,8 @@
 	                     	<a class="layui-btn layui-btn-primary"  href="{url./admin/Content/index/mcode/'.get('mcode').'}">清除搜索</a>
 	                     </div>
 	                </div>
+	                
+	               
                 </form>
                 
 	  	   		<form action="{url./admin/Content/mod}" method="post" id="contentForm" name="contentForm" class="layui-form" onkeydown="if(event.keyCode==13) return false;">
@@ -129,6 +131,19 @@
 		            </table>
 			       
 			        
+			        <div class="layui-inline" style="float:right">
+			     		<select lay-filter="tourl" class="page-select" >
+							<option value="" selected="">每页显示数量</option>
+							<option value="{url./admin/Content/index/mcode/'.get('mcode').'/pagesize/20}" {if(get('pagesize')==20)}selected{/if}>20条/页</option>
+							<option value="{url./admin/Content/index/mcode/'.get('mcode').'/pagesize/30}" {if(get('pagesize')==30)}selected{/if}>30条/页</option>
+							<option value="{url./admin/Content/index/mcode/'.get('mcode').'/pagesize/50}" {if(get('pagesize')==50)}selected{/if}>50条/页</option>
+							<option value="{url./admin/Content/index/mcode/'.get('mcode').'/pagesize/60}" {if(get('pagesize')==60)}selected{/if}>60条/页</option>
+							<option value="{url./admin/Content/index/mcode/'.get('mcode').'/pagesize/100}" {if(get('pagesize')==100)}selected{/if}>100条/页</option>
+							<option value="{url./admin/Content/index/mcode/'.get('mcode').'/pagesize/150}" {if(get('pagesize')==150)}selected{/if}>150条/页</option>
+							<option value="{url./admin/Content/index/mcode/'.get('mcode').'/pagesize/200}" {if(get('pagesize')==200)}selected{/if}>200条/页</option>
+						</select>
+					</div>
+						
 			        <div class="layui-input-inline">
 				     	 <select name="scode">
 	                        	<option value="">请选择移动/复制到栏目</option>
@@ -163,7 +178,10 @@
 			     		}
 			     	</script>
 			     	
-			     	<div class="page">{$pagebar}</div>
+			     	<div class="page">
+			     		{$pagebar}
+			     		
+			     	</div>
 			      </form> 
 	  	   </div>
 	  	   
@@ -828,6 +846,7 @@ function saveOrder() {
 	}).get();
 	$("input[name=pics]").val(data.join(","))
 };
+
 </script>
 <script type="text/javascript" src="{APP_THEME_DIR}/js/jscolor.js"></script>
 

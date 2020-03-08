@@ -22,6 +22,12 @@ layui.use(['element','upload','laydate','form'], function(){
 	}
   });
   
+  //跳转
+	form.on('select(tourl)', function(data){
+		window.location.href= data.value;
+	}); 
+
+  
   //提示
   $(".tips").on("mouseover",function(){
 	layer.tips($(this).data('content'), this);
