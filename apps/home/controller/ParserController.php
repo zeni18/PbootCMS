@@ -47,6 +47,14 @@ class ParserController extends Controller
         $content = str_replace('{pboot:pagekeywords}', '{pboot:sitekeywords}', $content);
         $content = str_replace('{pboot:pagedescription}', '{pboot:sitedescription}', $content);
         
+        // 解析个人扩展标签，升级不覆盖
+        if (file_exists(APP_PATH . './home/controller/ExtLabelController.php')) {
+            if (class_exists('app\home\controller\ExtLabelController')) {
+                $extlabel = new ExtLabelController();
+                $content = $extlabel->run($content);
+            }
+        }
+        
         $content = $this->parserSingleLabel($content); // 单标签解析
         $content = $this->parserSiteLabel($content); // 站点标签
         $content = $this->parserCompanyLabel($content); // 公司标签

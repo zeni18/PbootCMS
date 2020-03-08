@@ -9,7 +9,8 @@ PbootCMS V2.0.6 build 2020-03-08
 2、新增后台“安全配置”中配置模板文件子目录功能；
 3、修复operate参数无法使用小数问题；
 4、新增tags列表支持指定参数target=tag跳转到tag.html模板，参考默认模板；
-5、优化调整前台文件结构；
+5、新增home下ExtLabelController控制器文件扩展个人标签，升级不覆盖；
+6、优化调整前台代码结构；
 
 PbootCMS V2.0.5 build 2020-01-31
 1、优化前台404.html，并支持内容内{info}自适应提示文字；
