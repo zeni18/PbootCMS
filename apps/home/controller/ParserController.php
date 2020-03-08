@@ -105,8 +105,8 @@ class ParserController extends Controller
     // 解析单标签
     public function parserSingleLabel($content)
     {
-        $content = str_replace('{pboot:msgaction}', Url::home('home/Index/addMsg'), $content); // 留言提交路径
-        $content = str_replace('{pboot:scaction}', Url::home('home/Index/search'), $content); // 搜索提交路径
+        $content = str_replace('{pboot:msgaction}', Url::home('message'), $content); // 留言提交路径
+        $content = str_replace('{pboot:scaction}', Url::home('search'), $content); // 搜索提交路径
         $content = str_replace('{pboot:checkcode}', CORE_DIR . '/code.php', $content); // 验证码路径
         $content = str_replace('{pboot:lgpath}', Url::get('home/Do/area'), $content); // 多语言切换前置路径,如{pboot:lgpath}?lg=cn
         $content = str_replace('{pboot:appid}', $this->config('api_appid'), $content); // API认证用户
@@ -1170,11 +1170,11 @@ class ParserController extends Controller
                 // 只对有分页的列表有效
                 if ($page) {
                     // tags数据传值筛选
-                    if (! ! $get_tags = get('tags', 'vars')) {
+                    if (! ! $get_tag = get('tag', 'vars')) {
                         if ($fuzzy) {
-                            $where2[] = "a.tags like '%" . $get_tags . "%'";
+                            $where2[] = "a.tags like '%" . $get_tag . "%'";
                         } else {
-                            $where2[] = "a.tags='" . $get_tags . "'";
+                            $where2[] = "a.tags='" . $get_tag . "'";
                         }
                     }
                     
@@ -1526,7 +1526,8 @@ class ParserController extends Controller
                 $params = $this->parserParam($matches[1][$i]);
                 $id = ''; // 调取指定内容的tags
                 $scode = ''; // 调取指定分类的tags
-                             
+                $target = 'list'; // 标签跳转目标，可以是内容列表，也可以是独立tags.html页面
+                                  
                 // 分离参数
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -1539,6 +1540,8 @@ class ParserController extends Controller
                         case 'num':
                             $num = $value;
                             break;
+                        case 'target':
+                            $target = $value;
                     }
                 }
                 
@@ -1569,15 +1572,29 @@ class ParserController extends Controller
                             $tags = implode(',', $rs); // 把栏目tags串起来
                             $tags = array_unique(explode(',', $tags)); // 再把所有tags组成数组并去重
                             foreach ($tags as $key2 => $value2) {
+                                if (! in_array($value2, array_column($data, 'tags'))) { // 避免重复输出
+                                    $data[] = array(
+                                        'sort' => $sort,
+                                        'tags' => $value2
+                                    );
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // 全部栏目时候强制标签页形式
+                    $target = 'tag';
+                    if (! ! $rs = $this->model->getSortTags('')) {
+                        $tags = implode(',', $rs); // 把栏目tags串起来
+                        $tags = array_unique(explode(',', $tags)); // 再把所有tags组成数组并去重
+                        foreach ($tags as $key2 => $value2) {
+                            if (! in_array($value2, array_column($data, 'tags'))) { // 避免重复输出
                                 $data[] = array(
-                                    'sort' => $sort,
                                     'tags' => $value2
                                 );
                             }
                         }
                     }
-                } else {
-                    continue; // 未指定任何时不解析
                 }
                 
                 // 无内容直接替换为空并跳过
@@ -1611,12 +1628,17 @@ class ParserController extends Controller
                                 break;
                             case 'link':
                                 $url_rule_type = $this->config('url_rule_type') ?: 3;
-                                $link = $this->parserLink($value['sort']->type, $value['sort']->urlname, 'list', $value['sort']->scode, $value['sort']->filename, '', '');
-                                if ($url_rule_type == 3) {
-                                    $link = $link . '&tags=' . urlencode($value['tags']);
+                                if ($target == 'tag') {
+                                    $link = Url::home('tag/' . urlencode($value['tags']));
                                 } else {
-                                    $link = $link . '?tags=' . urlencode($value['tags']);
+                                    $link = $this->parserLink($value['sort']->type, $value['sort']->urlname, 'list', $value['sort']->scode, $value['sort']->filename, '', '');
+                                    if ($url_rule_type == 3) {
+                                        $link = $link . '&tag=' . urlencode($value['tags']);
+                                    } else {
+                                        $link = $link . '?tag=' . urlencode($value['tags']);
+                                    }
                                 }
+                                
                                 $one_html = str_replace($matches2[0][$j], $link, $one_html);
                                 break;
                         }
@@ -2019,7 +2041,7 @@ class ParserController extends Controller
                 if (! $fcode) { // 无表单编码不解析
                     continue;
                 }
-                $content = str_replace($matches[0][$i], Url::home('home/Index/addForm/fcode/' . $fcode), $content);
+                $content = str_replace($matches[0][$i], Url::home('form/' . $fcode), $content);
             }
         }
         return $content;
@@ -2676,7 +2698,7 @@ class ParserController extends Controller
                     }
                     break;
                 case 'operate': // 实现列表页标签+-*/%运算功能
-                    if (preg_match('/^([\+\-\*\/\%])([0-9]+)$/', $params['operate'], $mathes)) {
+                    if (preg_match('/^([\+\-\*\/\%])([0-9\.]+)$/', $params['operate'], $mathes)) {
                         if (! is_numeric($data)) {
                             $data = 0;
                         }

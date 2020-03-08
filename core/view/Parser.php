@@ -8,6 +8,8 @@
  */
 namespace core\view;
 
+use core\basic\Config;
+
 class Parser
 {
 
@@ -100,7 +102,12 @@ class Parser
                 } elseif (! ! $pos = strpos($brr[$i], '@')) {
                     $inc_file = APP_PATH . '/' . substr($brr[$i], 0, $pos) . '/view/' . basename(self::$tplPath) . '/' . substr($brr[$i], $pos + 1);
                 } else {
-                    $inc_file = self::$tplPath . '/' . $brr[$i];
+                    if (M == 'home') { // 前台适应模板子目录
+                        $htmldir = Config::get('tpl_html_dir') ? Config::get('tpl_html_dir') . '/' : '';
+                        $inc_file = self::$tplPath . '/' . $htmldir . $brr[$i];
+                    } else {
+                        $inc_file = self::$tplPath . '/' . $brr[$i];
+                    }
                 }
                 file_exists($inc_file) ?: error('包含文件不存在！' . $inc_file);
                 if (! $inc_content = file_get_contents($inc_file)) {
