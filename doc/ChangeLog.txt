@@ -12,6 +12,7 @@ PbootCMS V2.0.6 build 2020-03-08
 5、新增home下ExtLabelController控制器文件扩展个人标签，升级不覆盖；
 6、优化调整前台代码结构；
 7、新增后台内容列表每页显示数量选择；
+8、修复tags重复显示问题；
 
 PbootCMS V2.0.5 build 2020-01-31
 1、优化前台404.html，并支持内容内{info}自适应提示文字；
