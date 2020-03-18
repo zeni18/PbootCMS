@@ -10,6 +10,7 @@ namespace app\api\controller;
 
 use core\basic\Controller;
 use app\api\model\CmsModel;
+use core\basic\Url;
 
 class ContentController extends Controller
 {
@@ -32,10 +33,26 @@ class ContentController extends Controller
                 if ($data->outlink) {
                     $data->link = $data->outlink;
                 } else {
-                    $data->link = url('/api/content/index/id/' . $data->id, false);
+                    $data->apilink = url('/api/content/index/id/' . $data->id, false);
                 }
                 $data->likeslink = url('/home/Do/likes/id/' . $data->id, false);
                 $data->opposelink = url('/home/Do/oppose/id/' . $data->id, false);
+                
+                $url_break_char = $this->config('url_break_char') ?: '_';
+                $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
+                $urlname = $data->urlname ?: 'list';
+                
+                // 返回网页链接地址
+                if ($data->sortfilename && $data->filename) {
+                    $data->contentlink = Url::home($data->sortfilename . '/' . $data->filename, true);
+                } elseif ($data->sortfilename) {
+                    $data->contentlink = Url::home($data->sortfilename . '/' . $data->id, true);
+                } elseif ($data->filename) {
+                    $data->contentlink = Url::home($urlname . $url_break_char . $data->scode . '/' . $data->filename, true);
+                } else {
+                    $data->contentlink = Url::home($urlname . $url_break_char . $data->scode . '/' . $data->id, true);
+                }
+                
                 $data->content = str_replace(STATIC_DIR . '/upload/', get_http_url() . STATIC_DIR . '/upload/', $data->content);
                 json(1, $data);
             } else {

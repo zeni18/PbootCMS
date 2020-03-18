@@ -209,9 +209,11 @@ class CmsModel extends Model
         $fields = array(
             'a.*',
             'b.name as sortname',
+            'b.filename as sortfilename',
             'c.name as subsortname',
             'd.type',
             'd.name as modelname',
+            'd.urlname',
             'e.*'
         );
         $join = array(
@@ -279,9 +281,11 @@ class CmsModel extends Model
         $fields = array(
             'a.*',
             'b.name as sortname',
+            'b.filename as sortfilename',
             'c.name as subsortname',
             'd.type',
             'd.name as modelname',
+            'd.urlname',
             'e.*'
         );
         $join = array(
@@ -349,9 +353,11 @@ class CmsModel extends Model
         $field = array(
             'a.*',
             'b.name as sortname',
+            'b.filename as sortfilename',
             'c.name as subsortname',
             'd.type',
             'd.name as modelname',
+            'd.urlname',
             'e.*'
         );
         $join = array(
@@ -398,9 +404,11 @@ class CmsModel extends Model
         $field = array(
             'a.*',
             'b.name as sortname',
+            'b.filename as sortfilename',
             'c.name as subsortname',
             'd.type',
             'd.name as modelname',
+            'd.urlname',
             'e.*'
         );
         $join = array(

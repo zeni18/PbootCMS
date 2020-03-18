@@ -10,6 +10,7 @@ namespace app\api\controller;
 
 use core\basic\Controller;
 use app\api\model\CmsModel;
+use core\basic\Url;
 
 class ListController extends Controller
 {
@@ -81,16 +82,29 @@ class ListController extends Controller
         
         // 读取数据
         $data = $this->model->getLists($acode, $scode, $num, $order);
+        $url_break_char = $this->config('url_break_char') ?: '_';
         
         foreach ($data as $key => $value) {
             if ($value->outlink) {
-                $data[$key]->link = $data->outlink;
+                $data[$key]->apilink = $value->outlink;
             } else {
-                $data[$key]->link = url('/api/list/index/scode/' . $data[$key]->id, false);
+                $data[$key]->apilink = url('/api/content/index/id/' . $value->id, false);
             }
-            $data[$key]->likeslink = url('/home/Do/likes/id/' . $data[$key]->id, false);
-            $data[$key]->opposelink = url('/home/Do/oppose/id/' . $data[$key]->id, false);
-            $data[$key]->content = str_replace(STATIC_DIR . '/upload/', get_http_url() . STATIC_DIR . '/upload/', $data[$key]->content);
+            $data[$key]->likeslink = url('/home/Do/likes/id/' . $value->id, false);
+            $data[$key]->opposelink = url('/home/Do/oppose/id/' . $value->id, false);
+            $data[$key]->content = str_replace(STATIC_DIR . '/upload/', get_http_url() . STATIC_DIR . '/upload/', $value->content);
+            
+            // 返回网页链接地址，便于AJAX调用内容
+            $urlname = $value->urlname ?: 'list';
+            if ($value->sortfilename && $value->filename) {
+                $data[$key]->contentlink = Url::home($value->sortfilename . '/' . $value->filename, true);
+            } elseif ($value->sortfilename) {
+                $data[$key]->contentlink = Url::home($value->sortfilename . '/' . $value->id, true);
+            } elseif ($value->filename) {
+                $data[$key]->contentlink = Url::home($urlname . $url_break_char . $value->scode . '/' . $value->filename, true);
+            } else {
+                $data[$key]->contentlink = Url::home($urlname . $url_break_char . $value->scode . '/' . $value->id, true);
+            }
         }
         
         // 输出数据

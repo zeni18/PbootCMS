@@ -10,6 +10,7 @@ namespace app\api\controller;
 
 use core\basic\Controller;
 use app\api\model\CmsModel;
+use core\basic\Url;
 
 class CmsController extends Controller
 {
@@ -328,16 +329,29 @@ class CmsController extends Controller
         
         // 读取数据
         $data = $this->model->getLists($acode, $scode, $num, $order, $where1, $where2, $where3, $fuzzy);
+        $url_break_char = $this->config('url_break_char') ?: '_';
         
         foreach ($data as $key => $value) {
             if ($value->outlink) {
-                $data[$key]->link = $data[$key]->outlink;
+                $data[$key]->apilink = $value->outlink;
             } else {
-                $data[$key]->link = url('/api/list/index/scode/' . $data[$key]->id, false);
+                $data[$key]->apilink = url('/api/content/index/scode/' . $value->id, false);
             }
-            $data[$key]->likeslink = url('/home/Do/likes/id/' . $data[$key]->id, false);
-            $data[$key]->opposelink = url('/home/Do/oppose/id/' . $data[$key]->id, false);
-            $data[$key]->content = str_replace(STATIC_DIR . '/upload/', get_http_url() . STATIC_DIR . '/upload/', $data[$key]->content);
+            $data[$key]->likeslink = url('/home/Do/likes/id/' . $value->id, false);
+            $data[$key]->opposelink = url('/home/Do/oppose/id/' . $value->id, false);
+            $data[$key]->content = str_replace(STATIC_DIR . '/upload/', get_http_url() . STATIC_DIR . '/upload/', $value->content);
+            
+            // 返回网页链接地址，便于AJAX调用内容
+            $urlname = $value->urlname ?: 'list';
+            if ($value->sortfilename && $value->filename) {
+                $data[$key]->contentlink = Url::home($value->sortfilename . '/' . $value->filename, true);
+            } elseif ($value->sortfilename) {
+                $data[$key]->contentlink = Url::home($value->sortfilename . '/' . $value->id, true);
+            } elseif ($value->filename) {
+                $data[$key]->contentlink = Url::home($urlname . $url_break_char . $value->scode . '/' . $value->filename, true);
+            } else {
+                $data[$key]->contentlink = Url::home($urlname . $url_break_char . $value->scode . '/' . $value->id, true);
+            }
         }
         
         // 输出数据
@@ -370,6 +384,10 @@ class CmsController extends Controller
     {
         if ($_POST) {
             
+            if ($this->config('message_status') === '0') {
+                json(0, '系统已经关闭留言功能，请到后台开启再试！');
+            }
+            
             // 读取字段
             if (! $form = $this->model->getFormField(1)) {
                 json(0, '接收表单不存在任何字段，请核对后重试！');
@@ -382,6 +400,7 @@ class CmsController extends Controller
                 if (is_array($field_data)) { // 如果是多选等情况时转换
                     $field_data = implode(',', $field_data);
                 }
+                $field_data = str_replace('pboot:if', '', $field_data);
                 if ($value->required && ! $field_data) {
                     json(0, $value->description . '不能为空！');
                 } else {
@@ -456,6 +475,10 @@ class CmsController extends Controller
                 json(0, '传递的表单编码fcode有误！');
             }
             
+            if ($this->config('form_status') === '0') {
+                json(0, '系统已经关闭表单功能，请到后台开启再试！');
+            }
+            
             // 读取字段
             if (! $form = $this->model->getFormField($fcode)) {
                 json(0, '接收表单不存在任何字段，请核对后重试！');
@@ -468,6 +491,7 @@ class CmsController extends Controller
                 if (is_array($field_data)) { // 如果是多选等情况时转换
                     $field_data = implode(',', $field_data);
                 }
+                $field_data = str_replace('pboot:if', '', $field_data);
                 if ($value->required && ! $field_data) {
                     json(0, $value->description . '不能为空！');
                 } else {
