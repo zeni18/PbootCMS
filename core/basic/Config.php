@@ -103,6 +103,12 @@ class Config
             $configs = mult_array_merge($configs, $config);
         }
         
+        // 载入用户路由配置文件
+        if (file_exists(CONF_PATH . '/route.php')) {
+            $config = require CONF_PATH . '/route.php';
+            $configs = mult_array_merge($configs, $config);
+        }
+        
         // 载入扩展的配置文件
         $ext_path = CONF_PATH . '/ext';
         if (is_dir($ext_path) && function_exists('scandir')) {
@@ -116,7 +122,7 @@ class Config
             }
         }
         
-        // 载入公共路由文件
+        // 载入系统路由文件
         if (file_exists(APP_PATH . '/common/route.php')) {
             $config = require APP_PATH . '/common/route.php';
             $configs = mult_array_merge($configs, $config);
