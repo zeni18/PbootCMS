@@ -11,13 +11,19 @@
 .layui-layout-admin .layui-logo {
 	color: #fff;
 	font-size: 20px;
-	background: #23262E;
 	line-height: 50px;
 	height: 50px;
 	overflow:hidden;
 	text-align: left;
 	width: 180px;
-	padding-left: 20px;
+	padding-left: 10px;
+}
+.layui-layout-admin .layui-logo .layui-badge{
+	font-size:10px;
+	padding: 3px;
+	height: 12px;
+	line-height: 12px;
+	top:-3px;
 }
 .layui-layout-admin .layui-logo img {
 	vertical-align: middle;
@@ -217,15 +223,15 @@ a.page-num-current:hover{
 	left: 0px !important;
 }
 .layui-layout-admin .layui-logo {
-	width: 140px;
+	width: 180px;
 	text-align: left;
 	padding-left: 5px;
 }
 .menu {
-	left: 150px;
+	left: 185px;
 }
 .area-select {
-	right: 10px;
+	right: 5px;
 	left: auto;
 }
 .layui-layout-admin .layui-footer {

@@ -8,7 +8,7 @@
   <link rel="shortcut icon" href="{SITE_DIR}/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="{APP_THEME_DIR}/layui/css/layui.css?v=v2.5.4">
   <link rel="stylesheet" href="{APP_THEME_DIR}/font-awesome/css/font-awesome.min.css?v=v4.7.0" type="text/css">
-  <link rel="stylesheet" href="{APP_THEME_DIR}/css/comm.css?v=v2.0.0">
+  <link rel="stylesheet" href="{APP_THEME_DIR}/css/comm.css?v=v2.0.7">
   <link href="{APP_THEME_DIR}/css/jquery.treetable.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="{APP_THEME_DIR}/js/jquery-1.12.4.min.js"></script>
   <script type="text/javascript" src="{APP_THEME_DIR}/js/jquery.treetable.js"></script>
@@ -30,7 +30,12 @@
     <div class="layui-logo">
     <a href="{url./admin/Index/home}">
     <img src="{APP_THEME_DIR}/images/logo.png" height="30">
-    PbootCMS
+	    PbootCMS 
+	   	{if(LICENSE==3)}
+	   		<span class="layui-badge">SVIP</span>
+	   	{else}
+	   		<span class="layui-badge layui-bg-gray">V{APP_VERSION}</span>	
+	   	{/if}
     </a>
     </div>
     
@@ -61,21 +66,13 @@
        		<a href="{url./admin/Index/clearCache}"><i class="fa fa-trash-o" aria-hidden="true"></i> 清理缓存</a>
        </li>
        
-       {if([$one_area])}
-	       	<li class="layui-nav-item">
-	       		<a href="{url./admin/Index/loginOut}"><i class="fa fa-sign-out" aria-hidden="true"></i> 退出登录</a>
-	       	</li>
-       {else}
-	       	<li class="layui-nav-item layui-hide-xs">
-	       		<a href="{url./admin/Index/loginOut}"><i class="fa fa-sign-out" aria-hidden="true"></i> 退出登录</a>
-	       	</li>
-       {/if}
        <li class="layui-nav-item layui-hide-xs">
 	        <a href="javascript:;">
 	          <i class="fa fa-user-circle-o" aria-hidden="true"></i> {$session.realname}
 	        </a>
 	        <dl class="layui-nav-child">
 	          <dd><a href="{url./admin/Index/ucenter}"><i class="fa fa-address-card-o" aria-hidden="true"></i> 资料修改</a></dd>
+	          <dd><a href="{url./admin/Index/ucenter}"><i class="fa fa-address-card-o" aria-hidden="true"></i> 退出登录</a></dd>
 	        </dl>
       </li>
     </ul>
@@ -116,6 +113,10 @@
 		<li style="height:1px;background:#666" class="layui-hide-sm"></li>
 		
 		<li class="layui-nav-item layui-hide-sm">
+		 <a href="{SITE_DIR}/" target="_blank"><i class="fa fa-home" aria-hidden="true"></i> 网站主页</a>
+		</li>
+		
+		<li class="layui-nav-item layui-hide-sm">
           <a href="{url./admin/Index/ucenter}"><i class="fa fa-address-card-o" aria-hidden="true"></i> 资料修改</a>
         </li>
         
@@ -123,11 +124,10 @@
          <a href="{url./admin/Index/clearCache}"><i class="fa fa-trash-o" aria-hidden="true"></i> 清理缓存</a>
         </li>
         
-        {if(![$one_area])}
         <li class="layui-nav-item layui-hide-sm">
          <a href="{url./admin/Index/loginOut}"><i class="fa fa-sign-out" aria-hidden="true"></i> 退出登录</a>
         </li>
-        {/if}
+
       </ul>
     </div>
   </div>

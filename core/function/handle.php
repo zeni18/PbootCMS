@@ -447,7 +447,7 @@ function clear_html_blank($string)
     $string = str_replace("\r\n", '', $string); // 清除换行符
     $string = str_replace("\n", '', $string); // 清除换行符
     $string = str_replace("\t", '', $string); // 清除制表符
-    $string = str_replace(' ', '', $string); // 清除大空格
+    $string = str_replace('　', '', $string); // 清除大空格
     $string = str_replace('&nbsp;', '', $string); // 清除 &nbsp;
     $string = preg_replace('/\s+/', ' ', $string); // 清除空格
     return $string;
