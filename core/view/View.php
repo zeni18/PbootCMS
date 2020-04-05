@@ -107,12 +107,12 @@ class View
             // 定义当前应用主题目录
             define('APP_THEME_DIR', str_replace(DOC_PATH, '', APP_VIEW_PATH) . '/' . $theme);
             if (! is_dir($this->tplPath .= '/' . $theme)) { // 检查主题是否存在
-                error('模板主题目录不存在！主题路径：' . $this->tplPath);
+                error('模板主题目录不存在！主题路径：' . APP_THEME_DIR);
             }
             $tpl_file = $this->tplPath . '/' . $file; // 模板文件
         }
-        
-        file_exists($tpl_file) ?: error('模板文件' . $file . '不存在！');
+        $note = Config::get('tpl_html_dir') ? '<br>同时检测到您系统中启用了模板子目录' . Config::get('tpl_html_dir') . '，请核对是否是此原因导致！' : '';
+        file_exists($tpl_file) ?: error('模板文件' . APP_THEME_DIR . '/' . $file . '不存在！' . $note);
         $tpl_c_file = $this->tplcPath . '/' . md5($tpl_file) . '.php'; // 编译文件
                                                                        
         // 当编译文件不存在，或者模板文件修改过，则重新生成编译文件
