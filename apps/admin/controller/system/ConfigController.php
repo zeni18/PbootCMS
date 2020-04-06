@@ -162,7 +162,7 @@ class ConfigController extends Controller
             $tpl_path = ROOT_PATH . current($this->config('tpl_dir')) . '/' . model('admin.content.ContentSort')->getTheme();
             
             if (! $htmldir || ! file_exists($tpl_path . '/' . $htmldir)) {
-                if (! create_dir($tpl_path . '/' . $value)) {
+                if (! check_dir($tpl_path . '/' . $value, true)) {
                     return;
                 } // 原来没有目录时只创建目录，创建失败时直接不修改
             } else {
