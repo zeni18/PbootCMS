@@ -242,8 +242,9 @@ class IndexController extends Controller
             $acode = post('acode');
             if (in_array($acode, session('acodes'))) {
                 session('acode', $acode);
+                cookie('lg', $acode); // 同步切换前台语言
             }
-            location(- 1);
+            location(url('admin/Index/home'));
         }
     }
 

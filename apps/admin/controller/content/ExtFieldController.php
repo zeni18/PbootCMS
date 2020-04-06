@@ -98,7 +98,7 @@ class ExtFieldController extends Controller
                     $sqlite = 'TEXT';
                     break;
                 case '8': // 编辑器
-                    $mysql = 'varchar(10000)';
+                    $mysql = 'TEXT';
                     $sqlite = 'TEXT(10000)';
                     break;
                 default:
