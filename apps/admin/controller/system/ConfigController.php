@@ -151,18 +151,32 @@ class ConfigController extends Controller
         
         // 模板目录修改
         if (($key == 'tpl_html_dir') && $value) {
+            
+            // 不允许特殊字符
+            if (! preg_match('/^\w+$/', $value)) {
+                return;
+            }
+            
             $value = basename($value);
             $htmldir = $this->config('tpl_html_dir');
             $tpl_path = ROOT_PATH . current($this->config('tpl_dir')) . '/' . model('admin.content.ContentSort')->getTheme();
             
-            if (! $htmldir) {
+            if (! $htmldir || ! file_exists($tpl_path . '/' . $htmldir)) {
                 if (! create_dir($tpl_path . '/' . $value)) {
                     return;
-                } // 原来没有目录时只创建目录
+                } // 原来没有目录时只创建目录，创建失败时直接不修改
             } else {
                 if ($value != $htmldir) {
-                    if (! rename($tpl_path . '/' . $htmldir, $tpl_path . '/' . $value)) {
-                        return; // 修改失败
+                    if (file_exists($tpl_path . '/' . $value)) {
+                        if (dir_copy($tpl_path . '/' . $htmldir, $tpl_path . '/' . $value)) {
+                            path_delete($tpl_path . '/' . $htmldir, true); // 删除原来的
+                        } else {
+                            return; // 修改失败
+                        }
+                    } else {
+                        if (! rename($tpl_path . '/' . $htmldir, $tpl_path . '/' . $value)) {
+                            return; // 修改失败
+                        }
                     }
                 }
             }

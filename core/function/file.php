@@ -141,6 +141,31 @@ function path_delete($path, $delDir = false)
     }
 }
 
+// 拷贝文件夹
+function dir_copy($src, $des, $son = 1)
+{
+    if (! is_dir($src)) {
+        return false;
+    }
+    
+    if (! is_dir($des)) {
+        create_dir($des);
+    }
+    
+    $handle = dir($src);
+    while (! ! $path = $handle->read()) {
+        if (($path != ".") && ($path != "..")) {
+            if (is_dir($src . "/" . $path)) {
+                if ($son)
+                    dir_copy($src . "/" . $path, $des . "/" . $path, $son);
+            } else {
+                copy($src . "/" . $path, $des . "/" . $path);
+            }
+        }
+    }
+    return true;
+}
+
 // 判断文件是否是图片
 function is_image($path)
 {
