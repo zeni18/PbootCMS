@@ -44,7 +44,7 @@ class IndexController extends Controller
         } elseif ($url_rule_type == 3 && isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) { // 采用简短传参模式
             parse_str($qs, $output);
             unset($output['page']); // 去除分页
-            if ($output) {
+            if ($output && ! current($output)) { // 第一个路径参数不能有值，否则非标准路径参数
                 $path = key($output); // 第一个参数为路径信息，注意PHP数组会自动将key点符号转换下划线
                 $path = trim($path, '/'); // 去除两端斜杠
                 $url_rule_suffix = substr($this->config('url_rule_suffix'), 1);
