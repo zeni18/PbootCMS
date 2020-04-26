@@ -36,7 +36,7 @@ class TagController extends Controller
         }
         
         $tagstpl = request('tagstpl');
-        if (! preg_match('/^[\w\-\.\/]+$/', $tagstpl)) {
+        if (! preg_match('/^[\w]+\.html$/', $tagstpl)) {
             $tagstpl = 'tags.html';
         }
         $content = parent::parser($this->htmldir . $tagstpl); // 框架标签解析

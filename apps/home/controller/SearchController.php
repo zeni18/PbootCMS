@@ -27,7 +27,7 @@ class SearchController extends Controller
     public function index()
     {
         $searchtpl = request('searchtpl');
-        if (! preg_match('/^[\w\-\.\/]+$/', $searchtpl)) {
+        if (! preg_match('/^[\w]+\.html$/', $searchtpl)) {
             $searchtpl = 'search.html';
         }
         

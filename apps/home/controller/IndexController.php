@@ -44,7 +44,7 @@ class IndexController extends Controller
         } elseif ($url_rule_type == 3 && isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) { // 采用简短传参模式
             parse_str($qs, $output);
             unset($output['page']); // 去除分页
-            if ($output && ! current($output)) { // 第一个路径参数不能有值，否则非标准路径参数
+            if ($output) { // 第一个路径参数不能有值，否则非标准路径参数
                 $path = key($output); // 第一个参数为路径信息，注意PHP数组会自动将key点符号转换下划线
                 $path = trim($path, '/'); // 去除两端斜杠
                 $url_rule_suffix = substr($this->config('url_rule_suffix'), 1);
@@ -107,22 +107,26 @@ class IndexController extends Controller
                     $tag->index();
                     break;
                 default:
-                    define('CMS_PAGE', true); // 使用cms分页处理模型
-                    if (count($path) > 1) {
-                        if (! ! ($data = $this->model->getContent($path[1])) && ($data->scode == $scode || $data->sortfilename == $scode)) {
-                            $this->getContent($data);
-                        } else {
-                            _404('您访问的内容不存在，请核对后重试！');
-                        }
+                    if (get($param[0])) {
+                        $this->getIndex();
                     } else {
-                        if (! ! $sort = $this->model->getSort($scode)) {
-                            if ($sort->type == 1) {
-                                $this->getAbout($sort);
+                        define('CMS_PAGE', true); // 使用cms分页处理模型
+                        if (count($path) > 1) {
+                            if (! ! ($data = $this->model->getContent($path[1])) && ($data->scode == $scode || $data->sortfilename == $scode)) {
+                                $this->getContent($data);
                             } else {
-                                $this->getList($sort);
+                                _404('您访问的内容不存在，请核对后重试！');
                             }
                         } else {
-                            _404('您访问的栏目不存在，请核对后重试！');
+                            if (! ! $sort = $this->model->getSort($scode)) {
+                                if ($sort->type == 1) {
+                                    $this->getAbout($sort);
+                                } else {
+                                    $this->getList($sort);
+                                }
+                            } else {
+                                _404('您访问的栏目不存在，请核对后重试！');
+                            }
                         }
                     }
             }
