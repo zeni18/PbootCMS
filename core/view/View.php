@@ -89,8 +89,8 @@ class View
         // 设置主题
         $theme = isset($this->vars['theme']) ? $this->vars['theme'] : 'default';
         
-        $theme = preg_replace('/\.\.(\/|\\\)/', '', $theme); // 过滤掉相对路径
-        $file = preg_replace('/\.\.(\/|\\\)/', '', $file); // 过滤掉相对路径
+        $theme = preg_replace_r('{\.\.(\/|\\\\)}', '', $theme); // 过滤掉相对路径
+        $file = preg_replace_r('{\.\.(\/|\\\\)}', '', $file); // 过滤掉相对路径
         
         if (strpos($file, '/') === 0) { // 绝对路径模板
             $tpl_file = ROOT_PATH . $file;

@@ -1250,7 +1250,7 @@ class Model
             return;
         }
         if (M != 'admin') {
-            $sql = str_replace('pboot:if', '', $sql); // 过滤插入cms条件语句
+            $sql = preg_replace_r('/pboot:if/i', '', $sql); // 过滤插入cms条件语句
         }
         return $this->getDb()->amd($sql);
     }
@@ -1319,7 +1319,7 @@ class Model
         $this->sql['value'] = $update_string;
         $sql = $this->buildSql($this->updateSql);
         if (M != 'admin') {
-            $sql = str_replace('pboot:if', '', $sql); // 过滤插入cms条件语句
+            $sql = preg_replace_r('/pboot:if/i', '', $sql); // 过滤插入cms条件语句
         }
         return $this->getDb()->amd($sql);
     }

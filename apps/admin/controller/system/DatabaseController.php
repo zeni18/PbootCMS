@@ -54,7 +54,7 @@ class DatabaseController extends Controller
         
         switch ($submit) {
             case 'yh':
-                $tables = post('list');
+                $tables = self::getTableList();
                 if (! $tables)
                     alert_back('请选择数据表！');
                 if ($this->model->optimize(implode(',', $tables))) {
@@ -66,7 +66,7 @@ class DatabaseController extends Controller
                 }
                 break;
             case 'xf':
-                $tables = post('list');
+                $tables = self::getTableList();
                 if (! $tables)
                     alert_back('请选择数据表！');
                 if ($this->model->repair(implode(',', $tables))) {
@@ -78,7 +78,7 @@ class DatabaseController extends Controller
                 }
                 break;
             case 'bf':
-                $tables = post('list');
+                $tables = self::getTableList();
                 if (! $tables)
                     alert_back('请选择数据表！');
                 if ($this->backupTable($tables)) {
@@ -232,5 +232,17 @@ class DatabaseController extends Controller
         if (file_put_contents($sqlfile, $content)) {
             return true;
         }
+    }
+
+    // 获取并检查表名称
+    private function getTableList()
+    {
+        $list = post('list');
+        foreach ($list as $key => $value) {
+            if (! preg_match('/^[\w]+$/', $value)) {
+                unset($list[$key]);
+            }
+        }
+        return $list;
     }
 }

@@ -2544,9 +2544,9 @@ class ParserController extends Controller
                 $matches[1][$i] = decode_string($matches[1][$i]);
                 
                 // 带有函数的条件语句进行安全校验
-                if (preg_match_all('/([\w]+)([\\\s]+)?\(/i', $matches[1][$i], $matches2)) {
+                if (preg_match_all('/([\w]+)([\s\\\\]+)?\(/i', $matches[1][$i], $matches2)) {
                     foreach ($matches2[1] as $value) {
-                        if ((function_exists($value) || preg_match('/^eval$/i', $value)) && ! in_array($value, $white_fun)) {
+                        if (function_exists($value) && ! in_array($value, $white_fun)) {
                             $danger = true;
                             break;
                         }
@@ -2554,7 +2554,7 @@ class ParserController extends Controller
                 }
                 
                 // 过滤特殊字符串
-                if (preg_match('/(\$_GET\[)|(\$_POST\[)|(\$_REQUEST\[)|(\$_COOKIE\[)|(\$_SESSION\[)|(file_put_contents)|(fwrite)|(phpinfo)|(base64_decode)|(`)|(shell_exec)|(eval)|(system)|(exec)|(passthru)/i', $matches[1][$i])) {
+                if (preg_match('/(\$_GET\[)|(\$_POST\[)|(\$_REQUEST\[)|(\$_COOKIE\[)|(\$_SESSION\[)|(file_put_contents)|(file_get_contents)|(fwrite)|(phpinfo)|(base64)|(`)|(shell_exec)|(eval)|(assert)|(system)|(exec)|(passthru)|(print_r)|(urldecode)/i', $matches[1][$i])) {
                     $danger = true;
                 }
                 

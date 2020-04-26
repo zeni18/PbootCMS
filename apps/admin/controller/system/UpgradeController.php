@@ -69,7 +69,7 @@ class UpgradeController extends Controller
         $db = get_db_type();
         foreach ($files as $key => $value) {
             // 过滤掉相对路径
-            $value->path = preg_replace('/\.\.(\/|\\\)/', '', $value->path);
+            $value->path = preg_replace_r('{\.\.(\/|\\\\)}', '', $value->path);
             $file = ROOT_PATH . $value->path;
             if (@md5_file($file) != $value->md5) {
                 // 筛选数据库更新脚本
@@ -108,7 +108,7 @@ class UpgradeController extends Controller
             $len = count($list) ?: 0;
             foreach ($list as $value) {
                 // 过滤掉相对路径
-                $value = preg_replace('/\.\.(\/|\\\)/', '', $value);
+                $value = preg_replace_r('{\.\.(\/|\\\\)}', '', $value);
                 // 本地存储路径
                 $path = RUN_PATH . '/upgrade' . $value;
                 // 自动创建目录
@@ -147,9 +147,9 @@ class UpgradeController extends Controller
                 // 分离文件
                 foreach ($list as $value) {
                     // 过滤掉相对路径
-                    $value = preg_replace('/\.\.(\/|\\\)/', '', $value);
+                    $value = preg_replace_r('{\.\.(\/|\\\\)}', '', $value);
                     
-                    if (stripos($value, '/script/') !== false) {
+                    if (stripos($value, '/script/') === 0 && preg_match('/\.sql$/i', $value)) {
                         $sqls[] = $value;
                     } else {
                         $path = RUN_PATH . '/upgrade' . $value;
