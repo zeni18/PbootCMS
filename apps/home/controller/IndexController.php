@@ -10,6 +10,7 @@ namespace app\home\controller;
 
 use core\basic\Controller;
 use app\home\model\ParserModel;
+use core\basic\Config;
 
 class IndexController extends Controller
 {
@@ -113,12 +114,18 @@ class IndexController extends Controller
                         define('CMS_PAGE', true); // 使用cms分页处理模型
                         if (count($path) > 1) {
                             if (! ! ($data = $this->model->getContent($path[1])) && ($data->scode == $scode || $data->sortfilename == $scode)) {
+                                if ($data->acode != get_lg() && Config::get('lgautosw') !== '0') {
+                                    cookie('lg', $data->acode); // 调用内容语言与当前语言不一致时，自动切换语言
+                                }
                                 $this->getContent($data);
                             } else {
                                 _404('您访问的内容不存在，请核对后重试！');
                             }
                         } else {
                             if (! ! $sort = $this->model->getSort($scode)) {
+                                if ($sort->acode != get_lg() && Config::get('lgautosw') !== '0') {
+                                    cookie('lg', $sort->acode); // 调用栏目语言与当前语言不一致时，自动切换语言
+                                }
                                 if ($sort->type == 1) {
                                     $this->getAbout($sort);
                                 } else {

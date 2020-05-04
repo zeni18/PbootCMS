@@ -46,7 +46,7 @@ class ParserModel extends Model
         return parent::table('ay_company')->where("acode='" . get_lg() . "'")->find();
     }
 
-    // 自定义标签
+    // 自定义标签，不区分语言，兼容跨语言
     public function getLabel()
     {
         return parent::table('ay_label')->decode()->column('value,type', 'name');
@@ -79,7 +79,7 @@ class ParserModel extends Model
             ->find();
     }
 
-    // 多个分类信息
+    // 多个分类信息，不区分语言，兼容跨语言
     public function getMultSort($scodes)
     {
         $field = array(
@@ -101,7 +101,6 @@ class ParserModel extends Model
             )
         );
         return parent::table('ay_content_sort a')->field($field)
-            ->where("a.acode='" . get_lg() . "'")
             ->in('a.scode', $scodes)
             ->join($join)
             ->order('a.sorting,a.id')
@@ -551,7 +550,7 @@ class ParserModel extends Model
         return $result;
     }
 
-    // 指定内容多图,不区分语言，兼容跨语言
+    // 指定内容多图
     public function getContentPics($id)
     {
         $result = parent::table('ay_content')->where("id='$id'")

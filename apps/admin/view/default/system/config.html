@@ -81,6 +81,14 @@
 		                     </div>
 		                </div>
 		                
+		               <div class="layui-form-item">
+		                     <label class="layui-form-label">跨语言自动切换</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="lgautosw" value="1" {if([$configs.lgautosw.value]=='1'||[$configs.lgautosw.value]=='')} checked="checked" {/if} title="启用">
+								<input type="radio" name="lgautosw" value="0" {if([$configs.lgautosw.value]=='0')} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
 		                <div class="layui-form-item">
 		                     <label class="layui-form-label">分页数字条数量</label>
 		                     <div class="layui-input-inline">
