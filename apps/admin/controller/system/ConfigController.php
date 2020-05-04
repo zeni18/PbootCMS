@@ -88,6 +88,9 @@ class ConfigController extends Controller
                 case 'urlrule':
                     success('修改成功！', url('/admin/Config/index' . get_tab('t7'), false));
                     break;
+                case 'pagetitle':
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t8'), false));
+                    break;
                 case 'upgrade':
                     success('修改成功！', url('/admin/Upgrade/index' . get_tab('t2'), false));
                     break;

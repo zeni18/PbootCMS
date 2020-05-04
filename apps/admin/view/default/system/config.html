@@ -10,6 +10,7 @@
 	    <li  lay-id="t5">图片水印</li>
 	    <li  lay-id="t6">安全配置</li>
 	    <li  lay-id="t7">URL规则</li>
+	    <li  lay-id="t8">标题样式</li>
 	  </ul>
 		  <div class="layui-tab-content">
 		  	   <div class="layui-tab-item layui-show">
@@ -530,6 +531,73 @@
 		                <div class="layui-form-item">
 							 <div class="layui-input-block">
 							    <button class="layui-btn" lay-submit name="submit" value="urlrule">立即提交</button>
+							    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+							 </div>
+						</div>
+	              </form>
+		  	   </div>
+		  	   
+		  	   <div class="layui-tab-item">
+		  	   	   <form action="{url./admin/Config/index}" method="post" class="layui-form">
+			  	   	   <input type="hidden" name="formcheck" value="{$formcheck}" > 
+
+	                  <div class="layui-form-item">
+		                   <label class="layui-form-label">常用组合标签： </label>
+		                   <div class="layui-input-block" style="line-height:36px;">
+								<p>全局标签：{pboot:sitetitle}站点标题、{pboot:sitesubtitle}站点副标题</p>
+								<p>列表或内容页：{sort:name}栏目名称、{sort:title}栏目标题</p>
+								<p>内容页：{content:title}内容标题</p>
+								<p>搜索结果页：{pboot:keyword}搜索关键字</p>
+								<p>例如定义内容页样式：{content:title}-{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}</p>
+								<p>以下配置参数不设置时将使用系统默认规则。</p>
+		                   </div>
+		              </div>
+		             
+		               <div class="layui-form-item">
+		                   <label class="layui-form-label">首页</label>
+		                   <div class="layui-input-block">
+		                  		<input type="text" name="index_title" value="{$configs.index_title.value}" class="layui-input">
+		                   </div>
+			           </div>
+			           
+			           <div class="layui-form-item">
+		                   <label class="layui-form-label">专题页</label>
+		                   <div class="layui-input-block">
+		                  		<input type="text" name="about_title" value="{$configs.about_title.value}" class="layui-input">
+		                   </div>
+			           </div>
+			           
+			           <div class="layui-form-item">
+		                   <label class="layui-form-label">列表页</label>
+		                   <div class="layui-input-block">
+		                  		<input type="text" name="list_title" value="{$configs.list_title.value}" class="layui-input">
+		                   </div>
+			           </div>
+			           
+			           <div class="layui-form-item">
+		                   <label class="layui-form-label">内容页</label>
+		                   <div class="layui-input-block">
+		                  		<input type="text" name="content_title" value="{$configs.content_title.value}" class="layui-input">
+		                   </div>
+			           </div>
+			           
+			           <div class="layui-form-item">
+		                   <label class="layui-form-label">搜索结果页</label>
+		                   <div class="layui-input-block">
+		                  		<input type="text" name="search_title" value="{$configs.search_title.value}" class="layui-input">
+		                   </div>
+			           </div>
+			           
+			            <div class="layui-form-item">
+		                   <label class="layui-form-label">其它页</label>
+		                   <div class="layui-input-block">
+		                  		<input type="text" name="other_title" value="{$configs.other_title.value}" class="layui-input">
+		                   </div>
+			           </div>
+		                
+		                <div class="layui-form-item">
+							 <div class="layui-input-block">
+							    <button class="layui-btn" lay-submit name="submit" value="pagetitle">立即提交</button>
 							    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
 							 </div>
 						</div>

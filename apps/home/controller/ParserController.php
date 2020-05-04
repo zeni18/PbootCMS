@@ -44,7 +44,7 @@ class ParserController extends Controller
     public function parserAfter($content)
     {
         // 默认页面信息替换
-        $content = str_replace('{pboot:pagetitle}', '{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+        $content = str_replace('{pboot:pagetitle}', $this->config('other_title') ?: '{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
         $content = str_replace('{pboot:pagekeywords}', '{pboot:sitekeywords}', $content);
         $content = str_replace('{pboot:pagedescription}', '{pboot:sitedescription}', $content);
         

@@ -147,6 +147,7 @@ class IndexController extends Controller
     {
         $content = parent::parser($this->htmldir . 'index.html'); // 框架标签解析
         $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
+        $content = str_replace('{pboot:pagetitle}', $this->config('index_title') ?: '{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
         $content = $this->parser->parserPositionLabel($content, - 1, '首页', SITE_INDEX_DIR . '/'); // CMS当前位置标签解析
         $content = $this->parser->parserSpecialPageSortLabel($content, 0, '', SITE_INDEX_DIR . '/'); // 解析分类标签
         $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
@@ -160,7 +161,7 @@ class IndexController extends Controller
             $content = parent::parser($this->htmldir . $sort->listtpl); // 框架标签解析
             $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
             $pagetitle = $sort->title ? "{sort:title}" : "{sort:name}"; // 页面标题
-            $content = str_replace('{pboot:pagetitle}', $pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+            $content = str_replace('{pboot:pagetitle}', $this->config('list_title') ?: ($pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}'), $content);
             $content = str_replace('{pboot:pagekeywords}', '{sort:keywords}', $content);
             $content = str_replace('{pboot:pagedescription}', '{sort:description}', $content);
             $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
@@ -181,7 +182,7 @@ class IndexController extends Controller
             if ($sort->contenttpl) {
                 $content = parent::parser($this->htmldir . $sort->contenttpl); // 框架标签解析
                 $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-                $content = str_replace('{pboot:pagetitle}', '{content:title}-{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+                $content = str_replace('{pboot:pagetitle}', $this->config('content_title') ?: '{content:title}-{sort:name}-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
                 $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
                 $content = str_replace('{pboot:pagedescription}', '{content:description}', $content);
                 $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
@@ -209,7 +210,7 @@ class IndexController extends Controller
             $content = parent::parser($this->htmldir . $sort->contenttpl); // 框架标签解析
             $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
             $pagetitle = $sort->title ? "{sort:title}" : "{content:title}"; // 页面标题
-            $content = str_replace('{pboot:pagetitle}', $pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
+            $content = str_replace('{pboot:pagetitle}', $this->config('about_title') ?: ($pagetitle . '-{pboot:sitetitle}-{pboot:sitesubtitle}'), $content);
             $content = str_replace('{pboot:pagekeywords}', '{content:keywords}', $content);
             $content = str_replace('{pboot:pagedescription}', '{content:description}', $content);
             $content = $this->parser->parserPositionLabel($content, $sort->scode); // CMS当前位置标签解析
