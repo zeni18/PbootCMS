@@ -1270,7 +1270,8 @@ class ParserController extends Controller
                 }
                 
                 $out_html = '';
-                $key = 1;
+                $pagenum = defined('PAGE') ? PAGE : 1;
+                $key = ($pagenum - 1) * $num + 1;
                 foreach ($data as $value) { // 按查询数据条数循环
                     $one_html = $matches[2][$i];
                     for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
@@ -1913,7 +1914,9 @@ class ParserController extends Controller
                 }
                 
                 $out_html = '';
-                $key = 1;
+                
+                $pagenum = defined('PAGE') ? PAGE : 1;
+                $key = ($pagenum - 1) * $num + 1;
                 foreach ($data as $value) { // 按查询数据条数循环
                     $one_html = $matches[2][$i];
                     for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
@@ -2017,7 +2020,8 @@ class ParserController extends Controller
                 }
                 
                 $out_html = '';
-                $key = 1;
+                $pagenum = defined('PAGE') ? PAGE : 1;
+                $key = ($pagenum - 1) * $num + 1;
                 foreach ($data as $value) { // 按查询数据条数循环
                     $one_html = $matches[2][$i];
                     for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
@@ -2417,7 +2421,8 @@ class ParserController extends Controller
                 }
                 
                 $out_html = '';
-                $key = 1;
+                $pagenum = defined('PAGE') ? PAGE : 1;
+                $key = ($pagenum - 1) * $num + 1;
                 foreach ($data as $value) { // 按查询数据条数循环
                     $one_html = $matches[2][$i];
                     for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
