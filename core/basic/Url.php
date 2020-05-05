@@ -109,9 +109,9 @@ class Url
         if (! isset(self::$urls[$path])) {
             $url_rule_type = Config::get('url_rule_type') ?: 3;
             $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
-            if ($suffix === true) {
+            if ($suffix) {
                 $suffix = $url_rule_suffix;
-            } elseif ($suffix === false) {
+            } else {
                 $suffix = '/';
             }
             $path = ltrim($path, '/');
