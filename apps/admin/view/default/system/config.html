@@ -243,37 +243,22 @@
 			  	   	    <input type="hidden" name="formcheck" value="{$formcheck}" > 
 		                
 		                <div class="layui-form-item">
-		                     <label class="layui-form-label">普通推送token</label>
+		                     <label class="layui-form-label">普通收录token</label>
 		                     <div class="layui-input-inline">
-		                     	<input type="text" name="baidu_zz_token"  value="{$configs.baidu_zz_token.value}" placeholder="请输入百度普通推送token"  class="layui-input">
+		                     	<input type="text" name="baidu_zz_token"  value="{$configs.baidu_zz_token.value}" placeholder="请输入普通收录token"  class="layui-input">
 		                     </div>
-		                     <span class="layui-icon layui-icon-about tips" data-content="请到百度站长中心的链接提交栏目中获取！"></span>
+		                     <span class="layui-icon layui-icon-about tips" data-content="请到百度站长中心获取！"></span>
 		                </div>
-		                
-		                <hr>
-		               
+
 		               <div class="layui-form-item">
-		                     <label class="layui-form-label">熊掌号appid</label>
+		                     <label class="layui-form-label">快速收录token</label>
 		                     <div class="layui-input-inline">
-		                     	<input type="text" name="baidu_xzh_appid"  value="{$configs.baidu_xzh_appid.value}" placeholder="请输入百度熊掌号appid"  class="layui-input">
+		                     	<input type="text" name="baidu_ks_token"  value="{$configs.baidu_ks_token.value}" placeholder="请输入快速收录token"  class="layui-input">
 		                     </div>
+		                     <span class="layui-icon layui-icon-about tips" data-content="请到百度站长中心获取！"></span>
 		               </div>
 		               
-		               <div class="layui-form-item">
-		                     <label class="layui-form-label">熊掌号token</label>
-		                     <div class="layui-input-inline">
-		                     	<input type="text" name="baidu_xzh_token"  value="{$configs.baidu_xzh_token.value}" placeholder="请输入百度熊掌号token"  class="layui-input">
-		                     </div>
-		               </div>
-		               
-		               <div class="layui-form-item">
-		                     <label class="layui-form-label">熊掌号推送类型</label>
-		                     <div class="layui-input-block">
-		                     	<input type="radio" name="baidu_xzh_type" value="0" {if([$configs.baidu_xzh_type.value]==0)} checked="checked" {/if} title="天级">
-								<input type="radio" name="baidu_xzh_type" value="1" {if([$configs.baidu_xzh_type.value]==1)} checked="checked" {/if} title="周级">
-		                     </div>
-		               </div>
-		                
+		           
 		                <div class="layui-form-item">
 							 <div class="layui-input-block">
 							    <button class="layui-btn" lay-submit name="submit" value="baidu">立即提交</button>

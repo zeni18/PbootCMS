@@ -640,9 +640,13 @@ function get_http_url($noport = false)
 }
 
 // 获取当前访问域名
-function get_http_host()
+function get_http_host($noport = true)
 {
-    return str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
+    if ($noport) {
+        return str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
+    } else {
+        return $_SERVER['HTTP_HOST'];
+    }
 }
 
 // 服务器信息

@@ -41,8 +41,7 @@ class SingleController extends Controller
                 $result = $this->model->getList($mcode);
             }
             $this->assign('baidu_zz_token', $this->config('baidu_zz_token'));
-            $this->assign('baidu_xzh_appid', $this->config('baidu_xzh_appid'));
-            $this->assign('baidu_xzh_token', $this->config('baidu_xzh_token'));
+            $this->assign('baidu_ks_token', $this->config('baidu_ks_token'));
             
             // 模型名称
             $this->assign('model_name', model('admin.content.Model')->getName($mcode));
@@ -81,11 +80,11 @@ class SingleController extends Controller
             $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
         }
         
-        // 站长推送
+        // 站长普通推送
         if (! ! $id = get('baiduzz')) {
             $domain = get_http_url();
             if (! $token = $this->config('baidu_zz_token')) {
-                alert_back('请先到系统配置中填写百度链接推送token值！');
+                alert_back('请先到系统配置中填写百度普通收录推送token值！');
             }
             
             $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
@@ -101,56 +100,41 @@ class SingleController extends Controller
             }
             $result = post_baidu($api, $urls);
             if (isset($result->error)) {
-                $this->log('百度推送失败：' . $urls[0]);
+                $this->log('百度普通收录推送失败：' . $urls[0]);
                 alert_back('推送发生错误：' . $result->message);
             } elseif (isset($result->success)) {
-                $this->log('百度推送成功：' . $urls[0]);
+                $this->log('百度普通收录推送成功：' . $urls[0]);
                 alert_back('成功推送' . $result->success . '条，今天剩余可推送' . $result->remain . '条数!');
             } else {
                 alert_back('发生未知错误！');
             }
         }
         
-        // 熊掌号推送
-        if (! ! $id = get('baiduxzh')) {
-            $domain = get_http_url();
-            $appid = $this->config('baidu_xzh_appid');
-            $token = $this->config('baidu_xzh_token');
-            $type = ($this->config('baidu_xzh_type')) ? 'batch' : 'realtime';
-            
-            if (! $appid || ! $token) {
-                alert_back('请先到系统配置中填写百度熊掌号推送appid及token值！');
+        // 站长快速推送
+        if (! ! $id = get('baiduks')) {
+            $domain = get_http_host(false);
+            if (! $token = $this->config('baidu_ks_token')) {
+                alert_back('请先到系统配置中填写百度快速收录推送token值！');
             }
-            $api = "http://data.zz.baidu.com/urls?appid=$appid&token=$token&type=$type";
+            
+            $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
             $data = $this->model->getSingle($id);
+            $data->urlname = $data->urlname ?: 'about';
             if ($data->outlink) {
                 alert_back('链接类型不允许推送！');
             }
-            $data->urlname = $data->urlname ?: 'about';
             if ($data->filename) {
                 $urls[] = $domain . homeurl('/home/Index/' . $data->filename, $url_rule_sort_suffix);
             } else {
                 $urls[] = $domain . homeurl('/home/Index/' . $data->urlname . $url_break_char . $data->scode, $url_rule_sort_suffix);
             }
             $result = post_baidu($api, $urls);
-            
-            if ($type == 'batch') {
-                $success = 'success_batch';
-                $remain = 'remain_batch';
-            } else {
-                $success = 'success_realtime';
-                $remain = 'remain_realtime';
-            }
-            
             if (isset($result->error)) {
-                $this->log('熊掌号推送失败：' . $urls[0]);
+                $this->log('百度快速收录推送失败：' . $urls[0]);
                 alert_back('推送发生错误：' . $result->message);
-            } elseif (isset($result->$success) || isset($result->$remain)) {
-                $this->log('熊掌号推送成功：' . $urls[0]);
-                alert_back('成功推送' . $result->$success . '条，今天剩余可推送' . $result->$remain . '条数!');
             } elseif (isset($result->success)) {
-                $this->log('熊掌号推送失败：' . $urls[0]);
-                alert_back('推送失败，不合规地址' . count($result->not_same_site) . '条！');
+                $this->log('百度快速收录推送成功：' . $urls[0]);
+                alert_back('成功推送' . $result->success . '条，今天剩余可推送' . $result->remain . '条数!');
             } else {
                 alert_back('发生未知错误！');
             }
