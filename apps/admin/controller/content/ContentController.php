@@ -360,11 +360,11 @@ class ContentController extends Controller
                         alert_back('请选择要推送的内容！');
                     }
                     // 依次推送
-                    $domain = get_http_host(false);
+                    $domain = get_http_url();
                     if (! $token = $this->config('baidu_ks_token')) {
                         alert_back('请先到系统配置中填写百度快速收录推送token值！');
                     }
-                    $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
+                    $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token&type=daily";
                     foreach ($list as $key => $value) {
                         $url = $domain . $urls[$value];
                         $this->log('百度快速收录推送：' . $url);
@@ -373,8 +373,8 @@ class ContentController extends Controller
                     $result = post_baidu($api, $post_urls);
                     if (isset($result->error)) {
                         alert_back('百度快速收录推送发生错误：' . $result->message);
-                    } elseif (isset($result->success)) {
-                        alert_back('成功推送' . $result->success . '条，今天剩余可推送' . $result->remain . '条数!');
+                    } elseif (isset($result->success_daily)) {
+                        alert_back('成功推送' . $result->success_daily . '条，今天剩余可推送' . $result->remain_daily . '条数!');
                     } else {
                         alert_back('发生未知错误！');
                     }

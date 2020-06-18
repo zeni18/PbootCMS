@@ -112,12 +112,12 @@ class SingleController extends Controller
         
         // 站长快速推送
         if (! ! $id = get('baiduks')) {
-            $domain = get_http_host(false);
+            $domain = get_http_url();
             if (! $token = $this->config('baidu_ks_token')) {
                 alert_back('请先到系统配置中填写百度快速收录推送token值！');
             }
             
-            $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token";
+            $api = "http://data.zz.baidu.com/urls?site=$domain&token=$token&type=daily";
             $data = $this->model->getSingle($id);
             $data->urlname = $data->urlname ?: 'about';
             if ($data->outlink) {
@@ -132,9 +132,9 @@ class SingleController extends Controller
             if (isset($result->error)) {
                 $this->log('百度快速收录推送失败：' . $urls[0]);
                 alert_back('推送发生错误：' . $result->message);
-            } elseif (isset($result->success)) {
+            } elseif (isset($result->success_daily)) {
                 $this->log('百度快速收录推送成功：' . $urls[0]);
-                alert_back('成功推送' . $result->success . '条，今天剩余可推送' . $result->remain . '条数!');
+                alert_back('成功推送' . $result->success_daily . '条，今天剩余可推送' . $result->remain_daily . '条数!');
             } else {
                 alert_back('发生未知错误！');
             }
