@@ -895,3 +895,13 @@ function cache_config($refresh = false)
     }
     Config::assign($config_cache); // 注入配置
 }
+
+// 递归替换
+function preg_replace_r($search, $replace, $subject)
+{
+    while (preg_match($search, $subject)) {
+        $subject = preg_replace($search, $replace, $subject);
+    }
+    return $subject;
+}
+
