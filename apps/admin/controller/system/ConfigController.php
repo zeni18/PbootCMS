@@ -122,7 +122,7 @@ class ConfigController extends Controller
         
         $config = file_get_contents(CONF_PATH . '/config.php');
         if (preg_match("'$key'", $config)) {
-            if (is_numeric($value)) {
+            if (preg_match('/^[0-9]+$/', $value)) {
                 $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}' . $value . ',', $config);
             } else {
                 $config = preg_replace('/(\'' . $key . '\'([\s]+)?=>([\s]+)?)[\w\'\"\s,]+,/', '${1}\'' . $value . '\',', $config);
