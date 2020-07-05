@@ -9,6 +9,7 @@
 namespace app\home\controller;
 
 use core\basic\Controller;
+use core\basic\Url;
 
 class TagController extends Controller
 {
@@ -41,8 +42,8 @@ class TagController extends Controller
         }
         $content = parent::parser($this->htmldir . $tagstpl); // 框架标签解析
         $content = $this->parser->parserBefore($content); // CMS公共标签前置解析
-        $content = $this->parser->parserPositionLabel($content, 0, '相关内容', homeurl('tag/' . get('tag'))); // CMS当前位置标签解析
-        $content = $this->parser->parserSpecialPageSortLabel($content, - 2, '相关内容', homeurl('tag/' . get('tag'))); // 解析分类标签
+        $content = $this->parser->parserPositionLabel($content, 0, '相关内容', Url::home('tag/' . get('tag'))); // CMS当前位置标签解析
+        $content = $this->parser->parserSpecialPageSortLabel($content, - 2, '相关内容', Url::home('tag/' . get('tag'))); // 解析分类标签
         $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
         $this->cache($content, true);
     }

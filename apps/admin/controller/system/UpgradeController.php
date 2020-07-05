@@ -32,7 +32,7 @@ class UpgradeController extends Controller
     public function __construct()
     {
         error_reporting(0);
-        $this->branch = $this->config('upgrade_branch') == '2.X.dev' ? '2.X.dev' : '2.X';
+        $this->branch = $this->config('upgrade_branch') == '3.X.dev' ? '3.X.dev' : '3.X';
         $this->force = $this->config('upgrade_force') ?: 0;
         $this->revise = $this->config('revise_version') ?: 0;
     }

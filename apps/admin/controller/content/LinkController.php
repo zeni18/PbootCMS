@@ -96,9 +96,6 @@ class LinkController extends Controller
                 $this->log('新增友情链接失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            $this->display('content/link.html');
         }
     }
 

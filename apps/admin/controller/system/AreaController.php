@@ -155,14 +155,6 @@ class AreaController extends Controller
                 $this->log('新增数据区域' . $acode . '失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            
-            // 区域下拉表
-            $area_tree = $this->model->getSelect();
-            $area_select = $this->makeAreaSelect($area_tree);
-            $this->assign('area_select', $area_select);
-            $this->display('system/area.html');
         }
     }
 

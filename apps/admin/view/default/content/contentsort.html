@@ -180,7 +180,33 @@
 			                     	<input type="radio" name="status" value="1" title="显示" checked>
 									<input type="radio" name="status" value="0" title="隐藏">
 			                     </div>
-			                </div>     
+			                </div>  
+			                
+			               <div class="layui-form-item">
+			                     <label class="layui-form-label">浏览权限</label>
+			                     <div class="layui-input-block">
+									<select name="gid">
+										<option value="">不限制</option>
+				                        {foreach $groups(key,value)}
+				                            <option value="[value->id]">[value->gname]</option>
+				                        {/foreach}
+				                    </select>
+			                     </div>
+			                </div>  
+			                
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">权限类型</label>
+			                     <div class="layui-input-block">
+			                     	<select name="gtype" id="gtype" >
+			                     		<option value="1">小于</option>
+			                     		<option value="2">小于等于</option>
+			                     		<option value="3">等于</option>
+			                     		<option value="4" selected>大于等于</option>
+			                     		<option value="5">大于</option>
+									</select>
+			                     </div>
+			                </div>   
+			                    
 					    </div>
 					    <div class="layui-tab-item">
 					    	<div class="layui-form-item">
@@ -194,6 +220,13 @@
 			                     <label class="layui-form-label">跳转链接</label>
 			                     <div class="layui-input-block">
 			                     	<input type="text" name="outlink" placeholder="请输入跳转链接" class="layui-input">
+			                     </div>
+			                </div>
+			                
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">权限不足提示</label>
+			                     <div class="layui-input-block">
+			                     	<input type="text" name="gnote"  placeholder="请输入权限不足时提示文本"  class="layui-input">
 			                     </div>
 			                </div>
 			                
@@ -428,6 +461,31 @@
 								<input type="radio" name="status" value="0" title="隐藏" {if([$sort->status]==0)}checked="checked"{/if}>
 		                     </div>
 		                </div>
+		                
+		                 <div class="layui-form-item">
+			                     <label class="layui-form-label">浏览权限</label>
+			                     <div class="layui-input-block">
+									<select name="gid">
+										<option value="">不限制</option>
+				                        {foreach $groups(key,value)}
+				                            <option value="[value->id]" {if([$sort->gid]==$value->id)}selected="selected"{/if}>[value->gname]</option>
+				                        {/foreach}
+				                    </select>
+			                     </div>
+			                </div>  
+			                
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">权限类型</label>
+			                     <div class="layui-input-block">
+			                     	<select name="gtype" id="gtype" >
+			                     		<option value="1" {if([$sort->gtype]==1)}selected="selected"{/if}>小于</option>
+			                     		<option value="2" {if([$sort->gtype]==2)}selected="selected"{/if}>小于等于</option>
+			                     		<option value="3" {if([$sort->gtype]==3)}selected="selected"{/if}>等于</option>
+			                     		<option value="4" {if([$sort->gtype]==4||(![$sort->gtype]))}selected="selected"{/if}>大于等于</option>
+			                     		<option value="5" {if([$sort->gtype]==5)}selected="selected"{/if}>大于</option>
+									</select>
+			                     </div>
+			                </div> 
 
 		                
 				    </div>
@@ -443,6 +501,13 @@
 		                     <label class="layui-form-label">跳转链接</label>
 		                     <div class="layui-input-block">
 		                     	<input type="text" name="outlink" value="{$sort->outlink}" placeholder="请输入跳转链接" class="layui-input">
+		                     </div>
+		                </div>
+		                
+	                    <div class="layui-form-item">
+		                     <label class="layui-form-label">权限不足提示</label>
+		                     <div class="layui-input-block">
+		                     	<input type="text" name="gnote" value="{$sort->gnote}"  placeholder="请输入权限不足时提示文本"  class="layui-input">
 		                     </div>
 		                </div>
 		                

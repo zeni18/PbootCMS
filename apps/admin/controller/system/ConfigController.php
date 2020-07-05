@@ -91,6 +91,9 @@ class ConfigController extends Controller
                 case 'pagetitle':
                     success('修改成功！', url('/admin/Config/index' . get_tab('t8'), false));
                     break;
+                case 'member':
+                    success('修改成功！', url('/admin/Config/index' . get_tab('t9'), false));
+                    break;
                 case 'upgrade':
                     success('修改成功！', url('/admin/Upgrade/index' . get_tab('t2'), false));
                     break;
@@ -108,6 +111,9 @@ class ConfigController extends Controller
         $configs['tpl_html_cache']['value'] = $this->config('tpl_html_cache');
         $configs['tpl_html_cache_time']['value'] = $this->config('tpl_html_cache_time');
         $this->assign('configs', $configs);
+        
+        $this->assign('groups', model('admin.member.MemberGroup')->getSelect());
+        
         $this->display('system/config.html');
     }
 

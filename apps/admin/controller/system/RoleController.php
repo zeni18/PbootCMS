@@ -90,23 +90,6 @@ class RoleController extends Controller
                 $this->log('修改角色' . $rcode . '失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            
-            // 数据区域选择
-            $area_model = model('admin.system.Area');
-            $area_tree = $area_model->getSelect();
-            $area_checkbox = $this->makeAreaCheckbox($area_tree);
-            $this->assign('area_checkbox', $area_checkbox);
-            
-            // 菜单权限表
-            $menu_model = model('admin.system.Menu');
-            $menu_level = $menu_model->getMenuLevel();
-            $menus = $menu_model->getSelect();
-            $menu_list = $this->makeLevelList($menus, $menu_level);
-            $this->assign('menu_list', $menu_list);
-            
-            $this->display('system/role.html');
         }
     }
 

@@ -15,7 +15,7 @@ class Url
     private static $urls = array();
 
     // 接收控制器方法完整访问路径，如：/home/Index/index /模块/控制器/方法/.. 路径，生成可访问地址
-    public static function get($path, $suffix = false)
+    public static function get($path, $suffix = null)
     {
         if (strpos($path, 'http') === 0 || ! $path) {
             return $path;
@@ -104,16 +104,19 @@ class Url
     }
 
     // 生成前端地址
-    public static function home($path, $suffix = false)
+    public static function home($path, $suffix = null, $qs = null)
     {
-        if (! isset(self::$urls[$path])) {
+        if (! isset(self::$urls[md5($path . $suffix . $qs)])) {
             $url_rule_type = Config::get('url_rule_type') ?: 3;
             $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
-            if ($suffix) {
+            $url_rule_sort_suffix = Config::get('url_rule_sort_suffix');
+            
+            if (($suffix === null && $url_rule_sort_suffix) || $suffix) {
                 $suffix = $url_rule_suffix;
             } else {
                 $suffix = '/';
             }
+            
             $path = ltrim($path, '/');
             
             // 去除默认模块及控制器部分
@@ -130,20 +133,23 @@ class Url
             } else {
                 switch ($url_rule_type) {
                     case '1': // 普通模式
-                        $link = SITE_INDEX_DIR . '/index.php' . '/' . $path . $suffix;
+                        $qs = $qs ? "?" . $qs : '';
+                        $link = SITE_INDEX_DIR . '/index.php' . '/' . $path . $suffix . $qs;
                         break;
                     case '2': // 伪静态模式
-                        $link = SITE_INDEX_DIR . '/' . $path . $suffix;
+                        $qs = $qs ? "?" . $qs : '';
+                        $link = SITE_INDEX_DIR . '/' . $path . $suffix . $qs;
                         break;
                     case '3': // 兼容模式
-                        $link = SITE_INDEX_DIR . '/?' . $path . $suffix;
+                        $qs = $qs ? "&" . $qs : '';
+                        $link = SITE_INDEX_DIR . '/?' . $path . $suffix . $qs;
                         break;
                     default:
                         error('地址模式设置错误,请登录后台重新设置！');
                 }
             }
-            self::$urls[$path] = $link;
+            self::$urls[md5($path . $suffix . $qs)] = $link;
         }
-        return self::$urls[$path];
+        return self::$urls[md5($path . $suffix . $qs)];
     }
 }

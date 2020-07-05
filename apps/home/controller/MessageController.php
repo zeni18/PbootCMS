@@ -10,6 +10,7 @@ namespace app\home\controller;
 
 use core\basic\Controller;
 use app\home\model\ParserModel;
+use core\basic\Url;
 
 class MessageController extends Controller
 {
@@ -32,6 +33,11 @@ class MessageController extends Controller
             
             if (time() - session('lastsub') < 10) {
                 alert_back('您提交太频繁了，请稍后再试！');
+            }
+            
+            // 需登录
+            if ($this->config('message_rqlogin') && ! session('pboot_uid')) {
+                alert_location("请先登录再提交留言信息！", Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
             }
             
             // 验证码验证
@@ -79,6 +85,7 @@ class MessageController extends Controller
                 $data['status'] = $status;
                 $data['create_user'] = 'guest';
                 $data['update_user'] = 'guest';
+                $data['uid'] = session('pboot_uid');
             }
             
             if ($this->model->addMessage($data)) {

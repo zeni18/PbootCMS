@@ -29,6 +29,12 @@ return array(
         'admin/Form' => 'admin/content.Form',
         'admin/Tags' => 'admin/content.Tags',
         
+        // 会员模块
+        'admin/MemberGroup' => 'admin/member.MemberGroup',
+        'admin/MemberField' => 'admin/member.MemberField',
+        'admin/Member' => 'admin/member.Member',
+        'admin/MemberComment' => 'admin/member.MemberComment',
+        
         // 前台及接口路径统一小写URL
         // =======前台路由============
         'home/sitemap.xml' => 'home/Sitemap/index', // 站点地图1

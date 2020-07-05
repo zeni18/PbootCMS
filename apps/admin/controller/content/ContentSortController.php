@@ -53,6 +53,9 @@ class ContentSortController extends Controller
         $url_break_char = $this->config('url_break_char') ?: '_';
         $this->assign('url_break_char', $url_break_char);
         
+        // 获取会员分组
+        $this->assign('groups', model('admin.member.MemberGroup')->getSelect());
+        
         $this->display('content/contentsort.html');
     }
 
@@ -143,6 +146,8 @@ class ContentSortController extends Controller
                         'listtpl' => $listtpl,
                         'contenttpl' => $contenttpl,
                         'status' => $status,
+                        'gid' => 0,
+                        'gtype' => 4,
                         'subname' => '',
                         'filename' => '',
                         'outlink' => '',
@@ -175,6 +180,10 @@ class ContentSortController extends Controller
                 $title = post('title');
                 $keywords = post('keywords');
                 $description = post('description');
+                
+                $gid = post('gid', 'int') ?: 0;
+                $gtype = post('gtype', 'int') ?: 4;
+                $gnote = post('gnote');
                 
                 if (! $scode) {
                     alert_back('编码不能为空！');
@@ -231,6 +240,9 @@ class ContentSortController extends Controller
                     'listtpl' => $listtpl,
                     'contenttpl' => $contenttpl,
                     'status' => $status,
+                    'gid' => $gid,
+                    'gtype' => $gtype,
+                    'gnote' => $gnote,
                     'subname' => $subname,
                     'filename' => $filename,
                     'outlink' => $outlink,
@@ -262,23 +274,6 @@ class ContentSortController extends Controller
                 $this->log('新增数据内容栏目' . $scode . '失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            
-            // 内容栏目下拉表
-            $sort_tree = $this->model->getSelect();
-            $sort_select = $this->makeSortSelect($sort_tree);
-            $this->assign('sort_select', $sort_select);
-            
-            // 模板文件
-            $htmldir = $this->config('tpl_html_dir') ? '/' . $this->config('tpl_html_dir') : '';
-            $this->assign('tpls', file_list(ROOT_PATH . current($this->config('tpl_dir')) . '/' . $this->model->getTheme() . $htmldir));
-            
-            // 内容模型
-            $models = model('admin.content.Model');
-            $this->assign('models', $models->getSelect());
-            
-            $this->display('content/contentsort.html');
         }
     }
 
@@ -396,6 +391,10 @@ class ContentSortController extends Controller
             $description = post('description');
             $modsub = post('modsub', 'int');
             
+            $gid = post('gid', 'int') ?: 0;
+            $gtype = post('gtype', 'int') ?: 4;
+            $gnote = post('gnote');
+            
             if (! $pcode) { // 父编码默认为0
                 $pcode = 0;
             }
@@ -439,6 +438,9 @@ class ContentSortController extends Controller
                 'listtpl' => $listtpl,
                 'contenttpl' => $contenttpl,
                 'status' => $status,
+                'gid' => $gid,
+                'gtype' => $gtype,
+                'gnote' => $gnote,
                 'subname' => $subname,
                 'filename' => $filename,
                 'outlink' => $outlink,
@@ -486,6 +488,9 @@ class ContentSortController extends Controller
             $models = model('admin.content.Model');
             $this->assign('models', $models->getSelect());
             
+            // 获取会员分组
+            $this->assign('groups', model('admin.member.MemberGroup')->getSelect());
+            
             $this->display('content/contentsort.html');
         }
     }
@@ -518,6 +523,9 @@ class ContentSortController extends Controller
             'istop' => 0,
             'isrecommend' => 0,
             'isheadline' => 0,
+            'gid' => 0,
+            'gtype' => 4,
+            'gnote' => '',
             'visits' => 0,
             'likes' => 0,
             'oppose' => 0,

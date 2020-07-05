@@ -952,5 +952,18 @@ function preg_replace_r($search, $replace, $subject)
     return $subject;
 }
 
+// 生成随机验证码
+function create_code($len = 4)
+{
+    $charset = 'ABCDEFGHKMNPRTUVWXY23456789';
+    $charset = str_shuffle($charset);
+    $charlen = strlen($charset) - 1;
+    $code = '';
+    for ($i = 0; $i < $len; $i ++) {
+        $code .= $charset[mt_rand(0, $charlen)];
+    }
+    return $code;
+}
+
 
 

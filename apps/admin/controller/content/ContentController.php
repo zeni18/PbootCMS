@@ -65,6 +65,9 @@ class ContentController extends Controller
             // 前端地址连接符判断
             $url_break_char = $this->config('url_break_char') ?: '_';
             $this->assign('url_break_char', $url_break_char);
+            
+            // 获取会员分组
+            $this->assign('groups', model('admin.member.MemberGroup')->getSelect());
         }
         
         $this->display('content/content.html');
@@ -97,6 +100,10 @@ class ContentController extends Controller
             $istop = post('istop', 'int', '', '', 0);
             $isrecommend = post('isrecommend', 'int', '', '', 0);
             $isheadline = post('isheadline', 'int', '', '', 0);
+            
+            $gid = post('gid', 'int') ?: 0;
+            $gtype = post('gtype', 'int') ?: 4;
+            $gnote = post('gnote');
             
             if (! $scode) {
                 alert_back('内容分类不能为空！');
@@ -155,6 +162,9 @@ class ContentController extends Controller
                 'istop' => $istop,
                 'isrecommend' => $isrecommend,
                 'isheadline' => $isheadline,
+                'gid' => $gid,
+                'gtype' => $gtype,
+                'gnote' => $gnote,
                 'visits' => 0,
                 'likes' => 0,
                 'oppose' => 0,
@@ -196,26 +206,6 @@ class ContentController extends Controller
                 $this->log('新增文章失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            
-            if (! $mcode = get('mcode', 'var')) {
-                error('传递的模型编码参数有误，请核对后重试！');
-            }
-            
-            // 文章分类
-            $sort_model = model('admin.content.ContentSort');
-            $sort_select = $sort_model->getListSelect($mcode);
-            $this->assign('sort_select', $this->makeSortSelect($sort_select, session('addscode')));
-            $this->assign('subsort_select', $this->makeSortSelect($sort_select));
-            
-            // 模型名称
-            $this->assign('model_name', model('admin.content.Model')->getName($mcode));
-            
-            // 扩展字段
-            $this->assign('extfield', model('admin.content.ExtField')->getModelField($mcode));
-            
-            $this->display('content/content.html');
         }
     }
 
@@ -420,6 +410,10 @@ class ContentController extends Controller
             $isrecommend = post('isrecommend', 'int', '', '', 0);
             $isheadline = post('isheadline', 'int', '', '', 0);
             
+            $gid = post('gid', 'int') ?: 0;
+            $gtype = post('gtype', 'int') ?: 4;
+            $gnote = post('gnote');
+            
             if (! $scode) {
                 alert_back('内容分类不能为空！');
             }
@@ -471,6 +465,9 @@ class ContentController extends Controller
                 'istop' => $istop,
                 'isrecommend' => $isrecommend,
                 'isheadline' => $isheadline,
+                'gid' => $gid,
+                'gtype' => $gtype,
+                'gnote' => $gnote,
                 'update_user' => session('username')
             );
             
@@ -528,6 +525,9 @@ class ContentController extends Controller
             
             // 扩展字段
             $this->assign('extfield', model('admin.content.ExtField')->getModelField($mcode));
+            
+            // 获取会员分组
+            $this->assign('groups', model('admin.member.MemberGroup')->getSelect());
             
             $this->display('content/content.html');
         }

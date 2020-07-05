@@ -59,7 +59,8 @@ class ParserModel extends Model
             'a.*',
             'c.name AS parentname',
             'b.type',
-            'b.urlname'
+            'b.urlname',
+            'd.gcode'
         );
         $join = array(
             array(
@@ -70,6 +71,11 @@ class ParserModel extends Model
             array(
                 'ay_content_sort c',
                 'a.pcode=c.scode',
+                'LEFT'
+            ),
+            array(
+                'ay_member_group d',
+                'a.gid=d.id',
                 'LEFT'
             )
         );
@@ -289,7 +295,8 @@ class ParserModel extends Model
                 'd.type',
                 'd.name as modelname',
                 'd.urlname',
-                'e.*'
+                'e.*',
+                'f.gcode'
             );
         }
         $join = array(
@@ -306,6 +313,11 @@ class ParserModel extends Model
             array(
                 'ay_model d',
                 'b.mcode=d.mcode',
+                'LEFT'
+            ),
+            array(
+                'ay_member_group f',
+                'a.gid=f.id',
                 'LEFT'
             )
         );
@@ -393,7 +405,8 @@ class ParserModel extends Model
                 'd.type',
                 'd.name as modelname',
                 'd.urlname',
-                'e.*'
+                'e.*',
+                'f.gcode'
             );
         }
         $join = array(
@@ -410,6 +423,11 @@ class ParserModel extends Model
             array(
                 'ay_model d',
                 'b.mcode=d.mcode',
+                'LEFT'
+            ),
+            array(
+                'ay_member_group f',
+                'a.gid=f.id',
                 'LEFT'
             )
         );
@@ -471,7 +489,8 @@ class ParserModel extends Model
             'd.type',
             'd.name as modelname',
             'd.urlname',
-            'e.*'
+            'e.*',
+            'f.gcode'
         );
         $join = array(
             array(
@@ -492,6 +511,11 @@ class ParserModel extends Model
             array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
+                'LEFT'
+            ),
+            array(
+                'ay_member_group f',
+                'a.gid=f.id',
                 'LEFT'
             )
         );
@@ -516,7 +540,8 @@ class ParserModel extends Model
             'd.type',
             'd.name as modelname',
             'd.urlname',
-            'e.*'
+            'e.*',
+            'f.gcode'
         );
         $join = array(
             array(
@@ -537,6 +562,11 @@ class ParserModel extends Model
             array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
+                'LEFT'
+            ),
+            array(
+                'ay_member_group f',
+                'a.gid=f.id',
                 'LEFT'
             )
         );
@@ -725,24 +755,41 @@ class ParserModel extends Model
             $where = array();
         } elseif ($lg) {
             $where = array(
-                'acode' => $lg
+                'a.acode' => $lg
             );
         } else {
             $where = array(
-                'acode' => get_lg()
+                'a.acode' => get_lg()
             );
         }
+        
+        $field = array(
+            'a.*',
+            'b.username',
+            'b.nickname',
+            'b.headpic'
+        );
+        $join = array(
+            'ay_member b',
+            'a.uid=b.id',
+            'LEFT'
+        );
+        
         if ($page) {
-            return parent::table('ay_message')->where("status=1")
+            return parent::table('ay_message a')->field($field)
+                ->join($join)
+                ->where("a.status=1")
                 ->where($where)
-                ->order('id DESC')
+                ->order('a.id DESC')
                 ->decode(false)
                 ->page(1, $num, $start)
                 ->select();
         } else {
-            return parent::table('ay_message')->where("status=1")
+            return parent::table('ay_message a')->field($field)
+                ->join($join)
+                ->where("a.status=1")
                 ->where($where)
-                ->order('id DESC')
+                ->order('a.id DESC')
                 ->decode(false)
                 ->limit($start - 1, $num)
                 ->select();
@@ -814,5 +861,111 @@ class ParserModel extends Model
             ->where("acode='" . get_lg() . "'")
             ->order('length(name) desc')
             ->select();
+    }
+
+    // 新增评论
+    public function addComment($data)
+    {
+        return parent::table('ay_member_comment')->insert($data);
+    }
+
+    // 文章评论
+    public function getComment($contentid, $pid, $num, $order, $page = false, $start = 1)
+    {
+        $field = array(
+            'a.*',
+            'b.username',
+            'b.nickname',
+            'b.headpic',
+            'c.username as pusername',
+            'c.nickname as pnickname',
+            'c.headpic as pheadpic'
+        );
+        $join = array(
+            array(
+                'ay_member b',
+                'a.uid=b.id',
+                'LEFT'
+            ),
+            array(
+                'ay_member c',
+                'a.puid=c.id',
+                'LEFT'
+            )
+        );
+        if ($page) {
+            return parent::table('ay_member_comment a')->field($field)
+                ->join($join)
+                ->where("a.contentid='$contentid'")
+                ->where('a.pid=' . $pid)
+                ->where("a.status=1")
+                ->order($order)
+                ->page(1, $num, $start)
+                ->select();
+        } else {
+            return parent::table('ay_member_comment a')->field($field)
+                ->join($join)
+                ->where("a.contentid='$contentid'")
+                ->where('a.pid=' . $pid)
+                ->where("a.status=1")
+                ->order($order)
+                ->limit($start - 1, $num)
+                ->select();
+        }
+    }
+
+    // 我的评论
+    public function getMyComment($num, $order, $page = false, $start = 1)
+    {
+        $field = array(
+            'a.*',
+            'b.username',
+            'b.nickname',
+            'b.headpic',
+            'c.username as pusername',
+            'c.nickname as pnickname',
+            'c.headpic as pheadpic',
+            'd.title'
+        );
+        $join = array(
+            array(
+                'ay_member b',
+                'a.uid=b.id',
+                'LEFT'
+            ),
+            array(
+                'ay_member c',
+                'a.puid=c.id',
+                'LEFT'
+            ),
+            array(
+                'ay_content d',
+                'a.contentid=d.id',
+                'LEFT'
+            )
+        );
+        if ($page) {
+            return parent::table('ay_member_comment a')->field($field)
+                ->join($join)
+                ->where("uid='" . session('pboot_uid') . "'")
+                ->order($order)
+                ->page(1, $num, $start)
+                ->select();
+        } else {
+            return parent::table('ay_member_comment a')->field($field)
+                ->join($join)
+                ->where("uid='" . session('pboot_uid') . "'")
+                ->order($order)
+                ->limit($start - 1, $num)
+                ->select();
+        }
+    }
+
+    // 删除评论
+    public function delComment($id)
+    {
+        return parent::table('ay_member_comment')->where("uid='" . session('pboot_uid') . "'")
+            ->where("id=$id")
+            ->delete();
     }
 }

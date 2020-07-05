@@ -129,14 +129,6 @@ class ExtFieldController extends Controller
                 $this->log('新增扩展字段失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            
-            // 内容模型
-            $models = model('admin.content.Model');
-            $this->assign('models', $models->getSelect());
-            
-            $this->assign('add', true);
-            $this->display('content/extfield.html');
         }
     }
 

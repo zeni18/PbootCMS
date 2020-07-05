@@ -76,9 +76,6 @@ class TagsController extends Controller
                 $this->log('新增文章内链失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            $this->display('content/tags.html');
         }
     }
 

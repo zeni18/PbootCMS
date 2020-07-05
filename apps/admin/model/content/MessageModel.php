@@ -16,8 +16,21 @@ class MessageModel extends Model
     // 获取列表
     public function getList($page = true)
     {
-        return parent::table('ay_message')->where("acode='" . session('acode') . "'")
-            ->order('id DESC')
+        $field = array(
+            'a.*',
+            'b.username',
+            'b.nickname',
+            'b.headpic'
+        );
+        $join = array(
+            'ay_member b',
+            'a.uid=b.id',
+            'LEFT'
+        );
+        return parent::table('ay_message a')->field($field)
+            ->join($join)
+            ->where("a.acode='" . session('acode') . "'")
+            ->order('a.id DESC')
             ->decode(false)
             ->page($page)
             ->select();
@@ -26,8 +39,21 @@ class MessageModel extends Model
     // 获取详情
     public function getMessage($id)
     {
-        return parent::table('ay_message')->where("id=$id")
-            ->where("acode='" . session('acode') . "'")
+        $field = array(
+            'a.*',
+            'b.username',
+            'b.nickname',
+            'b.headpic'
+        );
+        $join = array(
+            'ay_member b',
+            'a.uid=b.id',
+            'LEFT'
+        );
+        return parent::table('ay_message a')->field($field)
+            ->join($join)
+            ->where("a.id=$id")
+            ->where("a.acode='" . session('acode') . "'")
             ->find();
     }
 

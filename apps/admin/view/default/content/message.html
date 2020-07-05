@@ -46,6 +46,12 @@
 								操作系统:[value->user_os]
 							</td>
 					    </tr>
+					    {if($value->username)}
+					    <tr>
+					      	<th>会员账号</th>
+					      	<td>[value->username]([value->nickname])</td>
+					    </tr>
+					    {/if}
 					    <tr>
 					      	<th>回复内容</th>
 					      	<td>[value->recontent]</td>

@@ -111,13 +111,6 @@ class UserController extends Controller
                 $this->log('新增用户' . $ucode . '失败！');
                 error('新增失败', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            
-            // 角色列表
-            $role_model = model('admin.system.Role');
-            $this->assign('roles', $role_model->getSelect());
-            $this->display('system/user.html');
         }
     }
 

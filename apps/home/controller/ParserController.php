@@ -12,6 +12,7 @@ use core\basic\Controller;
 use app\home\model\ParserModel;
 use core\basic\Url;
 use app\home\model\DoModel;
+use app\home\model\MemberModel;
 
 class ParserController extends Controller
 {
@@ -37,6 +38,8 @@ class ParserController extends Controller
     {
         // 处理模板中不需要解析的标签
         $content = $this->savePreLabel($content);
+        $content = $this->parserSingleLabel($content); // 单标签解析
+        $content = $this->parserUserLabel($content); // 自定义标签
         return $content;
     }
 
@@ -56,10 +59,9 @@ class ParserController extends Controller
             }
         }
         
-        $content = $this->parserSingleLabel($content); // 单标签解析
         $content = $this->parserSiteLabel($content); // 站点标签
         $content = $this->parserCompanyLabel($content); // 公司标签
-        $content = $this->parserUserLabel($content); // 自定义标签
+        $content = $this->parserMemberLabel($content); // 会员标签
         $content = $this->parserNavLabel($content); // 分类列表
         $content = $this->parserSelectAllLabel($content); // CMS筛选全部标签解析
         $content = $this->parserSelectLabel($content); // CMS筛选标签解析
@@ -115,18 +117,59 @@ class ParserController extends Controller
     // 解析单标签
     public function parserSingleLabel($content)
     {
+        $content = str_replace('{pboot:ucenter}', Url::home('member/ucenter'), $content); // 用户中心
+        if (! ! $url = get("backurl")) { // 获取会跳地址
+            $content = str_replace('{pboot:login}', Url::home('member/login', null, "backurl=" . $url), $content); // 登录地址
+        } else {
+            $content = str_replace('{pboot:login}', Url::home('member/login'), $content); // 登录地址
+        }
+        
+        $content = str_replace('{pboot:register}', Url::home('member/register'), $content); // 注册地址
+        $content = str_replace('{pboot:umodify}', Url::home('member/umodify'), $content); // 修改资料地址
+        $content = str_replace('{pboot:logout}', Url::home('member/logout'), $content); // 推出登录
+        $content = str_replace('{pboot:upload}', Url::home('member/upload'), $content); // 上传资料
+        
+        if (strpos($content, '{pboot:sendemail}')) {
+            session('sendemail', true); // 避免非法外部提交
+            $content = str_replace('{pboot:sendemail}', Url::home('member/sendEmail'), $content); // 上传资料
+        } else {
+            session('sendemail', false);
+        }
+        
+        $content = str_replace('{pboot:islogin}', session('pboot_uid') ? 1 : 0, $content); // 是否登录
+        if (strpos($content, '{pboot:mustlogin}') !== false) {
+            $content = str_replace('{pboot:mustlogin}', '', $content);
+            if (! session('pboot_uid')) { // 没有经登录
+                _404('您的权限不足，无法浏览本页面！', Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+            }
+        }
+        
         $content = str_replace('{pboot:msgaction}', Url::home('message'), $content); // 留言提交路径
         $content = str_replace('{pboot:scaction}', Url::home('search'), $content); // 搜索提交路径
+        $content = str_replace('{pboot:msgcodestatus}', $this->config('message_check_code') === '0' ? 0 : 1, $content); // 是否开留言启验证码
+        $content = str_replace('{pboot:formcodestatus}', $this->config('form_check_code') === '0' ? 0 : 1, $content); // 是否开启表单验证码
+        $content = str_replace('{pboot:keyword}', get('keyword', 'vars'), $content); // 当前搜索的关键字
+        
         $content = str_replace('{pboot:checkcode}', CORE_DIR . '/code.php', $content); // 验证码路径
         $content = str_replace('{pboot:lgpath}', Url::get('home/Do/area'), $content); // 多语言切换前置路径,如{pboot:lgpath}?lg=cn
+        
         $content = str_replace('{pboot:appid}', $this->config('api_appid'), $content); // API认证用户
         $content = str_replace('{pboot:timestamp}', time(), $content); // 认证时间戳
         $content = str_replace('{pboot:signature}', md5(md5($this->config('api_appid') . $this->config('api_secret') . time())), $content); // API认证密钥
+        
         $content = str_replace('{pboot:httpurl}', get_http_url(), $content); // 当前访问的域名地址
         $content = str_replace('{pboot:pageurl}', get_current_url(), $content); // 当前页面的地址
-        $content = str_replace('{pboot:keyword}', get('keyword', 'vars'), $content); // 当前搜索的关键字
-        $content = str_replace('{pboot:msgcodestatus}', $this->config('message_check_code') === '0' ? 0 : 1, $content); // 是否开留言启验证码
-        $content = str_replace('{pboot:formcodestatus}', $this->config('form_check_code') === '0' ? 0 : 1, $content); // 是否开启表单验证码
+        
+        $content = str_replace('{pboot:registercodestatus}', $this->config('register_check_code') === '0' ? 0 : ($this->config('register_check_code') ?: 1), $content); // 是否开启注册验证码
+        $content = str_replace('{pboot:logincodestatus}', $this->config('login_check_code') === '0' ? 0 : 1, $content); // 是否开启评论验证码
+        $content = str_replace('{pboot:commentcodestatus}', $this->config('comment_check_code') === '0' ? 0 : 1, $content); // 是否开启评论验证码
+        $content = str_replace('{pboot:commentaction}', Url::home('comment/add', null, "contentid={content:id}"), $content); // 评论提交路径
+        $content = str_replace('{pboot:mycommentpage}', Url::home('comment/my'), $content); // 我的评论
+        
+        $content = str_replace('{pboot:registerstatus}', $this->config('register_status') === '0' ? 0 : 1, $content); // 是否开启注册
+        $content = str_replace('{pboot:loginstatus}', $this->config('login_status') === '0' ? 0 : 1, $content); // 是否开启登录
+        $content = str_replace('{pboot:commentstatus}', $this->config('comment_status') === '0' ? 0 : 1, $content); // 是否开启评论
+        
         return $content;
     }
 
@@ -251,6 +294,59 @@ class ParserController extends Controller
                                 }
                             }
                             $content = str_replace($matches[0][$i], $this->adjustLabelData($params, $data[$matches[1][$i]]['value']), $content);
+                        }
+                }
+            }
+        }
+        return $content;
+    }
+
+    // 会员标签解析
+    private function parserMemberLabel($content)
+    {
+        $pattern = '/\{user:([\w]+)(\s+[^}]+)?\}/';
+        if (preg_match_all($pattern, $content, $matches)) {
+            $count = count($matches[0]);
+            $model = new MemberModel();
+            $data = $model->getUser();
+            for ($i = 0; $i < $count; $i ++) {
+                // 无数据直接替换并跳过
+                if (! $data) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                $params = $this->parserParam($matches[2][$i]);
+                switch ($matches[1][$i]) {
+                    case 'password': // 密码不允许显示
+                        $content = str_replace($matches[0][$i], '', $content);
+                        break;
+                    case 'registertime':
+                        $content = str_replace($matches[0][$i], $this->adjustLabelData($params, $data->register_time), $content);
+                        break;
+                    case 'logincount':
+                        $content = str_replace($matches[0][$i], $this->adjustLabelData($params, $data->login_count), $content);
+                        break;
+                    case 'lastloginip':
+                        $content = str_replace($matches[0][$i], $this->adjustLabelData($params, long2ip($data->last_login_ip)), $content);
+                        break;
+                    case 'lastlogintime':
+                        $content = str_replace($matches[0][$i], $this->adjustLabelData($params, $data->last_login_time), $content);
+                        break;
+                    case 'headpic':
+                        if ($data->headpic) {
+                            if (! preg_match('/^http/', $data->headpic)) {
+                                $content = str_replace($matches[0][$i], $this->adjustLabelData($params, SITE_DIR . $data->headpic), $content);
+                            } else {
+                                $content = str_replace($matches[0][$i], $this->adjustLabelData($params, $data->headpic), $content);
+                            }
+                        } else {
+                            $content = str_replace($matches[0][$i], SITE_DIR . '/apps/admin/view/default/images/logo.png', $content);
+                        }
+                    default:
+                        if (isset($data->{$matches[1][$i]})) {
+                            $content = str_replace($matches[0][$i], $this->adjustLabelData($params, $data->{$matches[1][$i]}), $content);
+                        } else {
+                            $content = str_replace($matches[0][$i], '', $content);
                         }
                 }
             }
@@ -1655,9 +1751,9 @@ class ParserController extends Controller
                                 $url_rule_type = $this->config('url_rule_type') ?: 3;
                                 if ($target == 'tag') {
                                     if ($url_rule_type == 3) {
-                                        $link = Url::home('tag=' . urlencode($value['tags']), '');
+                                        $link = Url::home('tag=' . urlencode($value['tags']), false);
                                     } else {
-                                        $link = Url::home('tag/' . urlencode($value['tags']));
+                                        $link = Url::home('tag/' . urlencode($value['tags']), false);
                                     }
                                 } else {
                                     $link = $this->parserLink($value['sort']->type, $value['sort']->urlname, 'list', $value['sort']->scode, $value['sort']->filename, '', '');
@@ -1946,9 +2042,29 @@ class ParserController extends Controller
                             case 'replydate':
                                 $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->update_time), $one_html);
                                 break;
+                            case 'headpic':
+                                if ($value->headpic) {
+                                    if (! preg_match('/^http/', $value->headpic)) {
+                                        $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, SITE_DIR . $value->headpic), $one_html);
+                                    } else {
+                                        $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->headpic), $one_html);
+                                    }
+                                } else {
+                                    $one_html = str_replace($matches2[0][$j], SITE_DIR . '/apps/admin/view/default/images/logo.png', $one_html);
+                                }
+                                break;
+                            case 'nickname':
+                                if ($value->nickname) {
+                                    $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->nickname), $one_html);
+                                } elseif (! $value->username) {
+                                    $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, "匿名用户"), $one_html);
+                                }
+                                break;
                             default:
                                 if (isset($value->{$matches2[1][$j]})) {
                                     $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->{$matches2[1][$j]}), $one_html);
+                                } else {
+                                    $one_html = str_replace($matches2[0][$j], '', $one_html);
                                 }
                         }
                     }
@@ -2042,6 +2158,8 @@ class ParserController extends Controller
                             default:
                                 if (isset($value->{$matches2[1][$j]})) {
                                     $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->{$matches2[1][$j]}), $one_html);
+                                } else {
+                                    $one_html = str_replace($matches2[0][$j], '', $one_html);
                                 }
                         }
                     }
@@ -2074,6 +2192,388 @@ class ParserController extends Controller
                     continue;
                 }
                 $content = str_replace($matches[0][$i], Url::home('form/' . $fcode), $content);
+            }
+        }
+        return $content;
+    }
+
+    // 解析文章评论
+    public function parserCommentLabel($content)
+    {
+        $pattern = '/\{pboot:comment(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:comment\}/';
+        $pattern2 = '/\[comment:([\w]+)(\s+[^]]+)?\]/';
+        $pattern3 = '/\{pboot:commentsub(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:commentsub\}/';
+        $pattern4 = '/\[commentsub:([\w]+)(\s+[^]]+)?\]/';
+        if (preg_match_all($pattern, $content, $matches)) {
+            $count = count($matches[0]);
+            for ($i = 0; $i < $count; $i ++) {
+                // 获取调节参数
+                $params = $this->parserParam($matches[1][$i]);
+                $num = $this->config('pagesize');
+                $page = true;
+                $order = 'a.id desc';
+                $start = 1;
+                
+                // 跳过未指定fcode的标签
+                if (! array_key_exists('contentid', $params)) {
+                    continue;
+                }
+                
+                foreach ($params as $key => $value) {
+                    switch ($key) {
+                        case 'num':
+                            $num = $value;
+                            break;
+                        case 'page':
+                            $page = $value;
+                            break;
+                        case 'start':
+                            $start = $value;
+                            break;
+                        case 'contentid':
+                            $contentid = $value;
+                            break;
+                        case 'order':
+                            $order = $value;
+                            break;
+                    }
+                }
+                
+                // 起始数校验
+                if (! is_numeric($start) || $start < 1) {
+                    $start = 1;
+                }
+                
+                // 读取数据
+                if (! $data = $this->model->getComment($contentid, 0, $num, $order, $page, $start)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
+                // 匹配到内部标签
+                if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
+                    $count2 = count($matches2[0]); // 循环内的内容标签数量
+                } else {
+                    $count2 = 0;
+                }
+                
+                $out_html = '';
+                
+                $pagenum = defined('PAGE') ? PAGE : 1;
+                $key = ($pagenum - 1) * $num + 1;
+                foreach ($data as $value) { // 按查询数据条数循环
+                    $one_html = $matches[2][$i];
+                    for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
+                        $params = $this->parserParam($matches2[2][$j]);
+                        $one_html = $this->parserComment($matches2[1][$j], $matches2[0][$j], $one_html, $value, $params, $key);
+                    }
+                    $key ++;
+                    
+                    // 解析子评论
+                    if (preg_match_all($pattern3, $one_html, $matches3)) {
+                        $count3 = count($matches3[0]);
+                        for ($k = 0; $k < $count3; $k ++) {
+                            
+                            // 读取子评论数据，正序排列，最大100条
+                            if (! $data_sub = $this->model->getComment($contentid, $value->id, 100, 'a.id asc')) {
+                                $one_html = str_replace($matches3[0][$k], '', $one_html);
+                                continue;
+                            }
+                            
+                            // 匹配到子评论内部标签
+                            if (preg_match_all($pattern4, $matches3[2][$k], $matches4)) {
+                                $count4 = count($matches4[0]); // 循环内的内容标签数量
+                            } else {
+                                $count4 = 0;
+                            }
+                            
+                            $out_html_sub = '';
+                            $key_sub = 1;
+                            foreach ($data_sub as $value_sub) { // 按子查询数据条数循环
+                                $one_html_sub = $matches3[2][$k];
+                                for ($m = 0; $m < $count4; $m ++) { // 循环替换数据
+                                    $params_sub = $this->parserParam($matches4[2][$m]);
+                                    $one_html_sub = $this->parserComment($matches4[1][$m], $matches4[0][$m], $one_html_sub, $value_sub, $params_sub, $key_sub);
+                                }
+                                $key_sub ++;
+                                $out_html_sub .= $one_html_sub;
+                            }
+                            $one_html = str_replace($matches3[0][$k], $out_html_sub, $one_html);
+                        }
+                    }
+                    
+                    $out_html .= $one_html;
+                }
+                $content = str_replace($matches[0][$i], $out_html, $content);
+            }
+        }
+        return $content;
+    }
+
+    // 解析我的评论
+    public function parserMyCommentLabel($content)
+    {
+        $pattern = '/\{pboot:mycomment(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:mycomment\}/';
+        $pattern2 = '/\[mycomment:([\w]+)(\s+[^]]+)?\]/';
+        
+        if (preg_match_all($pattern, $content, $matches)) {
+            $count = count($matches[0]);
+            for ($i = 0; $i < $count; $i ++) {
+                // 获取调节参数
+                $params = $this->parserParam($matches[1][$i]);
+                $num = $this->config('pagesize');
+                $page = true;
+                $order = 'a.id desc';
+                $start = 1;
+                
+                foreach ($params as $key => $value) {
+                    switch ($key) {
+                        case 'num':
+                            $num = $value;
+                            break;
+                        case 'page':
+                            $page = $value;
+                            break;
+                        case 'start':
+                            $start = $value;
+                            break;
+                        case 'order':
+                            $order = $value;
+                            break;
+                    }
+                }
+                
+                // 起始数校验
+                if (! is_numeric($start) || $start < 1) {
+                    $start = 1;
+                }
+                
+                // 读取数据
+                if (! $data = $this->model->getMyComment($num, $order, $page, $start)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
+                // 匹配到内部标签
+                if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
+                    $count2 = count($matches2[0]); // 循环内的内容标签数量
+                } else {
+                    $count2 = 0;
+                }
+                
+                $out_html = '';
+                
+                $pagenum = defined('PAGE') ? PAGE : 1;
+                $key = ($pagenum - 1) * $num + 1;
+                foreach ($data as $value) { // 按查询数据条数循环
+                    $one_html = $matches[2][$i];
+                    for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
+                        $params = $this->parserParam($matches2[2][$j]);
+                        $one_html = str_replace("[mycomment:delaction]", Url::home('comment/del', null, 'id=' . $value->id), $one_html);
+                        $one_html = $this->parserComment($matches2[1][$j], $matches2[0][$j], $one_html, $value, $params, $key);
+                    }
+                    $key ++;
+                    $out_html .= $one_html;
+                }
+                $content = str_replace($matches[0][$i], $out_html, $content);
+            }
+        }
+        return $content;
+    }
+
+    // 解析评论内容
+    private function parserComment($label, $search, $content, $data, $params, $key)
+    {
+        switch ($label) {
+            case 'n':
+                $content = str_replace($search, $this->adjustLabelData($params, $key) - 1, $content);
+                break;
+            case 'i':
+                $content = str_replace($search, $this->adjustLabelData($params, $key), $content);
+                break;
+            case 'ip':
+                $content = str_replace($search, $this->adjustLabelData($params, long2ip($data->user_ip)), $content);
+                break;
+            case 'os':
+                $content = str_replace($search, $this->adjustLabelData($params, $data->user_os), $content);
+                break;
+            case 'bs':
+                $content = str_replace($search, $this->adjustLabelData($params, $data->user_bs), $content);
+                break;
+            case 'date':
+                $content = str_replace($search, $this->adjustLabelData($params, $data->create_time), $content);
+                break;
+            case 'headpic':
+                if ($data->headpic) {
+                    if (! preg_match('/^http/', $data->headpic)) {
+                        $content = str_replace($search, $this->adjustLabelData($params, SITE_DIR . $data->headpic), $content);
+                    } else {
+                        $content = str_replace($search, $this->adjustLabelData($params, $data->headpic), $content);
+                    }
+                } else {
+                    $content = str_replace($search, SITE_DIR . '/apps/admin/view/default/images/logo.png', $content);
+                }
+                break;
+            case 'pheadpic':
+                if ($data->pheadpic) {
+                    if (! preg_match('/^http/', $data->pheadpic)) {
+                        $content = str_replace($search, $this->adjustLabelData($params, SITE_DIR . $data->pheadpic), $content);
+                    } else {
+                        $content = str_replace($search, $this->adjustLabelData($params, $data->pheadpic), $content);
+                    }
+                } else {
+                    $content = str_replace($search, SITE_DIR . '/apps/admin/view/default/images/logo.png', $content);
+                }
+                break;
+            case 'replyaction':
+                if ($data->pid) {
+                    $pid = $data->pid;
+                } else {
+                    $pid = $data->id;
+                }
+                $content = str_replace($search, Url::home('comment/add', null, "contentid=" . $data->contentid . "&pid=" . $pid . "&puid=" . $data->uid), $content);
+                break;
+            case 'nickname':
+                if ($data->nickname) {
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->nickname), $content);
+                } elseif (! $data->username) {
+                    $content = str_replace($search, $this->adjustLabelData($params, "匿名用户"), $content);
+                }
+                break;
+            case 'pnickname':
+                if ($data->pnickname) {
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->pnickname), $content);
+                } elseif (! $data->pusername) {
+                    $content = str_replace($search, $this->adjustLabelData($params, "匿名用户"), $content);
+                }
+                break;
+            default:
+                if (isset($data->{$label})) {
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->{$label}), $content);
+                } else {
+                    $content = str_replace($search, '', $content);
+                }
+        }
+        return $content;
+    }
+
+    // 解析评论子楼层
+    public function parserCommentsubLabel($content)
+    {
+        $pattern = '/\{pboot:commentsub(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:commentsub\}/';
+        $pattern2 = '/\[commentsub:([\w]+)(\s+[^]]+)?\]/';
+        if (preg_match_all($pattern, $content, $matches)) {
+            $count = count($matches[0]);
+            for ($i = 0; $i < $count; $i ++) {
+                // 获取调节参数
+                $params = $this->parserParam($matches[1][$i]);
+                $num = $this->config('pagesize');
+                $page = false;
+                $order = 'a.id desc';
+                $start = 1;
+                
+                // 跳过未指定fcode的标签
+                if (! array_key_exists('contentid', $params)) {
+                    continue;
+                }
+                
+                foreach ($params as $key => $value) {
+                    switch ($key) {
+                        case 'num':
+                            $num = $value;
+                            break;
+                        case 'page':
+                            $page = $value;
+                            break;
+                        case 'start':
+                            $start = $value;
+                            break;
+                        case 'contentid':
+                            $contentid = $value;
+                            break;
+                        case 'order':
+                            $order = $value;
+                            break;
+                    }
+                }
+                
+                // 起始数校验
+                if (! is_numeric($start) || $start < 1) {
+                    $start = 1;
+                }
+                
+                // 读取数据
+                if (! $data = $this->model->getComment($contentid, $num, $order, $page, $start)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
+                // 匹配到内部标签
+                if (preg_match_all($pattern2, $matches[2][$i], $matches2)) {
+                    $count2 = count($matches2[0]); // 循环内的内容标签数量
+                } else {
+                    $count2 = 0;
+                }
+                
+                $out_html = '';
+                
+                $pagenum = defined('PAGE') ? PAGE : 1;
+                $key = ($pagenum - 1) * $num + 1;
+                foreach ($data as $value) { // 按查询数据条数循环
+                    $one_html = $matches[2][$i];
+                    for ($j = 0; $j < $count2; $j ++) { // 循环替换数据
+                        $params = $this->parserParam($matches2[2][$j]);
+                        switch ($matches2[1][$j]) {
+                            case 'n':
+                                $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $key) - 1, $one_html);
+                                break;
+                            case 'i':
+                                $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $key), $one_html);
+                                break;
+                            case 'ip':
+                                $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, long2ip($value->user_ip)), $one_html);
+                                break;
+                            case 'os':
+                                $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->user_os), $one_html);
+                                break;
+                            case 'bs':
+                                $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->user_bs), $one_html);
+                                break;
+                            case 'date':
+                                $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->create_time), $one_html);
+                                break;
+                            case 'headpic':
+                                if ($value->headpic) {
+                                    if (! preg_match('/^http/', $value->headpic)) {
+                                        $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, SITE_DIR . $value->headpic), $one_html);
+                                    } else {
+                                        $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->headpic), $one_html);
+                                    }
+                                } else {
+                                    $one_html = str_replace($matches2[0][$j], SITE_DIR . '/apps/admin/view/default/images/logo.png', $one_html);
+                                }
+                                break;
+                            case 'pheadpic':
+                                if ($value->pheadpic) {
+                                    if (! preg_match('/^http/', $value->pheadpic)) {
+                                        $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, SITE_DIR . $value->pheadpic), $one_html);
+                                    } else {
+                                        $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->pheadpic), $one_html);
+                                    }
+                                } else {
+                                    $one_html = str_replace($matches2[0][$j], SITE_DIR . '/apps/admin/view/default/images/logo.png', $one_html);
+                                }
+                                break;
+                            default:
+                                if (isset($value->{$matches2[1][$j]})) {
+                                    $one_html = str_replace($matches2[0][$j], $this->adjustLabelData($params, $value->{$matches2[1][$j]}), $one_html);
+                                }
+                        }
+                    }
+                    $key ++;
+                    $out_html .= $one_html;
+                }
+                $content = str_replace($matches[0][$i], $out_html, $content);
             }
         }
         return $content;
@@ -2757,6 +3257,80 @@ class ParserController extends Controller
                 case 'mark':
                     if ($label && $reqdata = request($label, 'vars') ?: request('keyword', 'vars')) {
                         $data = preg_replace('/(' . $reqdata . ')/i', '<span style="color:red">$1</span>', $data);
+                    }
+                    break;
+                case 'showgcode': // 指定等级显示，支持多个逗号隔开
+                    $showgcode = explode(',', $params['showgcode']);
+                    if (! in_array(session('pboot_gcode'), $showgcode)) {
+                        $data = '';
+                    }
+                    break;
+                case 'showucode': // 指定用户显示，支持多个逗号隔开
+                    $showucode = explode(',', $params['showucode']);
+                    if (! in_array(session('pboot_ucode'), $showucode)) {
+                        $data = '';
+                    }
+                    break;
+                case 'hidegcode': // 指定等级隐藏，支持多个逗号隔开
+                    $hidegcode = explode(',', $params['hidegcode']);
+                    if (in_array(session('pboot_gcode'), $hidegcode)) {
+                        $data = '';
+                    }
+                    break;
+                case 'hideucode': // 指定用户隐藏，支持多个逗号隔开
+                    $hideucode = explode(',', $params['hideucode']);
+                    if (in_array(session('pboot_ucode'), $hideucode)) {
+                        $data = '';
+                    }
+                    break;
+                case 'showgcodelt': // 等级小于显示
+                    if ($params['showgcodelt'] <= session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'showgcodegt': // 等级大于显示
+                    if ($params['showgcodegt'] >= session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'showgcodele': // 等级小于等于显示
+                    if ($params['showgcodele'] < session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'showgcodege': // 等级大于等于显示
+                    if ($params['showgcodege'] > session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'hidegcodelt': // 等级小于隐藏
+                    if ($params['hidegcodelt'] > session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'hidegcodegt': // 等级大于隐藏
+                    if ($params['hidegcodegt'] < session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'hidegcodele': // 等级小于等于隐藏
+                    if ($params['hidegcodele'] >= session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'hidegcodege': // 等级大于等于隐藏
+                    if ($params['hidegcodege'] <= session('pboot_gcode')) {
+                        $data = '';
+                    }
+                    break;
+                case 'showlogin': // 登录后显示
+                    if ($params['showlogin'] && ! session('pboot_uid')) {
+                        $data = '';
+                    }
+                    break;
+                case 'hidelogin': // 登录后隐藏
+                    if ($params['hidelogin'] && session('pboot_uid')) {
+                        $data = '';
                     }
                     break;
             }

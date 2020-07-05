@@ -144,9 +144,11 @@ class Paging
         if (! isset($this->preUrl) && URL) {
             $url = parse_url(URL);
             $path = preg_replace('/\/page\/[0-9]+/i', '', $url['path']);
-            $url_rule_suffix = Config::get('url_rule_suffix');
-            if (! ! $pos = strripos($path, $url_rule_suffix)) {
-                $path = substr($path, 0, $pos);
+            if (defined('CMS_PAGE') && CMS_PAGE == true) { // 使用CMS分页时去除扩展
+                $url_rule_suffix = Config::get('url_rule_suffix');
+                if (! ! $pos = strripos($path, $url_rule_suffix)) {
+                    $path = substr($path, 0, $pos);
+                }
             }
             $this->preUrl = $path;
         }
@@ -157,7 +159,7 @@ class Paging
     private function buildPath($page)
     {
         if ($page) {
-            if (defined('CMS_PAGE')) {
+            if (defined('CMS_PAGE') && CMS_PAGE == true) {
                 $url_rule_type = Config::get('url_rule_type') ?: 3;
                 $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
                 $url_break_char = Config::get('url_break_char') ?: '_';
@@ -233,17 +235,22 @@ class Paging
     private function buildBasicPage($page)
     {
         // 对于路径保留变量给予去除
+        $qs = $_SERVER["QUERY_STRING"];
         if ((M == 'home' && Config::get('url_rule_type') == 2) || (M != 'home' && Config::get('app_url_type') == 2)) {
-            $unset = 'p,s';
-        } else {
-            $unset = null;
+            $qs = preg_replace('/[&\?]?p=([\w\/\.]+)?/i', '', $qs);
+            $qs = preg_replace('/[&\?]?s=([\w\/\.]+)?/i', '', $qs);
         }
+        $qs = preg_replace('/[&\?]?page=([0-9]+)?/i', '', $qs);
         
         if ($page == 1) {
-            return $this->getPreUrl() . query_string($unset);
+            if ($qs) {
+                return $this->getPreUrl() . '?' . $qs;
+            } else {
+                return $this->getPreUrl();
+            }
         } else {
-            if (! ! $qs = query_string($unset)) {
-                return $this->getPreUrl() . $qs . '&page=' . $page;
+            if ($qs) {
+                return $this->getPreUrl() . '?' . $qs . '&page=' . $page;
             } else {
                 return $this->getPreUrl() . '?page=' . $page;
             }

@@ -28,11 +28,12 @@ class Response
     }
 
     // 服务端API返回JSON数据
-    public static function json($code, $data)
+    public static function json($code, $data, $tourl = null)
     {
         @ob_clean();
         $output['code'] = $code ?: 0;
         $output['data'] = $data ?: array();
+        $output['tourl'] = $tourl ?: "";
         
         if (defined('ROWTOTAL')) {
             $output['rowtotal'] = ROWTOTAL;

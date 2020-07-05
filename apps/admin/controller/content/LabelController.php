@@ -88,9 +88,6 @@ class LabelController extends Controller
                 $this->log('新增自定义标签' . $name . '失败！');
                 error('新增失败！', url('admin/Label/index' . get_tab('t2'), false));
             }
-        } else {
-            $this->assign('add', true);
-            $this->display('content/label.html');
         }
     }
 

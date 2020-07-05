@@ -390,6 +390,31 @@
 			                    	<input type="checkbox" name="isheadline" value="1" title="头条">
 			                     </div>
 			                </div>
+			                
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">浏览权限</label>
+			                     <div class="layui-input-block">
+									<select name="gid">
+										<option value="">不限制</option>
+				                        {foreach $groups(key,value)}
+				                            <option value="[value->id]">[value->gname]</option>
+				                        {/foreach}
+				                    </select>
+			                     </div>
+			                </div>  
+			                
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">权限类型</label>
+			                     <div class="layui-input-block">
+			                     	<select name="gtype" id="gtype" >
+			                     		<option value="1">小于</option>
+			                     		<option value="2">小于等于</option>
+			                     		<option value="3">等于</option>
+			                     		<option value="4" selected>大于等于</option>
+			                     		<option value="5">大于</option>
+									</select>
+			                     </div>
+			                </div>  
 					    </div>
 					    
 					    <div class="layui-tab-item ">
@@ -430,6 +455,13 @@
 			                     	<input type="text" name="outlink" placeholder="请输入跳转外链接" class="layui-input">
 			                     </div>
 			                 </div>
+			                 
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">权限不足提示</label>
+			                     <div class="layui-input-block">
+			                     	<input type="text" name="gnote" placeholder="请输入权限不足时提示文本"  class="layui-input">
+			                     </div>
+			                </div>
 			                 
 			                 <div class="layui-form-item">
 			                     <label class="layui-form-label">发布时间</label>
@@ -731,6 +763,32 @@
 			                    	<input type="checkbox" name="isheadline" value="1" title="头条" {if([$content->isheadline]==1)}checked{/if}>
 			                     </div>
 			                </div>
+			                
+			                 <div class="layui-form-item">
+			                     <label class="layui-form-label">浏览权限</label>
+			                     <div class="layui-input-block">
+									<select name="gid">
+										<option value="">不限制</option>
+				                        {foreach $groups(key,value)}
+				                            <option value="[value->id]" {if([$content->gid]==$value->id)}selected="selected"{/if}>[value->gname]</option>
+				                        {/foreach}
+				                    </select>
+			                     </div>
+			                </div>  
+			                
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">权限类型</label>
+			                     <div class="layui-input-block">
+			                     	<select name="gtype" id="gtype" >
+			                     		<option value="1" {if([$content->gtype]==1)}selected="selected"{/if}>小于</option>
+			                     		<option value="2" {if([$content->gtype]==2)}selected="selected"{/if}>小于等于</option>
+			                     		<option value="3" {if([$content->gtype]==3)}selected="selected"{/if}>等于</option>
+			                     		<option value="4" {if([$content->gtype]==4||(![$sort->gtype]))}selected="selected"{/if}>大于等于</option>
+			                     		<option value="5" {if([$content->gtype]==5)}selected="selected"{/if}>大于</option>
+									</select>
+			                     </div>
+			                </div> 
+			                
 					    </div>
 					    
 					    <div class="layui-tab-item ">
@@ -771,6 +829,13 @@
 			                     	<input type="text" name="outlink" value="{$content->outlink}" placeholder="请输入跳转外链接" class="layui-input">
 			                     </div>
 			                 </div>
+			                 
+			                <div class="layui-form-item">
+			                     <label class="layui-form-label">权限不足提示</label>
+			                     <div class="layui-input-block">
+			                     	<input type="text" name="gnote" value="{$content->gnote}"  placeholder="请输入权限不足时提示文本"  class="layui-input">
+			                     </div>
+			                </div>
 			                 
 			                 <div class="layui-form-item">
 			                     <label class="layui-form-label">发布时间</label>

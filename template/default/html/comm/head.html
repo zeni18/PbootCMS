@@ -38,6 +38,27 @@
 	              </li>
 	          {/pboot:nav}
 	      </ul>
+	      
+	      <span class="navbar-text">
+	     	 {pboot:if({pboot:islogin}==1)}
+				<a class="text-secondary" href="{pboot:ucenter}" >个人中心</a>
+		     {else}
+		     
+		     	{pboot:2if({pboot:registerstatus})}
+					<a class="text-secondary" href="{pboot:register}" >注册</a>
+				{/pboot:2if}
+				
+				{pboot:2if({pboot:registerstatus} && {pboot:loginstatus})}
+					/
+				{/pboot:2if}
+				
+				{pboot:2if({pboot:loginstatus})}
+					<a class="text-secondary" href="{pboot:login}" >登录</a>
+				{/pboot:2if}
+				
+		     {/pboot:if}
+	      </span>
+	      
 	    </div>
     </div>
 </nav>

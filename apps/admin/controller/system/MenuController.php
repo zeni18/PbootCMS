@@ -142,18 +142,6 @@ class MenuController extends Controller
                 $this->log('新增菜单' . $mcode . '失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            
-            // 菜单下拉列表
-            $menus = $this->model->getSelect();
-            $this->assign('menu_select', $this->makeMenuSelect($menus));
-            
-            // 获取菜单按钮
-            $this->assign('actions', get_type('T101'));
-            
-            // 显示
-            $this->display('system/menu.html');
         }
     }
 

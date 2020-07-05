@@ -34,9 +34,9 @@ function url($url, $suffix = false)
  *            前端地址参数
  * @return mixed
  */
-function homeurl($url, $suffix = false)
+function homeurl($url, $suffix = null, $qs = null)
 {
-    return Url::home($url, $suffix);
+    return Url::home($url, $suffix, $qs);
 }
 
 /**
@@ -52,18 +52,18 @@ function error($string, $jump_url = null, $time = 2)
     if (! $string)
         $string = '未知错误！';
     
+    if ($jump_url == '-1' && isset($_SERVER['HTTP_REFERER'])) {
+        $jump_url = $_SERVER['HTTP_REFERER'];
+        if (strpos($jump_url, get_http_url()) !== 0) {
+            $jump_url = '/';
+        }
+    } elseif ($jump_url == '-1') {
+        $jump_url = null;
+    }
     if (Config::get('return_data_type') == 'json' || is_ajax()) { // 接口模型返回格式数据
-        Response::json(0, strip_tags($string));
+        Response::json(0, strip_tags($string), $jump_url);
     } else {
         $err_tpl = CORE_PATH . '/template/error.html';
-        if ($jump_url == '-1' && isset($_SERVER['HTTP_REFERER'])) {
-            $jump_url = $_SERVER['HTTP_REFERER'];
-            if (strpos($jump_url, get_http_url()) !== 0) {
-                $jump_url = '/';
-            }
-        } elseif ($jump_url == '-1') {
-            $jump_url = null;
-        }
         echo parse_info_tpl($err_tpl, $string, $jump_url, $time);
     }
     exit();
@@ -78,18 +78,18 @@ function error($string, $jump_url = null, $time = 2)
  */
 function success($string, $jump_url = null, $time = 2)
 {
+    if ($jump_url == '-1' && isset($_SERVER['HTTP_REFERER'])) {
+        $jump_url = $_SERVER['HTTP_REFERER'];
+        if (strpos($jump_url, get_http_url()) !== 0) {
+            $jump_url = '/';
+        }
+    } elseif ($jump_url == '-1') {
+        $jump_url = null;
+    }
     if (Config::get('return_data_type') == 'json' || is_ajax()) { // 接口模型返回格式数据
-        Response::json(1, strip_tags($string));
+        Response::json(1, strip_tags($string), $jump_url);
     } else {
         $err_tpl = CORE_PATH . '/template/success.html';
-        if ($jump_url == '-1' && isset($_SERVER['HTTP_REFERER'])) {
-            $jump_url = $_SERVER['HTTP_REFERER'];
-            if (strpos($jump_url, get_http_url()) !== 0) {
-                $jump_url = '/';
-            }
-        } elseif ($jump_url == '-1') {
-            $jump_url = null;
-        }
         echo parse_info_tpl($err_tpl, $string, $jump_url, $time);
     }
     exit();
@@ -149,15 +149,15 @@ function location($url)
  */
 function alert_location($info, $url, $status = 0)
 {
-    if (Config::get('return_data_type') == 'json' || is_ajax()) { // 接口模型返回格式数据
-        Response::json($status, strip_tags($info));
-    } else {
-        if ($url == '-1' && isset($_SERVER['HTTP_REFERER'])) {
-            $url = $_SERVER['HTTP_REFERER'];
-            if (strpos($url, get_http_url()) !== 0) {
-                $url = '/';
-            }
+    if ($url == '-1' && isset($_SERVER['HTTP_REFERER'])) {
+        $url = $_SERVER['HTTP_REFERER'];
+        if (strpos($url, get_http_url()) !== 0) {
+            $url = '/';
         }
+    }
+    if (Config::get('return_data_type') == 'json' || is_ajax()) { // 接口模型返回格式数据
+        Response::json($status, strip_tags($info), $url);
+    } else {
         echo '<script type="text/javascript">alert("' . clear_html_blank($info) . '");location.href="' . $url . '";</script>';
         exit();
     }
@@ -259,9 +259,9 @@ function response($data)
 }
 
 // Json内容输出助手函数
-function json($code, $data)
+function json($code, $data, $tourl = null)
 {
-    return core\basic\Response::json($code, $data);
+    return core\basic\Response::json($code, $data, $tourl);
 }
 
 /**
@@ -715,15 +715,15 @@ function get_sms_balance(array $config)
 }
 
 // 返回404页面,文件中可使用{info}替换提示信息
-function _404($string)
+function _404($string, $jump_url = null, $time = 2)
 {
     header('HTTP/1.1 404 Not Found');
     header('status: 404 Not Found');
     $file_404 = ROOT_PATH . '/404.html';
     if (file_exists($file_404)) {
-        echo parse_info_tpl($file_404, $string);
+        echo parse_info_tpl($file_404, $string, $jump_url, $time);
         exit();
     } else {
-        error($string);
+        error($string, $jump_url, $time);
     }
 }

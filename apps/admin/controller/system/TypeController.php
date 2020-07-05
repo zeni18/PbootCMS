@@ -89,10 +89,6 @@ class TypeController extends Controller
                 $this->log('新增类型' . $tcode . '-' . $item . '失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            $this->assign('type_select', $this->model->getSelect());
-            $this->display('system/type.html');
         }
     }
 

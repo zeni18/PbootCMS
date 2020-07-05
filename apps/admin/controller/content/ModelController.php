@@ -102,9 +102,6 @@ class ModelController extends Controller
                 $this->log('新增内容模型失败！');
                 error('新增失败！', - 1);
             }
-        } else {
-            $this->assign('add', true);
-            $this->display('content/model.html');
         }
     }
 
