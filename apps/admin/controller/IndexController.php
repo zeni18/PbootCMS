@@ -70,7 +70,7 @@ class IndexController extends Controller
         }
         
         $this->assign('server', get_server_info());
-        $this->assign('branch', $this->config('upgrade_branch') == '2.X.dev' ? '2.X.dev' : '2.X');
+        $this->assign('branch', $this->config('upgrade_branch') == '3.X' ? '3.X' : '2.X');
         $this->assign('revise', $this->config('revise_version') ?: '0');
         $this->assign('snuser', $this->config('sn_user') ?: '0');
         $this->assign('site', get_http_url());
