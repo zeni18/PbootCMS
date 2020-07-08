@@ -279,7 +279,11 @@ class IndexController extends Controller
                 if (session('pboot_uid')) { // 已经登录
                     error($gnote);
                 } else {
-                    error($gnote, Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                    if ($this->config('login_no_wait')) {
+                        location(Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                    } else {
+                        error($gnote, Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                    }
                 }
             }
         }

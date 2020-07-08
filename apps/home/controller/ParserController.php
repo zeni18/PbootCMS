@@ -140,7 +140,11 @@ class ParserController extends Controller
         if (strpos($content, '{pboot:mustlogin}') !== false) {
             $content = str_replace('{pboot:mustlogin}', '', $content);
             if (! session('pboot_uid')) { // 没有经登录
-                error('您的权限不足，无法浏览本页面！', Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                if ($this->config('login_no_wait')) {
+                    location(Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                } else {
+                    error('您的权限不足，无法浏览本页面！', Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                }
             }
         }
         
@@ -373,6 +377,10 @@ class ParserController extends Controller
                 
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
                 $parent = 0;
                 $num = 0;
                 foreach ($params as $key => $value) {
@@ -736,6 +744,11 @@ class ParserController extends Controller
                 
                 // 跳过未指定scode的列表
                 if (! array_key_exists('scode', $params)) {
+                    continue;
+                }
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
                     continue;
                 }
                 
@@ -1118,6 +1131,12 @@ class ParserController extends Controller
                 
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $num = $this->config('pagesize'); // 未设置条数时使用默认15
                 $order = 'a.istop DESC,a.isrecommend DESC,a.isheadline DESC,a.sorting ASC,a.date DESC,a.id DESC'; // 默认排序
                 $filter = ''; // 过滤
@@ -1427,6 +1446,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $id = - 1;
                 $scode = - 1;
                 
@@ -1477,6 +1502,11 @@ class ParserController extends Controller
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
                 $id = - 1;
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
                 
                 // 跳过未指定id的列表
                 if (! array_key_exists('id', $params)) {
@@ -1566,6 +1596,11 @@ class ParserController extends Controller
                 $params = $this->parserParam($matches[1][$i]);
                 $id = - 1;
                 
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 // 跳过未指定id的调用
                 if (! array_key_exists('id', $params)) {
                     continue;
@@ -1645,6 +1680,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $id = ''; // 调取指定内容的tags
                 $scode = ''; // 调取指定分类的tags
                 $target = 'list'; // 标签跳转目标，可以是内容列表，也可以是独立tags.html页面
@@ -1791,6 +1832,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $gid = 1;
                 $num = 5;
                 $start = 1;
@@ -1882,6 +1929,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $gid = 1;
                 $num = 10;
                 $start = 1;
@@ -1972,6 +2025,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $num = $this->config('pagesize');
                 $page = true;
                 $start = 1;
@@ -2087,6 +2146,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $num = $this->config('pagesize');
                 $fcode = - 1;
                 $page = true;
@@ -2209,6 +2274,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $num = $this->config('pagesize');
                 $page = true;
                 $order = 'a.id desc';
@@ -2321,6 +2392,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $num = $this->config('pagesize');
                 $page = true;
                 $order = 'a.id desc';
@@ -2467,6 +2544,12 @@ class ParserController extends Controller
             for ($i = 0; $i < $count; $i ++) {
                 // 获取调节参数
                 $params = $this->parserParam($matches[1][$i]);
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 $num = $this->config('pagesize');
                 $page = false;
                 $order = 'a.id desc';
@@ -2638,6 +2721,11 @@ class ParserController extends Controller
                 $isheadline = ''; // 是否头条
                 $page = true; // 搜索默认分页
                 $lfield = ''; // 查询字段限制
+                
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
                 
                 foreach ($params as $key => $value) {
                     switch ($key) {
@@ -3000,6 +3088,11 @@ class ParserController extends Controller
                 $start = 1;
                 $end = $this->config('pagesize');
                 
+                if (! self::checkLabelLevel($params)) {
+                    $content = str_replace($matches[0][$i], '', $content);
+                    continue;
+                }
+                
                 foreach ($params as $key => $value) {
                     switch ($key) {
                         case 'start':
@@ -3139,6 +3232,11 @@ class ParserController extends Controller
             }
         }
         
+        // 检查标签权限
+        if (! self::checkLabelLevel($params)) {
+            $data = '';
+        }
+        
         foreach ($params as $key => $value) {
             switch ($key) {
                 case 'style': // 时间样式
@@ -3257,80 +3355,6 @@ class ParserController extends Controller
                 case 'mark':
                     if ($label && $reqdata = request($label, 'vars') ?: request('keyword', 'vars')) {
                         $data = preg_replace('/(' . $reqdata . ')/i', '<span style="color:red">$1</span>', $data);
-                    }
-                    break;
-                case 'showgcode': // 指定等级显示，支持多个逗号隔开
-                    $showgcode = explode(',', $params['showgcode']);
-                    if (! in_array(session('pboot_gcode'), $showgcode)) {
-                        $data = '';
-                    }
-                    break;
-                case 'showucode': // 指定用户显示，支持多个逗号隔开
-                    $showucode = explode(',', $params['showucode']);
-                    if (! in_array(session('pboot_ucode'), $showucode)) {
-                        $data = '';
-                    }
-                    break;
-                case 'hidegcode': // 指定等级隐藏，支持多个逗号隔开
-                    $hidegcode = explode(',', $params['hidegcode']);
-                    if (in_array(session('pboot_gcode'), $hidegcode)) {
-                        $data = '';
-                    }
-                    break;
-                case 'hideucode': // 指定用户隐藏，支持多个逗号隔开
-                    $hideucode = explode(',', $params['hideucode']);
-                    if (in_array(session('pboot_ucode'), $hideucode)) {
-                        $data = '';
-                    }
-                    break;
-                case 'showgcodelt': // 等级小于显示
-                    if ($params['showgcodelt'] <= session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'showgcodegt': // 等级大于显示
-                    if ($params['showgcodegt'] >= session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'showgcodele': // 等级小于等于显示
-                    if ($params['showgcodele'] < session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'showgcodege': // 等级大于等于显示
-                    if ($params['showgcodege'] > session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'hidegcodelt': // 等级小于隐藏
-                    if ($params['hidegcodelt'] > session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'hidegcodegt': // 等级大于隐藏
-                    if ($params['hidegcodegt'] < session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'hidegcodele': // 等级小于等于隐藏
-                    if ($params['hidegcodele'] >= session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'hidegcodege': // 等级大于等于隐藏
-                    if ($params['hidegcodege'] <= session('pboot_gcode')) {
-                        $data = '';
-                    }
-                    break;
-                case 'showlogin': // 登录后显示
-                    if ($params['showlogin'] && ! session('pboot_uid')) {
-                        $data = '';
-                    }
-                    break;
-                case 'hidelogin': // 登录后隐藏
-                    if ($params['hidelogin'] && session('pboot_uid')) {
-                        $data = '';
                     }
                     break;
             }
@@ -3768,5 +3792,89 @@ class ParserController extends Controller
             }
         }
         return $link;
+    }
+
+    // 检查标签权限
+    protected function checkLabelLevel($params)
+    {
+        foreach ($params as $key => $value) {
+            switch ($key) {
+                case 'showgcode': // 指定等级显示，支持多个逗号隔开
+                    $showgcode = explode(',', $params['showgcode']);
+                    if (! in_array(session('pboot_gcode'), $showgcode)) {
+                        return false;
+                    }
+                    break;
+                case 'showucode': // 指定用户显示，支持多个逗号隔开
+                    $showucode = explode(',', $params['showucode']);
+                    if (! in_array(session('pboot_ucode'), $showucode)) {
+                        return false;
+                    }
+                    break;
+                case 'hidegcode': // 指定等级隐藏，支持多个逗号隔开
+                    $hidegcode = explode(',', $params['hidegcode']);
+                    if (in_array(session('pboot_gcode'), $hidegcode)) {
+                        return false;
+                    }
+                    break;
+                case 'hideucode': // 指定用户隐藏，支持多个逗号隔开
+                    $hideucode = explode(',', $params['hideucode']);
+                    if (in_array(session('pboot_ucode'), $hideucode)) {
+                        return false;
+                    }
+                    break;
+                case 'showgcodelt': // 等级小于显示
+                    if ($params['showgcodelt'] <= session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'showgcodegt': // 等级大于显示
+                    if ($params['showgcodegt'] >= session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'showgcodele': // 等级小于等于显示
+                    if ($params['showgcodele'] < session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'showgcodege': // 等级大于等于显示
+                    if ($params['showgcodege'] > session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'hidegcodelt': // 等级小于隐藏
+                    if ($params['hidegcodelt'] > session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'hidegcodegt': // 等级大于隐藏
+                    if ($params['hidegcodegt'] < session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'hidegcodele': // 等级小于等于隐藏
+                    if ($params['hidegcodele'] >= session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'hidegcodege': // 等级大于等于隐藏
+                    if ($params['hidegcodege'] <= session('pboot_gcode')) {
+                        return false;
+                    }
+                    break;
+                case 'showlogin': // 登录后显示
+                    if ($params['showlogin'] && ! session('pboot_uid')) {
+                        return false;
+                    }
+                    break;
+                case 'hidelogin': // 登录后隐藏
+                    if ($params['hidelogin'] && session('pboot_uid')) {
+                        return false;
+                    }
+                    break;
+            }
+        }
+        return true;
     }
 }

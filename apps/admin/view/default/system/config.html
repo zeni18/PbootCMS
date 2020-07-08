@@ -693,6 +693,14 @@
 		                </div>
 		                
 		                <div class="layui-form-item">
+		                     <label class="layui-form-label">不等待跳登录</label>
+		                     <div class="layui-input-block">
+		                     	<input type="radio" name="login_no_wait" value="1" {if([$configs.login_no_wait.value]==1)} checked="checked" {/if} title="启用">
+								<input type="radio" name="login_no_wait" value="0" {if([$configs.login_no_wait.value]==0)} checked="checked" {/if} title="禁用">
+		                     </div>
+		                </div>
+		                
+		                <div class="layui-form-item">
 		                     <label class="layui-form-label">评论功能</label>
 		                     <div class="layui-input-block">
 		                     	<input type="radio" name="comment_status" value="1" {if([$configs.comment_status.value]=='1'||[$configs.comment_status.value]=='')} checked="checked" {/if} title="启用">
