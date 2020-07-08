@@ -277,9 +277,9 @@ class IndexController extends Controller
             if ($deny) {
                 $gnote = $gnote ?: '您的权限不足，无法浏览本页面！';
                 if (session('pboot_uid')) { // 已经登录
-                    _404($gnote);
+                    error($gnote);
                 } else {
-                    _404($gnote, Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                    error($gnote, Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
                 }
             }
         }

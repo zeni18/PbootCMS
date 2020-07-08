@@ -140,7 +140,7 @@ class ParserController extends Controller
         if (strpos($content, '{pboot:mustlogin}') !== false) {
             $content = str_replace('{pboot:mustlogin}', '', $content);
             if (! session('pboot_uid')) { // 没有经登录
-                _404('您的权限不足，无法浏览本页面！', Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
+                error('您的权限不足，无法浏览本页面！', Url::home('member/login', null, "backurl=" . urlencode(get_current_url())));
             }
         }
         
