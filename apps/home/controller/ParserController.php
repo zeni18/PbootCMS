@@ -2513,15 +2513,19 @@ class ParserController extends Controller
             case 'nickname':
                 if ($data->nickname) {
                     $content = str_replace($search, $this->adjustLabelData($params, $data->nickname), $content);
-                } elseif (! $data->username) {
-                    $content = str_replace($search, $this->adjustLabelData($params, "匿名用户"), $content);
+                } elseif ($data->username) {
+                    $content = str_replace($search, $this->adjustLabelData($params, "匿名"), $content);
+                } else {
+                    $content = str_replace($search, $this->adjustLabelData($params, "游客"), $content);
                 }
                 break;
             case 'pnickname':
                 if ($data->pnickname) {
                     $content = str_replace($search, $this->adjustLabelData($params, $data->pnickname), $content);
-                } elseif (! $data->pusername) {
-                    $content = str_replace($search, $this->adjustLabelData($params, "匿名用户"), $content);
+                } elseif ($data->pusername) {
+                    $content = str_replace($search, $this->adjustLabelData($params, "匿名"), $content);
+                } else {
+                    $content = str_replace($search, $this->adjustLabelData($params, "游客"), $content);
                 }
                 break;
             default:
@@ -3145,7 +3149,7 @@ class ParserController extends Controller
                 $matches[1][$i] = decode_string($matches[1][$i]);
                 
                 // 带有函数的条件语句进行安全校验
-                if (preg_match_all('/([\w]+)([\/\*\<\>\%\w\s\\\\]+)?\(/i', $matches[1][$i], $matches2)) {
+                if (preg_match_all('/([\w]+)([\x00-\x1F\x7F\/\*\<\>\%\w\s\\\\]+)?\(/i', $matches[1][$i], $matches2)) {
                     foreach ($matches2[1] as $value) {
                         if (function_exists($value) && ! in_array($value, $white_fun)) {
                             $danger = true;
@@ -3155,7 +3159,7 @@ class ParserController extends Controller
                 }
                 
                 // 过滤特殊字符串
-                if (preg_match('/(\$_GET\[)|(\$_POST\[)|(\$_REQUEST\[)|(\$_COOKIE\[)|(\$_SESSION\[)|(file_put_contents)|(file_get_contents)|(fwrite)|(phpinfo)|(base64)|(`)|(shell_exec)|(eval)|(assert)|(system)|(exec)|(passthru)|(pcntl_exec)|(popen)|(proc_open)|(print_r)|(print)|(urldecode)|(chr)|(include)|(request)|(__FILE__)|(__DIR__)|(copy)|(call_user_)|(preg_replace)|(array_map)|(array_reverse)|(getallheaders)|(get_headers)|(decode_string)|(htmlspecialchars)/i', $matches[1][$i])) {
+                if (preg_match('/(\$_GET\[)|(\$_POST\[)|(\$_REQUEST\[)|(\$_COOKIE\[)|(\$_SESSION\[)|(file_put_contents)|(file_get_contents)|(fwrite)|(phpinfo)|(base64)|(`)|(shell_exec)|(eval)|(assert)|(system)|(exec)|(passthru)|(pcntl_exec)|(popen)|(proc_open)|(print_r)|(print)|(urldecode)|(chr)|(include)|(request)|(__FILE__)|(__DIR__)|(copy)|(call_user_)|(preg_replace)|(array_map)|(array_reverse)|(array_filter)|(getallheaders)|(get_headers)|(decode_string)|(htmlspecialchars)|(session_id)/i', $matches[1][$i])) {
                     $danger = true;
                 }
                 

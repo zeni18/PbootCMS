@@ -191,6 +191,13 @@ class ConfigController extends Controller
             }
         }
         
+        if ($key == 'home_upload_ext') {
+            // 不允许特殊扩展
+            if (preg_match('/(php|jsp|asp|exe|sh|cmd|vb|vbs)/i', $value)) {
+                return;
+            }
+        }
+        
         // 数据分割处理
         $hander = array(
             'content_keyword_replace',
