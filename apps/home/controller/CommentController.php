@@ -34,7 +34,7 @@ class CommentController extends Controller
         if ($_POST) {
             
             if ($this->config('comment_status') === '0') {
-                _404('系统已经关闭评论功能，请到后台开启再试！');
+                error('系统已经关闭评论功能，请到后台开启再试！');
             }
             
             if (time() - session('lastsub') < 10) {

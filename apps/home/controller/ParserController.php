@@ -1365,7 +1365,7 @@ class ParserController extends Controller
                 
                 if ($page) {
                     if (isset($paging)) {
-                        _404('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
+                        error('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
                     } else {
                         $paging = true;
                         $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);
@@ -1711,7 +1711,7 @@ class ParserController extends Controller
                 $data = array();
                 if ($id) { // 获取单个内容的tags
                     if (strpos($scode, ',') !== false) {
-                        _404('模板中指定id输出tags时不允许scode指定多个栏目！');
+                        error('模板中指定id输出tags时不允许scode指定多个栏目！');
                     }
                     if (! ! $rs = $this->model->getContentTags(escape_string($id))) {
                         if ($rs->tags) {
@@ -2989,7 +2989,7 @@ class ParserController extends Controller
                 // 读取数据
                 if ($page) {
                     if (isset($paging)) {
-                        _404('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
+                        error('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
                     } else {
                         $paging = true;
                         $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);

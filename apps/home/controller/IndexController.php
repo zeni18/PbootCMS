@@ -181,7 +181,7 @@ class IndexController extends Controller
             $content = $this->parser->parserListLabel($content, $sort->scode); // CMS分类列表标签解析
             $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
         } else {
-            _404('请到后台设置分类栏目列表页模板！');
+            error('请到后台设置分类栏目列表页模板！');
         }
         $this->cache($content, true);
     }
@@ -205,7 +205,7 @@ class IndexController extends Controller
                 $content = $this->parser->parserCommentLabel($content); // 文章评论
                 $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
             } else {
-                _404('请到后台设置分类栏目内容页模板！');
+                error('请到后台设置分类栏目内容页模板！');
             }
         } else {
             _404('您访问内容的分类已经不存在，请核对后再试！');
@@ -235,7 +235,7 @@ class IndexController extends Controller
             $content = $this->parser->parserCommentLabel($content); // 文章评论
             $content = $this->parser->parserAfter($content); // CMS公共标签后置解析
         } else {
-            _404('请到后台设置分类栏目内容页模板！');
+            error('请到后台设置分类栏目内容页模板！');
         }
         
         $this->cache($content, true);
