@@ -17,6 +17,8 @@ layui.use(['element','upload','laydate','form'], function(){
 			var url=$(this).attr('href');
 			if(url.indexOf('tab=')==-1){
 				$(this).attr('href', url+'#tab='+ clayid);
+			}else{
+				$(this).attr('href', url.replace(/tab=[\w]+/, 'tab='+ clayid));
 			}
         });
 	}
