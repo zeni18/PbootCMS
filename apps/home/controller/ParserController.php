@@ -50,9 +50,10 @@ class ParserController extends Controller
         $content = str_replace('{pboot:pagetitle}', $this->config('other_title') ?: '{pboot:sitetitle}-{pboot:sitesubtitle}', $content);
         $content = str_replace('{pboot:pagekeywords}', '{pboot:sitekeywords}', $content);
         $content = str_replace('{pboot:pagedescription}', '{pboot:sitedescription}', $content);
-        
+        $content = str_replace('{pboot:keyword}', get('keyword', 'vars'), $content); // 当前搜索的关键字
+                                                                                     
         // 解析个人扩展标签，升级不覆盖
-        if (file_exists(APP_PATH . './home/controller/ExtLabelController.php')) {
+        if (file_exists(APP_PATH . '/home/controller/ExtLabelController.php')) {
             if (class_exists('app\home\controller\ExtLabelController')) {
                 $extlabel = new ExtLabelController();
                 $content = $extlabel->run($content);
@@ -152,7 +153,6 @@ class ParserController extends Controller
         $content = str_replace('{pboot:scaction}', Url::home('search'), $content); // 搜索提交路径
         $content = str_replace('{pboot:msgcodestatus}', $this->config('message_check_code') === '0' ? 0 : 1, $content); // 是否开留言启验证码
         $content = str_replace('{pboot:formcodestatus}', $this->config('form_check_code') === '0' ? 0 : 1, $content); // 是否开启表单验证码
-        $content = str_replace('{pboot:keyword}', get('keyword', 'vars'), $content); // 当前搜索的关键字
         
         $content = str_replace('{pboot:checkcode}', CORE_DIR . '/code.php', $content); // 验证码路径
         $content = str_replace('{pboot:lgpath}', Url::get('home/Do/area'), $content); // 多语言切换前置路径,如{pboot:lgpath}?lg=cn
@@ -3463,9 +3463,9 @@ class ParserController extends Controller
             case 'enclosure':
                 if ($data->enclosure) {
                     if (! preg_match('/^http/', $data->enclosure)) {
-                        $content = str_replace($search, SITE_DIR . $data->enclosure, $content);
+                        $content = str_replace($search, $this->adjustLabelData($params, SITE_DIR . $data->enclosure), $content);
                     } else {
-                        $content = str_replace($search, $data->enclosure, $content);
+                        $content = str_replace($search, $this->adjustLabelData($params, $data->enclosure), $content);
                     }
                 } else {
                     $content = str_replace($search, '', $content);
@@ -3571,9 +3571,9 @@ class ParserController extends Controller
             case 'enclosure':
                 if ($data->enclosure) {
                     if (! preg_match('/^http/', $data->enclosure)) {
-                        $content = str_replace($search, SITE_DIR . $data->enclosure, $content);
+                        $content = str_replace($search, $this->adjustLabelData($params, SITE_DIR . $data->enclosure), $content);
                     } else {
-                        $content = str_replace($search, $data->enclosure, $content);
+                        $content = str_replace($search, $this->adjustLabelData($params, $data->enclosure), $content);
                     }
                 } else {
                     $content = str_replace($search, '', $content);

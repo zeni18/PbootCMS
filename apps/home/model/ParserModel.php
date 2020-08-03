@@ -601,6 +601,7 @@ class ParserModel extends Model
     {
         $result = parent::table('ay_content')->field('scode,tags')
             ->where("id='$id'")
+            ->where('status=1')
             ->find();
         return $result;
     }
@@ -637,6 +638,7 @@ class ParserModel extends Model
         $result = parent::table('ay_content a')->where("c.type=2 AND a.tags<>''")
             ->where($scode_arr, 'OR')
             ->join($join)
+            ->where('a.status=1')
             ->order('a.visits DESC')
             ->column('a.tags');
         return $result;

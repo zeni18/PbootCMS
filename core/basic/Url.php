@@ -113,6 +113,8 @@ class Url
             
             if (($suffix === null && $url_rule_sort_suffix) || $suffix) {
                 $suffix = $url_rule_suffix;
+            } elseif ($suffix === false) {
+                $suffix = '';
             } else {
                 $suffix = '/';
             }

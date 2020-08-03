@@ -46,7 +46,7 @@ class IndexController extends Controller
         } elseif ($url_rule_type == 3 && isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) { // 采用简短传参模式
             parse_str($qs, $output);
             unset($output['page']); // 去除分页
-            if ($output) { // 第一个路径参数不能有值，否则非标准路径参数
+            if ($output && ! current($output)) { // 第一个路径参数不能有值，否则非标准路径参数
                 $path = key($output); // 第一个参数为路径信息，注意PHP数组会自动将key点符号转换下划线
                 $path = trim($path, '/'); // 去除两端斜杠
                 $url_rule_suffix = substr($this->config('url_rule_suffix'), 1);
@@ -54,6 +54,12 @@ class IndexController extends Controller
                     $path = substr($path, 0, $pos); // 去扩展
                 }
                 $path = explode('/', $path);
+            } elseif (get('tag')) { // 对于兼容模式tag需要自动跳转tag独立页面
+                $tag = new TagController();
+                $tag->index();
+            } elseif (get('keyword')) { // 兼容模式搜索处理
+                $search = new SearchController();
+                $search->index();
             }
         }
         

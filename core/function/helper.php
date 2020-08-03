@@ -439,9 +439,9 @@ function filter($varname, $condition)
         $data = (! is_null($data)) ? $data : $condition['d_default'];
     }
     
-    // 去空格
     if (is_string($data)) {
-        $data = trim($data);
+        $data = trim($data); // 去空格
+        $data = preg_replace('/(x3c)|(x3e)/', '', $data); // 去十六进制括号
     }
     
     // 销毁错误
