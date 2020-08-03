@@ -38,9 +38,9 @@ class MessageController extends Controller
             // 需登录
             if ($this->config('message_rqlogin') && ! session('pboot_uid')) {
                 if (! ! $backurl = $_SERVER['HTTP_REFERER']) {
-                    alert_location("请先登录再提交留言信息！", Url::home('member/login', null, "backurl=" . urlencode($backurl)));
+                    alert_location("请先注册登录后再留言！", Url::home('member/login', null, "backurl=" . urlencode($backurl)));
                 } else {
-                    alert_location("请先登录再提交留言信息！", Url::home('member/login'));
+                    alert_location("请先注册登录后再留言！", Url::home('member/login'));
                 }
             }
             
