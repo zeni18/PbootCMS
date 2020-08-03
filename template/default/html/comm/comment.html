@@ -118,7 +118,7 @@
 //评论回复弹框
 $('.replybtn').on("click",function(){ 
 	var url=$(this).data("action");
-	$(".modal").modal("show");	
+	$("#reply").modal("show");	
 	$("#replyform").data("action",url);
 });
 
@@ -138,13 +138,17 @@ function submitcomment(obj){
     },
     success: function (response, status) {
       if(response.code){
-    	  alert(response.data);
+    	 alert(response.data);
 		 $(obj)[0].reset(); 
 		 $(".modal").modal("hide");	
 		 window.location.reload()
       }else{
-    	 alert(response.data);
-    	 $('.codeimg').click();
+    	 if(response.tourl!=""){
+    		 if(confirm(response.data+'是否立即跳转登录？')){
+    			 location.href=response.tourl; 
+   	   	     }
+    	 }
+    	 $('.codeimg').click();//更新验证码
       }
     },
     error:function(xhr,status,error){

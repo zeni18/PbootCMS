@@ -125,7 +125,11 @@ function submsg(obj){
 		 alert("谢谢您的反馈，我们会尽快联系您！");
 		 $(obj)[0].reset(); 
       }else{ 
-    	 alert(response.data);
+    	 if(response.tourl!=""){
+    		 if(confirm(response.data+'是否立即跳转登录？')){
+    			 location.href=response.tourl; 
+   	   	     }
+    	 }
     	 $('.codeimg').click();//更新验证码
       }
     },

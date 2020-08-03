@@ -120,7 +120,7 @@ class ParserController extends Controller
     {
         $content = str_replace('{pboot:ucenter}', Url::home('member/ucenter'), $content); // 用户中心
         if (! ! $url = get("backurl")) { // 获取会跳地址
-            $content = str_replace('{pboot:login}', Url::home('member/login', null, "backurl=" . $url), $content); // 登录地址
+            $content = str_replace('{pboot:login}', Url::home('member/login', null, "backurl=" . urlencode($url)), $content); // 登录地址
         } else {
             $content = str_replace('{pboot:login}', Url::home('member/login'), $content); // 登录地址
         }

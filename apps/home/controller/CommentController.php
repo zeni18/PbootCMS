@@ -42,7 +42,11 @@ class CommentController extends Controller
             }
             
             if (! session('pboot_uid') && ! $this->config('comment_anonymous')) {
-                alert_back('请先注册登录后再评论！');
+                if (! ! $backurl = $_SERVER['HTTP_REFERER']) {
+                    alert_location("请先注册登录后再评论！", Url::home('member/login', null, "backurl=" . urlencode($backurl)));
+                } else {
+                    alert_location("请先注册登录后再评论！", Url::home('member/login'));
+                }
             }
             
             // 验证码验证
