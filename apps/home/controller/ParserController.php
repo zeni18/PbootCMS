@@ -3764,7 +3764,7 @@ class ParserController extends Controller
     protected function parserLink($type, $urlname, $page, $scode, $sortfilename, $id, $contentfilename)
     {
         $url_break_char = $this->config('url_break_char') ?: '_';
-        $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
+        $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : null;
         
         if ($type == 1) {
             $urlname = $urlname ?: 'about';

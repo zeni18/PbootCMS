@@ -42,7 +42,7 @@ class AboutController extends Controller
                 
                 $urlname = $data->urlname ?: 'about';
                 $url_break_char = $this->config('url_break_char') ?: '_';
-                $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
+                $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : null;
                 
                 if ($data->sortfilename) {
                     $data->contentlink = Url::home($data->sortfilename, $url_rule_sort_suffix);

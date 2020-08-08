@@ -39,7 +39,7 @@ class ContentController extends Controller
                 $data->opposelink = url('/home/Do/oppose/id/' . $data->id, false);
                 
                 $url_break_char = $this->config('url_break_char') ?: '_';
-                $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : false;
+                $url_rule_sort_suffix = $this->config('url_rule_sort_suffix') ? true : null;
                 $urlname = $data->urlname ?: 'list';
                 
                 // 返回网页链接地址
