@@ -126,6 +126,7 @@ class ParserController extends Controller
         }
         
         $content = str_replace('{pboot:register}', Url::home('member/register'), $content); // 注册地址
+        $content = str_replace('{pboot:isregister}', Url::home('member/isRegister'), $content); // 检查是否注册地址
         $content = str_replace('{pboot:umodify}', Url::home('member/umodify'), $content); // 修改资料地址
         $content = str_replace('{pboot:logout}', Url::home('member/logout'), $content); // 推出登录
         $content = str_replace('{pboot:upload}', Url::home('member/upload'), $content); // 上传资料
@@ -2725,6 +2726,7 @@ class ParserController extends Controller
                 $isheadline = ''; // 是否头条
                 $page = true; // 搜索默认分页
                 $lfield = ''; // 查询字段限制
+                $lg = get_lg(); // 查询语言限制，默认当前语言，可通过lg=* 来指定
                 
                 if (! self::checkLabelLevel($params)) {
                     $content = str_replace($matches[0][$i], '', $content);
@@ -2821,6 +2823,9 @@ class ParserController extends Controller
                             break;
                         case 'lfield':
                             $lfield = $value;
+                            break;
+                        case 'lg':
+                            $lg = $value;
                             break;
                     }
                 }
@@ -2996,10 +3001,10 @@ class ParserController extends Controller
                         error('请不要在一个页面使用多个具有分页的列表，您可将多余的使用page=0关闭分页！');
                     } else {
                         $paging = true;
-                        $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);
+                        $data = $this->model->getLists($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield, $lg);
                     }
                 } else {
-                    $data = $this->model->getList($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield);
+                    $data = $this->model->getList($scode, $num, $order, $where1, $where2, $where3, $fuzzy, $start, $lfield, $lg);
                 }
                 
                 // 无数据直接替换
@@ -3144,9 +3149,6 @@ class ParserController extends Controller
                 
                 // 还原可能包含的保留内容，避免判断失效
                 $matches[1][$i] = $this->restorePreLabel($matches[1][$i]);
-                
-                // 解码条件字符串
-                $matches[1][$i] = decode_string($matches[1][$i]);
                 
                 // 带有函数的条件语句进行安全校验
                 if (preg_match_all('/([\w]+)([\x00-\x1F\x7F\/\*\<\>\%\w\s\\\\]+)?\(/i', $matches[1][$i], $matches2)) {

@@ -257,7 +257,7 @@ class ParserModel extends Model
     }
 
     // 列表内容,带分页，不区分语言，兼容跨语言
-    public function getLists($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null)
+    public function getLists($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null, $lg = null)
     {
         $ext_table = false;
         if ($lfield) {
@@ -351,6 +351,10 @@ class ParserModel extends Model
             'd.type=2',
             "a.date<'" . date('Y-m-d H:i:s') . "'"
         );
+        
+        if ($lg) {
+            $where['a.acode'] = $lg;
+        }
         
         // 筛选条件支持模糊匹配
         return parent::table('ay_content a')->field($fields)
@@ -367,7 +371,7 @@ class ParserModel extends Model
     }
 
     // 列表内容，不带分页，不区分语言，兼容跨语言
-    public function getList($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null)
+    public function getList($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null, $lg = null)
     {
         $ext_table = false;
         if ($lfield) {
@@ -461,6 +465,10 @@ class ParserModel extends Model
             'd.type=2',
             "a.date<'" . date('Y-m-d H:i:s') . "'"
         );
+        
+        if ($lg) {
+            $where['a.acode'] = $lg;
+        }
         
         // 筛选条件支持模糊匹配
         return parent::table('ay_content a')->field($fields)

@@ -433,6 +433,11 @@ class MemberController extends Controller
             json(0, '发送失败，缺少发送对象参数to！');
         }
         
+        // 检查邮箱注册
+        if ($this->model->checkUsername("useremail='$to' OR username='$to'")) {
+            alert_back('您输入的邮箱已被注册！');
+        }
+        
         $rs = false;
         if ($to) {
             session('lastsend', time()); // 记录最后提交时间
@@ -447,6 +452,53 @@ class MemberController extends Controller
             json(1, '发送成功！');
         } else {
             json(0, '发送失败，' . $rs);
+        }
+    }
+
+    // 检查用户是否注册
+    public function isRegister()
+    {
+        // 接受用户名、邮箱、手机三种方式
+        $info = '';
+        if (! $username = post('username')) {
+            $err = '账号不能为空！';
+        }
+        
+        // 注册类型判断
+        if ($this->config('register_type') == 2) { // 邮箱注册
+            if (! preg_match('/^[\w]+@[\w\.]+\.[a-zA-Z]+$/', $username)) {
+                $err = '账号格式不正确，请输入正确的邮箱账号！';
+            }
+            if ($this->model->checkUsername("useremail='$username' OR username='$username'")) {
+                $err = '您输入的邮箱已被注册！';
+            } else {
+                $suc = '您输入的邮箱可以使用！';
+            }
+        } elseif ($this->config('register_type') == 3) { // 手机注册
+            if (! preg_match('/^1[0-9]{10}$/', $username)) {
+                $err = '账号格式不正确，请输入正确的手机号码！';
+            }
+            if ($this->model->checkUsername("usermobile='$username' OR username='$username'")) {
+                $err = '您输入的手机号码已被注册！';
+            } else {
+                $suc = '您输入的手机号码可以使用！';
+            }
+        } else { // 账号注册
+            if (! preg_match('/^[\w\@\.]+$/', $username)) {
+                $err = '用户账号含有不允许的特殊字符！';
+            }
+            // 检查用户名
+            if ($this->model->checkUsername("username='$username' OR useremail='$username' OR usermobile='$username'")) {
+                $err = '您输入的账号已被注册！';
+            } else {
+                $suc = '您输入的账号可以使用！';
+            }
+        }
+        
+        if ($err) {
+            json(1, $err);
+        } else {
+            json(0, $suc);
         }
     }
 

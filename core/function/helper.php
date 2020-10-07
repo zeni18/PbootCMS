@@ -441,7 +441,8 @@ function filter($varname, $condition)
     
     if (is_string($data)) {
         $data = trim($data); // 去空格
-        $data = preg_replace('/(x3c)|(x3e)/', '', $data); // 去十六进制括号
+        $data = preg_replace_r('/(x3c)|(x3e)/', '', $data); // 去十六进制括号
+        $data = preg_replace_r('/pboot:if/i', 'pboot@if', $data); // 过滤插入cms条件语句
     }
     
     // 销毁错误
