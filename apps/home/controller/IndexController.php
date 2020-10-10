@@ -50,7 +50,7 @@ class IndexController extends Controller
                 $path = key($output); // 第一个参数为路径信息，注意PHP数组会自动将key点符号转换下划线
                 $path = trim($path, '/'); // 去除两端斜杠
                 $url_rule_suffix = substr($this->config('url_rule_suffix'), 1);
-                if (! ! $pos = strripos($path, '_' . $url_rule_suffix)) {
+                if (preg_match('/_' . $url_rule_suffix . '$/', $path) && (! ! $pos = strripos($path, '_' . $url_rule_suffix))) {
                     $path = substr($path, 0, $pos); // 去扩展
                 }
                 $path = explode('/', $path);
