@@ -5,7 +5,7 @@
  * @author XingMeng
  * @email hnxsh@foxmail.com
  * @date 2017年11月5日
- *  
+ *
  */
 use core\basic\Config;
 
@@ -341,10 +341,10 @@ if (! function_exists('array_column')) {
 /**
  * 系统信息弹出解析函数
  *
- * @param string $info_tpl模板            
- * @param string $string内容            
- * @param string $jump_url跳转地址            
- * @param number $time时间            
+ * @param string $info_tpl模板
+ * @param string $string内容
+ * @param string $jump_url跳转地址
+ * @param number $time时间
  */
 function parse_info_tpl($info_tpl, $string, $jump_url = null, $time = 0)
 {
@@ -619,7 +619,13 @@ function is_ajax()
 // 判断当前是否为https
 function is_https()
 {
-    if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+    if ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')) {
+        return true;
+    } elseif (isset($_SERVER['REQUEST_SCHEME']) && strtolower($_SERVER['REQUEST_SCHEME']) == 'https') {
+        return true;
+    } elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https') {
+        return true;
+    } elseif (isset($_SERVER['HTTP_X_CLIENT_SCHEME']) && strtolower($_SERVER['HTTP_X_CLIENT_SCHEME']) == 'https') {
         return true;
     } else {
         return false;

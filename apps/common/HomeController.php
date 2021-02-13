@@ -25,6 +25,22 @@ class HomeController extends Controller
             error($close_site_note ?: '本站维护中，请稍后再访问，带来不便，敬请谅解！');
         }
         
+        // 自动跳转HTTPS
+        if (! is_https() && ! ! $tohttps = Config::get('to_https')) {
+            header("Location: https://" . $_SERVER['HTTP_HOST'], true, 301);
+        }
+        
+        // 自动跳转主域名
+        if (! ($this->config('wap_domain') && is_mobile()) && (! ! $main_domain = Config::get('main_domain')) && (! ! $to_main_domain = Config::get('to_main_domain'))) {
+            if (! preg_match('{^' . $main_domain . '$}i', get_http_host(true))) {
+                if (is_https()) {
+                    header("Location: https://" . $main_domain . ':' . $_SERVER['SERVER_PORT'], true, 301);
+                } else {
+                    header("Location: http://" . $main_domain . ':' . $_SERVER['SERVER_PORT'], true, 301);
+                }
+            }
+        }
+        
         // IP访问黑白名单检测
         $user_ip = get_user_ip(); // 获取用户IP
         if (filter_var($user_ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
@@ -76,7 +92,7 @@ class HomeController extends Controller
                 } else {
                     $pre = 'http://';
                 }
-                header('Location:' . $pre . $this->config('wap_domain') . URL); // 手机访问并且绑定了域名，但是访问域名不一致则跳转
+                header('Location:' . $pre . $this->config('wap_domain') . URL, true, 301); // 手机访问并且绑定了域名，但是访问域名不一致则跳转
             } elseif (is_mobile()) { // 其他情况手机访问则自动手机版本
                 $this->setTheme(get_theme() . '/wap');
             } else { // 其他情况，电脑版本
