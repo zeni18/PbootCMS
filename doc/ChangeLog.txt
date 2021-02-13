@@ -3,8 +3,9 @@
 标签手册：https://www.pbootcms.com/docs.html
 ##########################################
 
-PbootCMS V3.0.4 build 2020-10-11
-1、修复地址栏扩展后可附带任意字符问题;
+PbootCMS V3.0.4 build 2021-02-14
+1、新增{pboot:sql sql="语句"}[sql:字段]{/pboot:sql}万能循环标签；
+2、修复地址栏扩展后可附带任意字符问题;
 
 PbootCMS V3.0.3 build 2020-10-07
 1、修复上版本出现的地址后缀不一致问题；
