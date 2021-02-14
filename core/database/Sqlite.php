@@ -4,7 +4,7 @@
  * @author XingMeng
  * @email hnxsh@foxmail.com
  * @date 2017年8月23日
- *  数据库Sqlite驱动  ,写入数据时自动启用事务 
+ *  数据库Sqlite驱动  ,写入数据时自动启用事务
  */
 namespace core\database;
 
@@ -125,7 +125,7 @@ class Sqlite implements Builder
     /**
      * 获取表字段,接受数据库表名，返回表字段数组
      *
-     * @param $table 表名            
+     * @param $table 表名
      */
     public function tableFields($table)
     {
@@ -220,11 +220,12 @@ class Sqlite implements Builder
     // 显示执行错误
     protected function error($sql, $conn)
     {
-        $err = '错误：' . $this->$conn->lastErrorMsg() . '，';
+        $err = '错误：' . $this->$conn->lastErrorMsg();
         if ($this->begin) { // 存在显式开启事务时进行回滚
             $this->master->exec('rollback;');
             $this->begin = false;
         }
-        error('执行SQL发生错误！' . $err . '语句：' . $sql);
+        // error('执行SQL发生错误！' . $err . '语句：' . $sql);
+        error('执行SQL发生错误！' . $err);
     }
 }

@@ -156,7 +156,7 @@ class Mysqli implements Builder
     /**
      * 获取表信息,接受数据库表名，返回表字段信息数组
      *
-     * @param $table 表名            
+     * @param $table 表名
      */
     public function tableFields($table)
     {
@@ -248,7 +248,7 @@ class Mysqli implements Builder
     // 显示执行错误
     protected function error($sql, $conn)
     {
-        $err = '错误：' . mysqli_error($this->$conn) . '，';
+        $err = '错误：' . mysqli_error($this->$conn);
         if (preg_match('/XPATH/i', $err)) {
             $err = '';
         }
@@ -256,7 +256,8 @@ class Mysqli implements Builder
             $this->$conn->rollback();
             $this->begin = false;
         }
-        error('执行SQL发生错误！' . $err . '语句：' . $sql);
+        // error('执行SQL发生错误！' . $err . '语句：' . $sql);
+        error('执行SQL发生错误！' . $err);
     }
 }
 

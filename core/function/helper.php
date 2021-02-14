@@ -42,9 +42,9 @@ function homeurl($url, $suffix = null, $qs = null)
 /**
  * 自定义错误页面
  *
- * @param string $_string内容            
- * @param string $_url跳转地址            
- * @param number $_time时间            
+ * @param string $_string内容
+ * @param string $_url跳转地址
+ * @param number $_time时间
  */
 function error($string, $jump_url = null, $time = 2)
 {
@@ -72,9 +72,9 @@ function error($string, $jump_url = null, $time = 2)
 /**
  * 自定义错误页面
  *
- * @param string $_string内容            
- * @param string $_url跳转地址            
- * @param number $_time时间            
+ * @param string $_string内容
+ * @param string $_url跳转地址
+ * @param number $_time时间
  */
 function success($string, $jump_url = null, $time = 2)
 {
@@ -98,7 +98,7 @@ function success($string, $jump_url = null, $time = 2)
 /**
  * 弹窗
  *
- * @param string $info信息            
+ * @param string $info信息
  */
 function alert($info, $status = 0)
 {
@@ -112,7 +112,7 @@ function alert($info, $status = 0)
 /**
  * 弹窗并返回前页
  *
- * @param string $info信息            
+ * @param string $info信息
  */
 function alert_back($info, $status = 0)
 {
@@ -127,7 +127,7 @@ function alert_back($info, $status = 0)
 /**
  * 跳转
  *
- * @param string $url跳转地址            
+ * @param string $url跳转地址
  */
 function location($url)
 {
@@ -144,8 +144,8 @@ function location($url)
 /**
  * 弹窗并跳转
  *
- * @param string $info信息            
- * @param string $url跳转地址            
+ * @param string $info信息
+ * @param string $url跳转地址
  */
 function alert_location($info, $url, $status = 0)
 {
@@ -166,7 +166,7 @@ function alert_location($info, $url, $status = 0)
 /**
  * 弹窗并关闭
  *
- * @param string $info信息            
+ * @param string $info信息
  */
 function alert_close($info, $status = 0)
 {
@@ -443,6 +443,8 @@ function filter($varname, $condition)
         $data = trim($data); // 去空格
         $data = preg_replace_r('/(x3c)|(x3e)/', '', $data); // 去十六进制括号
         $data = preg_replace_r('/pboot:if/i', 'pboot@if', $data); // 过滤插入cms条件语句
+        $data = preg_replace_r('/GET\[/i', 'GET@[', $data);
+        $data = preg_replace_r('/POST\[/i', 'POST@[', $data);
     }
     
     // 销毁错误

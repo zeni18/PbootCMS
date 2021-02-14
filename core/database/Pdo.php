@@ -193,7 +193,7 @@ class Pdo implements Builder
     /**
      * 获取表信息,接受数据库表名，返回表字段信息数组
      *
-     * @param $table 表名            
+     * @param $table 表名
      */
     public function tableFields($table)
     {
@@ -297,7 +297,7 @@ class Pdo implements Builder
     protected function error($sql, $conn)
     {
         $errs = $this->$conn->errorInfo();
-        $err = '错误：' . $errs[2] . '，';
+        $err = '错误：' . $errs[2];
         if (preg_match('/XPATH/i', $err)) {
             $err = '';
         }
@@ -305,6 +305,7 @@ class Pdo implements Builder
             $this->$conn->rollBack();
             $this->begin = false;
         }
-        error('执行SQL发生错误！' . $err . '语句：' . $sql);
+        // error('执行SQL发生错误！' . $err . '语句：' . $sql);
+        error('执行SQL发生错误！' . $err);
     }
 }
