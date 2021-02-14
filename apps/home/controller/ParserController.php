@@ -3290,9 +3290,9 @@ class ParserController extends Controller
     }
 
     // 调整标签数据
-    protected function adjustLabelData($params, $data, $label = null)
+    protected function adjustLabelData($params, $data, $label = null, $savelabel = false)
     {
-        if (! $params || ! $data)
+        if (! $data)
             return $data;
         
         // 图片缩放功能
@@ -3330,127 +3330,136 @@ class ParserController extends Controller
             $data = '';
         }
         
-        foreach ($params as $key => $value) {
-            switch ($key) {
-                case 'style': // 时间样式
-                    if ($params['style'] && $date = strtotime($data)) {
-                        $data = date($params['style'], $date);
-                    }
-                    break;
-                case 'len': // 长度截取
-                    if ($params['len'] && is_string($data)) {
-                        if (mb_strlen($data, 'utf-8') > $params['len']) {
-                            if (isset($params['more'])) {
-                                $more = $params['more'];
-                            } else {
-                                $more = '···';
-                            }
-                            $data = mb_substr($data, 0, $params['len'], 'utf-8') . $more;
+        if (is_array($params) && $params) {
+            foreach ($params as $key => $value) {
+                switch ($key) {
+                    case 'style': // 时间样式
+                        if ($params['style'] && $date = strtotime($data)) {
+                            $data = date($params['style'], $date);
                         }
-                    }
-                    break;
-                case 'lencn': // 以中文占位长度方式截取，英文算半个
-                    if ($params['lencn'] && is_string($data)) {
-                        if (strlen_both($data) > $params['lencn']) {
-                            if (isset($params['more'])) {
-                                $more = $params['more'];
-                            } else {
-                                $more = '···';
+                        break;
+                    case 'len': // 长度截取
+                        if ($params['len'] && is_string($data)) {
+                            if (mb_strlen($data, 'utf-8') > $params['len']) {
+                                if (isset($params['more'])) {
+                                    $more = $params['more'];
+                                } else {
+                                    $more = '···';
+                                }
+                                $data = mb_substr($data, 0, $params['len'], 'utf-8') . $more;
                             }
-                            $data = substr_both($data, 0, $params['lencn']) . $more;
                         }
-                    }
-                    break;
-                case 'drophtml': // 去除html标签
-                    if ($params['drophtml']) {
-                        $data = strip_tags($data);
-                    }
-                    break;
-                case 'dropblank': // 清理特殊空白
-                    if ($params['dropblank']) {
-                        $data = clear_html_blank($data);
-                    }
-                    break;
-                case 'decode': // 解码或转义字符
-                    if ($params['decode']) {
-                        $data = decode_string($data);
-                    } else {
-                        $data = escape_string($data);
-                    }
-                    break;
-                case 'substr': // 截取字符串
-                    if ($params['substr'] && is_string($data)) {
-                        $arr = explode(',', $params['substr']);
-                        if (count($arr) == 2 && $arr[1]) {
-                            $data = mb_substr($data, $arr[0] - 1, $arr[1], 'utf-8');
+                        break;
+                    case 'lencn': // 以中文占位长度方式截取，英文算半个
+                        if ($params['lencn'] && is_string($data)) {
+                            if (strlen_both($data) > $params['lencn']) {
+                                if (isset($params['more'])) {
+                                    $more = $params['more'];
+                                } else {
+                                    $more = '···';
+                                }
+                                $data = substr_both($data, 0, $params['lencn']) . $more;
+                            }
+                        }
+                        break;
+                    case 'drophtml': // 去除html标签
+                        if ($params['drophtml']) {
+                            $data = strip_tags($data);
+                        }
+                        break;
+                    case 'dropblank': // 清理特殊空白
+                        if ($params['dropblank']) {
+                            $data = clear_html_blank($data);
+                        }
+                        break;
+                    case 'decode': // 解码或转义字符
+                        if ($params['decode']) {
+                            $data = decode_string($data);
                         } else {
-                            $data = mb_substr($data, $arr[0] - 1);
+                            $data = escape_string($data);
                         }
-                    }
-                    break;
-                case 'unit': // bytes转换未其它单位
-                    switch ($params['unit']) {
-                        case 'KB':
-                        case 'kb':
-                            $data = $data / 1024;
-                            break;
-                        case 'MB':
-                        case 'mb':
-                            $data = $data / (1024 * 1024);
-                            break;
-                        case 'GB':
-                        case 'gb':
-                            $data = $data / (1024 * 1024 * 1024);
-                            break;
-                        case 'TB':
-                        case 'tb':
-                            $data = $data / (1024 * 1024 * 1024 * 1024);
-                            break;
-                        case 'PB':
-                        case 'pb':
-                            $data = $data / (1024 * 1024 * 1024 * 1024 * 1024);
-                            break;
-                        case 'EB':
-                        case 'eb':
-                            $data = $data / (1024 * 1024 * 1024 * 1024 * 1024 * 1024);
-                            break;
-                    }
-                    break;
-                case 'decimal': // 小数点
-                    if ($params['decimal']) {
-                        $data = number_format($data, $params['decimal']);
-                    }
-                    break;
-                case 'operate': // 实现列表页标签+-*/%运算功能
-                    if (preg_match('/^([\+\-\*\/\%])([0-9\.]+)$/', $params['operate'], $mathes)) {
-                        if (! is_numeric($data)) {
-                            $data = 0;
+                        break;
+                    case 'substr': // 截取字符串
+                        if ($params['substr'] && is_string($data)) {
+                            $arr = explode(',', $params['substr']);
+                            if (count($arr) == 2 && $arr[1]) {
+                                $data = mb_substr($data, $arr[0] - 1, $arr[1], 'utf-8');
+                            } else {
+                                $data = mb_substr($data, $arr[0] - 1);
+                            }
                         }
-                        switch ($mathes[1]) {
-                            case '+':
-                                $data = $data + $mathes[2];
+                        break;
+                    case 'unit': // bytes转换未其它单位
+                        switch ($params['unit']) {
+                            case 'KB':
+                            case 'kb':
+                                $data = $data / 1024;
                                 break;
-                            case '-':
-                                $data = $data - $mathes[2];
+                            case 'MB':
+                            case 'mb':
+                                $data = $data / (1024 * 1024);
                                 break;
-                            case '*':
-                                $data = $data * $mathes[2];
+                            case 'GB':
+                            case 'gb':
+                                $data = $data / (1024 * 1024 * 1024);
                                 break;
-                            case '/':
-                                $data = $data / $mathes[2];
+                            case 'TB':
+                            case 'tb':
+                                $data = $data / (1024 * 1024 * 1024 * 1024);
                                 break;
-                            case '%':
-                                $data = $data % $mathes[2];
+                            case 'PB':
+                            case 'pb':
+                                $data = $data / (1024 * 1024 * 1024 * 1024 * 1024);
+                                break;
+                            case 'EB':
+                            case 'eb':
+                                $data = $data / (1024 * 1024 * 1024 * 1024 * 1024 * 1024);
                                 break;
                         }
-                    }
-                    break;
-                case 'mark':
-                    if ($label && $reqdata = request($label, 'vars') ?: request('keyword', 'vars')) {
-                        $data = preg_replace('/(' . $reqdata . ')/i', '<span style="color:red">$1</span>', $data);
-                    }
-                    break;
+                        break;
+                    case 'decimal': // 小数点
+                        if ($params['decimal']) {
+                            $data = number_format($data, $params['decimal']);
+                        }
+                        break;
+                    case 'operate': // 实现列表页标签+-*/%运算功能
+                        if (preg_match('/^([\+\-\*\/\%])([0-9\.]+)$/', $params['operate'], $mathes)) {
+                            if (! is_numeric($data)) {
+                                $data = 0;
+                            }
+                            switch ($mathes[1]) {
+                                case '+':
+                                    $data = $data + $mathes[2];
+                                    break;
+                                case '-':
+                                    $data = $data - $mathes[2];
+                                    break;
+                                case '*':
+                                    $data = $data * $mathes[2];
+                                    break;
+                                case '/':
+                                    $data = $data / $mathes[2];
+                                    break;
+                                case '%':
+                                    $data = $data % $mathes[2];
+                                    break;
+                            }
+                        }
+                        break;
+                    case 'mark':
+                        if ($label && $reqdata = request($label, 'vars') ?: request('keyword', 'vars')) {
+                            $data = preg_replace('/(' . $reqdata . ')/i', '<span style="color:red">$1</span>', $data);
+                        }
+                        break;
+                }
             }
+        }
+        
+        // 对标签内容中含有标签是否保留不解析
+        if ($savelabel && $data) {
+            $this->pre[] = $data; // 保存内容避免解析
+            end($this->pre); // 指向最后一个元素
+            $data = '#pre:' . key($this->pre) . '#';
         }
         return $data;
     }
@@ -3573,9 +3582,13 @@ class ParserController extends Controller
                 $content = str_replace($search, Url::get('home/Do/oppose/id/' . $data->id), $content);
                 break;
             case 'content':
-                $this->pre[] = $this->adjustLabelData($params, $data->content, $label); // 保存内容避免解析
-                end($this->pre); // 指向最后一个元素
-                $content = str_replace($search, '#pre:' . key($this->pre) . '#', $content); // 占位替换
+                $content = str_replace($search, $this->adjustLabelData($params, $data->content, $label, true), $content); // 占位替换
+                break;
+            case 'keywords':
+                $content = str_replace($search, $this->adjustLabelData($params, $data->keywords, $label, true), $content); // 占位替换
+                break;
+            case 'description':
+                $content = str_replace($search, $this->adjustLabelData($params, $data->description, $label, true), $content); // 占位替换
                 break;
             default:
                 if (isset($data->$label)) {
@@ -3810,20 +3823,18 @@ class ParserController extends Controller
                         }
                     }
                 }
-                $this->pre[] = $this->adjustLabelData($params, $data->content); // 保存内容避免解析
-                end($this->pre); // 指向最后一个元素
-                $content = str_replace($search, '#pre:' . key($this->pre) . '#', $content); // 占位替换
+                $content = str_replace($search, $this->adjustLabelData($params, $data->content, null, true), $content);
                 break;
             case 'keywords': // 如果内容关键字为空，则自动使用全局关键字
                 if ($data->keywords) {
-                    $content = str_replace($search, $this->adjustLabelData($params, $data->keywords), $content);
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->keywords, null, true), $content);
                 } else {
                     $content = str_replace($search, '{pboot:sitekeywords}', $content);
                 }
                 break;
             case 'description': // 如果内容描述为空，则自动使用全局描述
                 if ($data->description) {
-                    $content = str_replace($search, $this->adjustLabelData($params, $data->description), $content);
+                    $content = str_replace($search, $this->adjustLabelData($params, $data->description, null, true), $content);
                 } else {
                     $content = str_replace($search, '{pboot:sitedescription}', $content);
                 }
