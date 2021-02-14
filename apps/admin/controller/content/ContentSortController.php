@@ -507,7 +507,7 @@ class ContentSortController extends Controller
             'titlecolor' => '#333333',
             'subtitle' => '',
             'filename' => '',
-            'author' => session('username'),
+            'author' => session('realname'),
             'source' => '本站',
             'outlink' => '',
             'date' => date('Y-m-d H:i:s'),
