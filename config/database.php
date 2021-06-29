@@ -7,19 +7,19 @@ return array(
     
     'database' => array(
         
-        'type' => 'sqlite', // 数据库连接驱动类型: mysqli,sqlite,pdo_mysql,pdo_sqlite
+        'type' => 'pdo_mysql', // 数据库连接驱动类型: mysqli,sqlite,pdo_mysql,pdo_sqlite
         
-        'host' => '127.0.0.1', // 数据库服务器
+        'host' => '172.17.0.1', // 数据库服务器
         
-        'user' => 'pboot', // 数据库连接用户名
+        'user' => 'root', // 数据库连接用户名
         
-        'passwd' => '123456', // 数据库连接密码
+        'passwd' => 'zeni18', // 数据库连接密码
         
         'port' => '3306', // 数据库端口
                           
-        // 'dbname' => 'pbootcms' // 去掉注释，启用mysql数据库，注意修改前面的连接信息及type为mysqli
+        'dbname' => 'company' // 去掉注释，启用mysql数据库，注意修改前面的连接信息及type为mysqli
         
-        'dbname' => '/data/pbootcms.db' // 去掉注释，启用Sqlite数据库，注意修改type为sqlite
+        //'dbname' => '/data/pbootcms.db' // 去掉注释，启用Sqlite数据库，注意修改type为sqlite
     )
 
 );
